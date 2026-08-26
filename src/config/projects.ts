@@ -1,11 +1,11 @@
 export const projects = {
   jackUp: {
     /**
-     * Depois de publicar o repositório privado Jack-UP na Vercel,
-     * coloque aqui a URL pública da aplicação.
-     * Ex.: 'https://jack-up-seu-projeto.vercel.app'
-     * ou, depois de configurar DNS, 'https://jackup.senhoritaminuto.com.br'
+     * O Jack-UP continua com o repositório privado no GitHub,
+     * mas a aplicação pública roda na Vercel e pode ser incorporada ao hub.
+     * Assim que o subdomínio personalizado estiver ativo na Vercel,
+     * troque esta URL por: https://jackup.senhoritaminuto.com.br
      */
-    liveUrl: '',
+    liveUrl: 'https://jack-up-ten.vercel.app/',
   },
 };
