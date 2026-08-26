@@ -1,0 +1,121 @@
+<div class="mascot-zone" aria-live="polite">
+  <div class="mascot-traveler" id="mascotTraveler" data-mode="walk">
+    <div class="mascot-balloon" aria-hidden="true"><span>◌</span></div>
+    <div class="mascot-speech" id="mascotSpeech" role="status" hidden></div>
+    <button class="mascot-button" id="mascotButton" type="button" aria-label="Conversar com a Senhorita Minuto">
+      <span class="mascot-vehicle" aria-hidden="true">
+        <span class="vehicle-body"></span>
+        <span class="wheel one"></span>
+        <span class="wheel two"></span>
+      </span>
+      <svg class="mascot-svg" viewBox="0 0 92 108" role="img" aria-label="Senhorita Minuto, assistente digital pixelada">
+        <g shape-rendering="crispEdges">
+          <path class="antenna" d="M44 4h8v12h-8zM52 4h12v6H52zM64 0h8v10h-8z" />
+          <path class="hair-back" d="M18 30h56v48H18z" />
+          <path class="body" d="M26 20h40v8h8v50h-8v10H26V78h-8V28h8z" />
+          <path class="screen" d="M30 32h32v30H30z" />
+          <path class="eye" d="M35 42h7v7h-7zM51 42h7v7h-7z" />
+          <path class="mouth" d="M40 54h13v4H40z" />
+          <path class="panel" d="M31 68h30v8H31z" />
+          <path class="button-one" d="M35 70h5v4h-5z" />
+          <path class="button-two" d="M44 70h5v4h-5z" />
+          <path class="button-three" d="M53 70h5v4h-5z" />
+          <path class="arm" d="M10 43h8v8h-8zM74 43h8v8h-8zM4 51h10v7H4zM78 51h10v7H78z" />
+          <path class="leg" d="M31 88h8v12h-8zM54 88h8v12h-8z" />
+          <path class="shoe" d="M24 98h16v7H24zM53 98h16v7H53z" />
+          <path class="clock" d="M43 24h7v3h-7zM45 21h3v8h-3z" />
+        </g>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  const traveler = document.querySelector('#mascotTraveler');
+  const button = document.querySelector('#mascotButton');
+  const speech = document.querySelector('#mascotSpeech');
+
+  if (traveler instanceof HTMLElement && button instanceof HTMLButtonElement && speech instanceof HTMLElement) {
+    const phrases = [
+      'Eu cuido do tempo. Dos bugs, a gente negocia.',
+      'Tem coisa interessante ali em Projetos. Eu conferi. Duas vezes.',
+      'O FERNANDO treina decisões rápidas. Eu respeito quem trabalha com cronômetro.',
+      'O jogo do Scratch foi uma das primeiras portas daqui.',
+      'Se alguma coisa quebrar, eu volto alguns minutos e finjo que não aconteceu.',
+      'Eu sou a Senhorita Minuto. Assistente digital, guia e ocasional problema temporal.',
+      'Curiosidade é basicamente um projeto antes de ganhar uma pasta no GitHub.',
+      'Pode clicar em mim de novo. Tenho um estoque pouco responsável de comentários.'
+    ];
+
+    const modes = ['walk', 'ride', 'walk', 'balloon', 'walk', 'rewind'];
+    let speechTimer;
+    let movementTimer;
+    let direction = 1;
+
+    function say(message, duration = 4800) {
+      speech.textContent = message;
+      speech.hidden = false;
+      window.clearTimeout(speechTimer);
+      speechTimer = window.setTimeout(() => {
+        speech.hidden = true;
+      }, duration);
+    }
+
+    function playChirp() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(560, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(820, ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.035, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.12);
+        osc.addEventListener('ended', () => ctx.close());
+      } catch {
+        // Som é apenas um detalhe; a interação continua sem ele.
+      }
+    }
+
+    function moveMascot() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const max = Math.max(12, window.innerWidth - 126);
+      traveler.dataset.mode = modes[Math.floor(Math.random() * modes.length)];
+      traveler.style.setProperty('--facing', direction === 1 ? '1' : '-1');
+      traveler.style.left = direction === 1 ? `${max}px` : '12px';
+      direction *= -1;
+      movementTimer = window.setTimeout(moveMascot, 9500);
+    }
+
+    button.addEventListener('click', () => {
+      playChirp();
+      say(phrases[Math.floor(Math.random() * phrases.length)]);
+    });
+
+    const firstVisitKey = 'senhorita-minuto-welcome-v1';
+    try {
+      if (!window.localStorage.getItem(firstVisitKey)) {
+        window.setTimeout(() => {
+          say('Oi! Eu sou a Senhorita Minuto. Se quiser começar pelo melhor lugar, clique em “Ver projetos”.', 7000);
+          window.localStorage.setItem(firstVisitKey, '1');
+        }, 700);
+      }
+    } catch {
+      window.setTimeout(() => say('Oi! Clique em “Ver projetos” para começar.', 6500), 700);
+    }
+
+    traveler.style.left = '12px';
+    movementTimer = window.setTimeout(moveMascot, 1800);
+
+    window.addEventListener('pagehide', () => {
+      window.clearTimeout(speechTimer);
+      window.clearTimeout(movementTimer);
+    }, { once: true });
+  }
+</script>

@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Mascot from '../../components/Mascot.astro';
+---
+<BaseLayout title="FERNANDO — Senhorita Minuto" description="FERNANDO, simulador educacional de ACLS e PCR.">
+  <Header />
+  <main class="project-page">
+    <a class="back-link" href="/#projetos">← Voltar aos projetos</a>
+    <span class="eyebrow">EDTECH / ACLS</span>
+    <h1>FERNANDO</h1>
+    <p class="project-lead">Simulador educacional para transformar protocolo em treino prático de tomada de decisão.</p>
+
+    <div class="fernando-hero">
+      <div>
+        <span class="terminal-label">STATUS</span>
+        <strong>EM DESENVOLVIMENTO</strong>
+      </div>
+      <div>
+        <span class="terminal-label">FOCO</span>
+        <strong>PCR · ACLS · 5H/5T</strong>
+      </div>
+      <div>
+        <span class="terminal-label">EXPERIÊNCIA</span>
+        <strong>SIMULAÇÃO GUIADA</strong>
+      </div>
+    </div>
+
+    <div class="project-details">
+      <section>
+        <h2>O que ele faz</h2>
+        <p>Organiza ciclos de atendimento, análise de ritmos, decisão choque/não choque, medicações, temporizadores, casos clínicos e revisão por log.</p>
+      </section>
+      <section>
+        <h2>Por que existe</h2>
+        <p>Para aproximar o estudo de ACLS da pressão de uma sequência real de decisões, permitindo repetir, errar e revisar o raciocínio.</p>
+      </section>
+    </div>
+
+    <a class="button primary external-cta" href="https://fernando-acls.vercel.app/" target="_blank" rel="noreferrer">Abrir o FERNANDO ↗</a>
+  </main>
+  <Mascot />
+</BaseLayout>

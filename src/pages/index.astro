@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Mascot from '../components/Mascot.astro';
+---
+<BaseLayout>
+  <Header />
+
+  <main>
+    <section class="hero">
+      <div class="hero-kicker"><span class="pulse-dot"></span> SISTEMA ONLINE</div>
+      <h1>Ideias que saíram<br /><span>da cabeça e viraram projeto.</span></h1>
+      <p>
+        Um espaço para experiências, ferramentas e coisas que comecei por curiosidade —
+        e continuei construindo até funcionarem.
+      </p>
+      <div class="hero-actions">
+        <a class="button primary" href="#projetos">Ver projetos</a>
+        <a class="button secondary" href="#sobre">Sobre este lugar</a>
+      </div>
+      <div class="hero-console" aria-label="Mensagem da Senhorita Minuto">
+        <span class="console-prompt">SM&gt;</span>
+        <span>Bem-vindo. O tempo é curto; os projetos não precisam ser.</span>
+      </div>
+    </section>
+
+    <section class="projects-section" id="projetos">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">ARQUIVO / 001</span>
+          <h2>Projetos em destaque</h2>
+        </div>
+        <p>Dois projetos já estão de pé. Este hub é onde eles começam a conversar entre si.</p>
+      </div>
+
+      <div class="project-grid">
+        <ProjectCard
+          eyebrow="JOGO / SCRATCH"
+          title="Projeto Scratch"
+          description="Um projeto jogável incorporado ao próprio portfólio. Dá para experimentar sem sair daqui."
+          href="/projetos/scratch"
+          cta="Jogar e conhecer"
+          status="PRONTO"
+        />
+        <ProjectCard
+          eyebrow="EDTECH / ACLS"
+          title="FERNANDO"
+          description="Simulador educacional para treino de PCR e raciocínio em ACLS, com ciclos, ritmos, medicações e feedback guiado."
+          href="/projetos/fernando"
+          cta="Conhecer o projeto"
+          status="EM DESENVOLVIMENTO"
+        />
+      </div>
+    </section>
+
+    <section class="about-section" id="sobre">
+      <div class="about-index">02</div>
+      <div>
+        <span class="eyebrow">SOBRE ESTE HUB</span>
+        <h2>Senhorita Minuto é a porta de entrada.</h2>
+        <p>
+          O site reúne projetos de software, jogos, experimentos e futuras ferramentas em um único endereço.
+          A Senhorita Minuto é a assistente digital original que guia o visitante — e aparentemente tem dificuldade
+          em ficar parada por muito tempo.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>© {new Date().getFullYear()} Senhorita Minuto</span>
+    <span class="footer-status">● arquivo em expansão</span>
+  </footer>
+
+  <Mascot />
+</BaseLayout>

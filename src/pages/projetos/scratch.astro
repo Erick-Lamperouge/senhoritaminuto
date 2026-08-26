@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Mascot from '../../components/Mascot.astro';
+---
+<BaseLayout title="Projeto Scratch — Senhorita Minuto" description="Jogue o projeto Scratch diretamente no portfólio Senhorita Minuto.">
+  <Header />
+  <main class="project-page">
+    <a class="back-link" href="/#projetos">← Voltar aos projetos</a>
+    <span class="eyebrow">JOGO / SCRATCH</span>
+    <h1>Projeto Scratch</h1>
+    <p class="project-lead">Um dos primeiros projetos do arquivo — e ele pode ser jogado sem sair do site.</p>
+
+    <div class="embed-shell">
+      <iframe
+        src="https://scratch.mit.edu/projects/1280541113/embed"
+        title="Jogo no Scratch"
+        allowfullscreen
+        loading="lazy"></iframe>
+    </div>
+
+    <div class="project-details">
+      <section>
+        <h2>Sobre o projeto</h2>
+        <p>Esta página transforma o projeto do Scratch em uma peça do portfólio, preservando a experiência interativa.</p>
+      </section>
+      <section>
+        <h2>Origem</h2>
+        <p><a class="text-link" href="https://scratch.mit.edu/projects/1280541113/" target="_blank" rel="noreferrer">Abrir projeto original no Scratch →</a></p>
+      </section>
+    </div>
+  </main>
+  <Mascot />
+</BaseLayout>
