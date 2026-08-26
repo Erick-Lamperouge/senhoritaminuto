@@ -1,13 +1,18 @@
 <div class="mascot-zone" aria-live="polite">
-  <div class="mascot-traveler" id="mascotTraveler" data-mode="walk">
+  <div class="time-portal portal-left" id="portalLeft" aria-hidden="true"><span></span></div>
+  <div class="time-portal portal-right" id="portalRight" aria-hidden="true"><span></span></div>
+
+  <div class="mascot-traveler" id="mascotTraveler" data-mode="walk" data-side="left">
     <div class="mascot-balloon" aria-hidden="true"><span>◌</span></div>
     <div class="mascot-speech" id="mascotSpeech" role="status" hidden></div>
+
     <button class="mascot-button" id="mascotButton" type="button" aria-label="Conversar com a Senhorita Minuto">
-      <span class="mascot-vehicle" aria-hidden="true">
-        <span class="vehicle-body"></span>
-        <span class="wheel one"></span>
-        <span class="wheel two"></span>
+      <span class="mascot-skate" aria-hidden="true">
+        <span class="skate-board"></span>
+        <span class="skate-wheel one"></span>
+        <span class="skate-wheel two"></span>
       </span>
+
       <svg class="mascot-svg" viewBox="0 0 92 108" role="img" aria-label="Senhorita Minuto, assistente digital pixelada">
         <g shape-rendering="crispEdges">
           <path class="antenna" d="M44 4h8v12h-8zM52 4h12v6H52zM64 0h8v10h-8z" />
@@ -21,8 +26,16 @@
           <path class="button-two" d="M44 70h5v4h-5z" />
           <path class="button-three" d="M53 70h5v4h-5z" />
           <path class="arm" d="M10 43h8v8h-8zM74 43h8v8h-8zM4 51h10v7H4zM78 51h10v7H78z" />
-          <path class="leg" d="M31 88h8v12h-8zM54 88h8v12h-8z" />
-          <path class="shoe" d="M24 98h16v7H24zM53 98h16v7H53z" />
+
+          <g class="leg-group leg-left">
+            <path class="leg" d="M31 88h8v12h-8z" />
+            <path class="shoe" d="M24 98h16v7H24z" />
+          </g>
+          <g class="leg-group leg-right">
+            <path class="leg" d="M54 88h8v12h-8z" />
+            <path class="shoe" d="M53 98h16v7H53z" />
+          </g>
+
           <path class="clock" d="M43 24h7v3h-7zM45 21h3v8h-3z" />
         </g>
       </svg>
@@ -34,23 +47,59 @@
   const traveler = document.querySelector('#mascotTraveler');
   const button = document.querySelector('#mascotButton');
   const speech = document.querySelector('#mascotSpeech');
+  const portalLeft = document.querySelector('#portalLeft');
+  const portalRight = document.querySelector('#portalRight');
 
-  if (traveler instanceof HTMLElement && button instanceof HTMLButtonElement && speech instanceof HTMLElement) {
+  if (
+    traveler instanceof HTMLElement &&
+    button instanceof HTMLButtonElement &&
+    speech instanceof HTMLElement &&
+    portalLeft instanceof HTMLElement &&
+    portalRight instanceof HTMLElement
+  ) {
     const phrases = [
       'Eu cuido do tempo. Dos bugs, a gente negocia.',
-      'Tem coisa interessante ali em Projetos. Eu conferi. Duas vezes.',
-      'O FERNANDO treina decisões rápidas. Eu respeito quem trabalha com cronômetro.',
-      'O jogo do Scratch foi uma das primeiras portas daqui.',
-      'Se alguma coisa quebrar, eu volto alguns minutos e finjo que não aconteceu.',
-      'Eu sou a Senhorita Minuto. Assistente digital, guia e ocasional problema temporal.',
-      'Curiosidade é basicamente um projeto antes de ganhar uma pasta no GitHub.',
-      'Pode clicar em mim de novo. Tenho um estoque pouco responsável de comentários.'
+      'Projetos em destaque ficam logo ali. Eu recomendo começar por um deles.',
+      'O FERNANDO trabalha com segundos. Finalmente um projeto que respeita minha especialidade.',
+      'O Scratch foi uma das primeiras portas deste arquivo.',
+      'Se alguma coisa quebrar, eu tenho um plano. O plano envolve voltar alguns segundos.',
+      'Eu sou a Senhorita Minuto: assistente digital, guia e risco temporal moderado.',
+      'Curiosidade é um projeto antes de ganhar uma pasta no GitHub.',
+      'O Jack-UP chegou ao arquivo. Mascotes devem apoiar outros mascotes.',
+      'Você clicou em mim. Excelente decisão. Cientificamente questionável, mas excelente.',
+      'Portais economizam caminhada. E eu considero isso otimização.'
     ];
 
-    const modes = ['walk', 'ride', 'walk', 'balloon', 'walk', 'rewind'];
     let speechTimer;
     let movementTimer;
-    let direction = 1;
+    let busy = false;
+    let side = 'left';
+    let clickCount = 0;
+
+    const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const wideLayout = () => window.innerWidth >= 1180;
+
+    function randomTop() {
+      const min = 108;
+      const max = Math.max(min, window.innerHeight - 170);
+      return Math.round(min + Math.random() * (max - min));
+    }
+
+    function xFor(whichSide) {
+      return whichSide === 'left' ? 20 : Math.max(20, window.innerWidth - 116);
+    }
+
+    function setPosition(whichSide, top, instant = false) {
+      if (instant) traveler.classList.add('no-travel-transition');
+      traveler.dataset.side = whichSide;
+      traveler.style.left = `${xFor(whichSide)}px`;
+      traveler.style.top = `${top}px`;
+      traveler.style.setProperty('--facing', whichSide === 'left' ? '1' : '-1');
+      if (instant) {
+        traveler.getBoundingClientRect();
+        traveler.classList.remove('no-travel-transition');
+      }
+    }
 
     function say(message, duration = 4800) {
       speech.textContent = message;
@@ -61,48 +110,133 @@
       }, duration);
     }
 
-    function playChirp() {
+    function playRetroChime() {
       try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
         const ctx = new AudioCtx();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(560, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(820, ctx.currentTime + 0.08);
-        gain.gain.setValueAtTime(0.035, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.12);
-        osc.addEventListener('ended', () => ctx.close());
+        const master = ctx.createGain();
+        master.gain.setValueAtTime(0.0001, ctx.currentTime);
+        master.gain.exponentialRampToValueAtTime(0.028, ctx.currentTime + 0.015);
+        master.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.24);
+        master.connect(ctx.destination);
+
+        [660, 990].forEach((frequency, index) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(frequency, ctx.currentTime + index * 0.055);
+          gain.gain.setValueAtTime(index === 0 ? 0.55 : 0.34, ctx.currentTime);
+          osc.connect(gain);
+          gain.connect(master);
+          osc.start(ctx.currentTime + index * 0.055);
+          osc.stop(ctx.currentTime + 0.18 + index * 0.055);
+        });
+
+        window.setTimeout(() => ctx.close(), 380);
       } catch {
-        // Som é apenas um detalhe; a interação continua sem ele.
+        // O som é complementar; a mascote continua funcionando sem áudio.
       }
     }
 
-    function moveMascot() {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      const max = Math.max(12, window.innerWidth - 126);
-      traveler.dataset.mode = modes[Math.floor(Math.random() * modes.length)];
-      traveler.style.setProperty('--facing', direction === 1 ? '1' : '-1');
-      traveler.style.left = direction === 1 ? `${max}px` : '12px';
-      direction *= -1;
-      movementTimer = window.setTimeout(moveMascot, 9500);
+    function ordinaryMove() {
+      if (!wideLayout()) {
+        traveler.dataset.mode = 'walk';
+        setPosition(side, Math.max(110, window.innerHeight - 142));
+        return;
+      }
+
+      traveler.dataset.mode = Math.random() < 0.3 ? 'skate' : 'walk';
+      setPosition(side, randomTop());
+    }
+
+    function portalJump() {
+      if (busy || reducedMotion() || !wideLayout()) return ordinaryMove();
+      busy = true;
+      const from = side;
+      const to = side === 'left' ? 'right' : 'left';
+      const sourcePortal = from === 'left' ? portalLeft : portalRight;
+      const targetPortal = to === 'left' ? portalLeft : portalRight;
+      const currentTop = traveler.getBoundingClientRect().top + 22;
+      const targetTop = randomTop();
+
+      sourcePortal.style.top = `${currentTop}px`;
+      targetPortal.style.top = `${targetTop + 22}px`;
+      sourcePortal.classList.add('is-open');
+      traveler.dataset.mode = 'portal';
+
+      window.setTimeout(() => traveler.classList.add('portal-enter'), 180);
+
+      window.setTimeout(() => {
+        targetPortal.classList.add('is-open');
+        traveler.classList.add('no-travel-transition');
+        side = to;
+        setPosition(side, targetTop, true);
+        traveler.classList.remove('portal-enter');
+        traveler.classList.add('portal-exit');
+      }, 650);
+
+      window.setTimeout(() => {
+        traveler.classList.remove('portal-exit');
+        traveler.dataset.mode = 'walk';
+        sourcePortal.classList.remove('is-open');
+        targetPortal.classList.remove('is-open');
+        busy = false;
+      }, 1320);
+    }
+
+    function balloonDrop() {
+      if (busy || reducedMotion()) return ordinaryMove();
+      busy = true;
+      traveler.dataset.mode = 'balloon-drop';
+      const landingTop = Math.max(120, window.innerHeight - 148);
+
+      setPosition(side, -170, true);
+      traveler.getBoundingClientRect();
+      traveler.classList.add('balloon-falling');
+      traveler.style.top = `${landingTop}px`;
+
+      window.setTimeout(() => {
+        traveler.classList.remove('balloon-falling');
+        traveler.dataset.mode = 'impact';
+      }, 1650);
+
+      window.setTimeout(() => {
+        traveler.dataset.mode = 'rewind';
+      }, 2180);
+
+      window.setTimeout(() => {
+        traveler.dataset.mode = 'walk';
+        setPosition(side, wideLayout() ? randomTop() : landingTop);
+        busy = false;
+      }, 3150);
+    }
+
+    function scheduleNext() {
+      window.clearTimeout(movementTimer);
+      movementTimer = window.setTimeout(() => {
+        if (busy) return scheduleNext();
+        const roll = Math.random();
+        if (roll < 0.16) portalJump();
+        else if (roll < 0.27) balloonDrop();
+        else ordinaryMove();
+        scheduleNext();
+      }, 6200 + Math.random() * 3600);
     }
 
     button.addEventListener('click', () => {
-      playChirp();
-      say(phrases[Math.floor(Math.random() * phrases.length)]);
+      clickCount += 1;
+      playRetroChime();
+      if (clickCount === 4) say('Quatro cliques. Estou começando a suspeitar que eu sou o projeto favorito.');
+      else if (clickCount === 7) say('Sete. Certo. Vou registrar isso como teste de estresse da assistente.');
+      else say(phrases[Math.floor(Math.random() * phrases.length)]);
     });
 
-    const firstVisitKey = 'senhorita-minuto-welcome-v1';
+    const firstVisitKey = 'senhorita-minuto-welcome-v2';
     try {
       if (!window.localStorage.getItem(firstVisitKey)) {
         window.setTimeout(() => {
-          say('Oi! Eu sou a Senhorita Minuto. Se quiser começar pelo melhor lugar, clique em “Ver projetos”.', 7000);
+          say('Oi! Eu sou a Senhorita Minuto. Clique em “Ver projetos” para começar — eu fico pelas laterais para não atrapalhar sua leitura.', 7600);
           window.localStorage.setItem(firstVisitKey, '1');
         }, 700);
       }
@@ -110,8 +244,14 @@
       window.setTimeout(() => say('Oi! Clique em “Ver projetos” para começar.', 6500), 700);
     }
 
-    traveler.style.left = '12px';
-    movementTimer = window.setTimeout(moveMascot, 1800);
+    side = Math.random() < 0.5 ? 'left' : 'right';
+    setPosition(side, wideLayout() ? randomTop() : Math.max(110, window.innerHeight - 142), true);
+
+    if (!reducedMotion()) scheduleNext();
+
+    window.addEventListener('resize', () => {
+      setPosition(side, wideLayout() ? Math.min(randomTop(), Math.max(110, window.innerHeight - 170)) : Math.max(110, window.innerHeight - 142), true);
+    });
 
     window.addEventListener('pagehide', () => {
       window.clearTimeout(speechTimer);
