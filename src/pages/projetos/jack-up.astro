@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Mascot from '../../components/Mascot.astro';
+import { projects } from '../../config/projects';
+
+const jackUpUrl = projects.jackUp.liveUrl.trim();
+const hasLiveJackUp = jackUpUrl.length > 0;
+---
+<BaseLayout title="Jack-UP — Senhorita Minuto" description="Jack-UP, aventuras na saúde com o mascote Jack.">
+  <Header />
+  <main class="project-page">
+    <a class="back-link" href="/#projetos">← Voltar aos projetos</a>
+    <span class="eyebrow">JOGO / SAÚDE</span>
+    <h1>Jack-UP</h1>
+    <p class="project-lead">
+      Aventuras na saúde com o mascote Jack: um projeto interativo com navegação, pontuação e situações de cuidado.
+    </p>
+
+    <div class="fernando-hero">
+      <div>
+        <span class="terminal-label">STATUS</span>
+        <strong>EM DESENVOLVIMENTO</strong>
+      </div>
+      <div>
+        <span class="terminal-label">REPOSITÓRIO</span>
+        <strong>PRIVADO</strong>
+      </div>
+      <div>
+        <span class="terminal-label">EXECUÇÃO</span>
+        <strong>{hasLiveJackUp ? 'DENTRO DO HUB' : 'DEPLOY PENDENTE'}</strong>
+      </div>
+    </div>
+
+    {hasLiveJackUp ? (
+      <>
+        <div class="embed-shell jackup-shell">
+          <iframe
+            src={jackUpUrl}
+            title="Jack-UP"
+            allowfullscreen
+            loading="eager"></iframe>
+        </div>
+        <div class="jackup-actions">
+          <a class="button secondary" href={jackUpUrl} target="_blank" rel="noreferrer">Abrir em tela própria ↗</a>
+        </div>
+        <p class="project-note">
+          A aplicação roda publicamente, mas o repositório original pode continuar privado no GitHub.
+        </p>
+      </>
+    ) : (
+      <section class="integration-ready">
+        <span class="eyebrow">INTEGRAÇÃO PREPARADA</span>
+        <h2>O Jack-UP já tem um lugar dentro do hub.</h2>
+        <p>
+          Para preservar o repositório privado, publique o <strong>Jack-UP diretamente na Vercel</strong>
+          a partir do repositório privado. Depois copie a URL pública da Vercel para
+          <code>src/config/projects.ts</code>, no campo <code>jackUp.liveUrl</code>.
+        </p>
+        <p>
+          Assim, esta página passa automaticamente a carregar o jogo dentro do Senhorita Minuto
+          sem tornar o repositório Jack-UP público.
+        </p>
+      </section>
+    )}
+
+    <div class="project-details">
+      <section>
+        <h2>Sobre o projeto</h2>
+        <p>Jack-UP foi pensado como uma experiência lúdica em saúde, usando um mascote e mecânicas de jogo para conduzir o usuário.</p>
+      </section>
+      <section>
+        <h2>O que fica privado</h2>
+        <p>O repositório, histórico e arquivos-fonte no GitHub podem continuar privados. Já o JavaScript entregue ao navegador em qualquer app público pode ser inspecionado pelo visitante.</p>
+      </section>
+    </div>
+  </main>
+  <Mascot />
+</BaseLayout>
