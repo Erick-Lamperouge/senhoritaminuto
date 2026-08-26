@@ -1,6 +1,32 @@
+---
+import '../styles/mascot.css';
+---
+
 <div class="mascot-zone" aria-live="polite">
   <div class="time-portal portal-left" id="portalLeft" aria-hidden="true"><span></span></div>
   <div class="time-portal portal-right" id="portalRight" aria-hidden="true"><span></span></div>
+
+  <div class="climb-route climb-route-left" id="climbRouteLeft" aria-hidden="true">
+    <span class="hold h1"></span><span class="hold h2"></span><span class="hold h3"></span><span class="hold h4"></span><span class="hold h5"></span>
+  </div>
+  <div class="climb-route climb-route-right" id="climbRouteRight" aria-hidden="true">
+    <span class="hold h1"></span><span class="hold h2"></span><span class="hold h3"></span><span class="hold h4"></span><span class="hold h5"></span>
+  </div>
+
+  <div class="wind-streaks" id="windStreaks" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="rewind-clock-badge" id="rewindClock" aria-hidden="true">
+    <span class="clock-face"></span>
+    <span class="clock-hand hour"></span>
+    <span class="clock-hand minute"></span>
+  </div>
+
+  <a class="project-token" id="projectToken" href="/#projetos">
+    <span class="token-label">PROJETO ENCONTRADO</span>
+    <strong id="projectTokenName">clique para olhar</strong>
+  </a>
 
   <div class="mascot-traveler" id="mascotTraveler" data-mode="walk" data-side="left">
     <div class="mascot-balloon" aria-hidden="true"><span>◌</span></div>
@@ -15,10 +41,10 @@
 
       <svg class="mascot-svg" viewBox="0 0 92 108" role="img" aria-label="Senhorita Minuto, assistente digital pixelada">
         <g shape-rendering="crispEdges">
-          <!-- Presilha/pompom em duas folhas: substitui a antiga forma de manivela. -->
-          <path class="hair-leaf hair-leaf-left" d="M46 20H34v-4h-8V8h8V4h12v4h4v12z" />
-          <path class="hair-leaf hair-leaf-right" d="M50 20h12v-4h8V8h-8V4H50v4h-4v12z" />
-          <path class="hair-clip" d="M43 15h10v9H43z" />
+          <!-- Laço pequeno no lado direito da cabeça. -->
+          <path class="hair-bow-wing" d="M63 12h5V8h6v4h4v6h-4v4h-6v-4h-5z" />
+          <path class="hair-bow-wing" d="M61 13h-4v-3h-5v4h5v4h4z" />
+          <path class="hair-bow-knot" d="M60 12h5v7h-5z" />
 
           <path class="hair-back" d="M18 30h56v48H18z" />
           <path class="body" d="M26 20h40v8h8v50h-8v10H26V78h-8V28h8z" />
@@ -29,7 +55,8 @@
           <path class="button-one" d="M35 70h5v4h-5z" />
           <path class="button-two" d="M44 70h5v4h-5z" />
           <path class="button-three" d="M53 70h5v4h-5z" />
-          <path class="arm" d="M10 43h8v8h-8zM74 43h8v8h-8zM4 51h10v7H4zM78 51h10v7H78z" />
+          <path class="arm arm-left" d="M10 43h8v8h-8zM4 51h10v7H4z" />
+          <path class="arm arm-right" d="M74 43h8v8h-8zM78 51h10v7H78z" />
 
           <g class="leg-group leg-left">
             <path class="leg" d="M31 88h8v12h-8z" />
@@ -47,274 +74,6 @@
   </div>
 </div>
 
-<style>
-  .mascot-svg .hair-leaf { fill: #6db8ad; }
-  .mascot-svg .hair-clip { fill: #e5ad55; }
-</style>
-
 <script>
-  const traveler = document.querySelector('#mascotTraveler');
-  const button = document.querySelector('#mascotButton');
-  const speech = document.querySelector('#mascotSpeech');
-  const portalLeft = document.querySelector('#portalLeft');
-  const portalRight = document.querySelector('#portalRight');
-
-  if (
-    traveler instanceof HTMLElement &&
-    button instanceof HTMLButtonElement &&
-    speech instanceof HTMLElement &&
-    portalLeft instanceof HTMLElement &&
-    portalRight instanceof HTMLElement
-  ) {
-    const phrases = [
-      'Eu cuido do tempo. Dos bugs, a gente negocia.',
-      'Projetos em destaque ficam logo ali. Eu recomendo começar por um deles.',
-      'O FERNANDO trabalha com segundos. Finalmente um projeto que respeita minha especialidade.',
-      'O Scratch foi uma das primeiras portas deste arquivo.',
-      'Se alguma coisa quebrar, eu tenho um plano. O plano envolve voltar alguns segundos.',
-      'Eu sou a Senhorita Minuto: assistente digital, guia e risco temporal moderado.',
-      'Curiosidade é um projeto antes de ganhar uma pasta no GitHub.',
-      'O Jack-UP chegou ao arquivo. Mascotes devem apoiar outros mascotes.',
-      'Você clicou em mim. Excelente decisão. Cientificamente questionável, mas excelente.',
-      'Portal para texto; skate para pista livre. Eu também tenho regras de trânsito.'
-    ];
-
-    let speechTimer;
-    let movementTimer;
-    let busy = false;
-    let side = 'left';
-    let clickCount = 0;
-
-    const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const wideLayout = () => window.innerWidth >= 1180;
-    const baseTop = () => Math.max(108, window.innerHeight - 148);
-
-    function xFor(whichSide) {
-      return whichSide === 'left' ? 20 : Math.max(20, window.innerWidth - 116);
-    }
-
-    function faceInward(whichSide = side) {
-      traveler.style.setProperty('--facing', whichSide === 'left' ? '1' : '-1');
-    }
-
-    function setPosition(whichSide, top, instant = false) {
-      if (instant) traveler.classList.add('no-travel-transition');
-      traveler.dataset.side = whichSide;
-      traveler.style.left = `${xFor(whichSide)}px`;
-      traveler.style.top = `${top}px`;
-      faceInward(whichSide);
-      if (instant) {
-        traveler.getBoundingClientRect();
-        traveler.classList.remove('no-travel-transition');
-      }
-    }
-
-    function say(message, duration = 4800) {
-      speech.textContent = message;
-      speech.hidden = false;
-      window.clearTimeout(speechTimer);
-      speechTimer = window.setTimeout(() => {
-        speech.hidden = true;
-      }, duration);
-    }
-
-    function playRetroChime() {
-      try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return;
-        const ctx = new AudioCtx();
-        const master = ctx.createGain();
-        master.gain.setValueAtTime(0.0001, ctx.currentTime);
-        master.gain.exponentialRampToValueAtTime(0.025, ctx.currentTime + 0.015);
-        master.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.24);
-        master.connect(ctx.destination);
-
-        [620, 930].forEach((frequency, index) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(frequency, ctx.currentTime + index * 0.055);
-          gain.gain.setValueAtTime(index === 0 ? 0.5 : 0.3, ctx.currentTime);
-          osc.connect(gain);
-          gain.connect(master);
-          osc.start(ctx.currentTime + index * 0.055);
-          osc.stop(ctx.currentTime + 0.18 + index * 0.055);
-        });
-
-        window.setTimeout(() => ctx.close(), 380);
-      } catch {
-        // O som é complementar; a mascote continua funcionando sem áudio.
-      }
-    }
-
-    /*
-     * Decide se existe uma faixa horizontal livre no ponto em que a mascote está.
-     * Se texto/cards/iframe ocupam a faixa central, ela NÃO cruza por cima do conteúdo:
-     * abre um portal. Se o corredor estiver livre, atravessa de skate.
-     */
-    function isHorizontalPathClear() {
-      if (!wideLayout()) return false;
-
-      const mascotRect = traveler.getBoundingClientRect();
-      const routeTop = mascotRect.top - 10;
-      const routeBottom = mascotRect.bottom + 10;
-      const centerLeft = 125;
-      const centerRight = window.innerWidth - 125;
-
-      const blockers = document.querySelectorAll(
-        'main h1, main h2, main h3, main p, main a, main button, main iframe, main .project-card, main .hero-console, main .fernando-hero, main .embed-shell, footer'
-      );
-
-      return !Array.from(blockers).some((node) => {
-        if (!(node instanceof HTMLElement)) return false;
-        const style = window.getComputedStyle(node);
-        if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0) return false;
-        const rect = node.getBoundingClientRect();
-        const verticalCollision = rect.bottom > routeTop && rect.top < routeBottom;
-        const centralCollision = rect.right > centerLeft && rect.left < centerRight;
-        return verticalCollision && centralCollision;
-      });
-    }
-
-    function skateAcross() {
-      if (busy || reducedMotion() || !wideLayout()) return;
-      busy = true;
-
-      const to = side === 'left' ? 'right' : 'left';
-      const y = baseTop();
-
-      traveler.dataset.mode = 'skate';
-      traveler.style.top = `${y}px`;
-      traveler.style.setProperty('--facing', to === 'right' ? '1' : '-1');
-      traveler.style.transition = 'left 4.2s linear, opacity .28s ease, transform .35s ease, filter .35s ease';
-
-      traveler.getBoundingClientRect();
-      traveler.dataset.side = to;
-      traveler.style.left = `${xFor(to)}px`;
-
-      window.setTimeout(() => {
-        side = to;
-        traveler.dataset.mode = 'walk';
-        traveler.style.transition = '';
-        faceInward(side);
-        busy = false;
-      }, 4300);
-    }
-
-    function portalJump() {
-      if (busy || reducedMotion() || !wideLayout()) return;
-      busy = true;
-
-      const from = side;
-      const to = side === 'left' ? 'right' : 'left';
-      const sourcePortal = from === 'left' ? portalLeft : portalRight;
-      const targetPortal = to === 'left' ? portalLeft : portalRight;
-      const currentTop = traveler.getBoundingClientRect().top;
-      const portalTop = currentTop + 54;
-
-      traveler.style.transition = '';
-      sourcePortal.style.top = `${portalTop}px`;
-      targetPortal.style.top = `${portalTop}px`;
-      sourcePortal.classList.add('is-open');
-      traveler.dataset.mode = 'portal';
-
-      window.setTimeout(() => traveler.classList.add('portal-enter'), 180);
-
-      window.setTimeout(() => {
-        targetPortal.classList.add('is-open');
-        side = to;
-        setPosition(side, currentTop, true);
-        traveler.classList.remove('portal-enter');
-        traveler.classList.add('portal-exit');
-      }, 650);
-
-      window.setTimeout(() => {
-        traveler.classList.remove('portal-exit');
-        traveler.dataset.mode = 'walk';
-        sourcePortal.classList.remove('is-open');
-        targetPortal.classList.remove('is-open');
-        busy = false;
-      }, 1320);
-    }
-
-    function crossToOtherSide() {
-      if (!wideLayout()) return;
-      if (isHorizontalPathClear()) skateAcross();
-      else portalJump();
-    }
-
-    function balloonDrop() {
-      if (busy || reducedMotion()) return;
-      busy = true;
-      traveler.dataset.mode = 'balloon-drop';
-      const landingTop = baseTop();
-
-      traveler.style.transition = '';
-      setPosition(side, -170, true);
-      traveler.getBoundingClientRect();
-      traveler.classList.add('balloon-falling');
-      traveler.style.top = `${landingTop}px`;
-
-      window.setTimeout(() => {
-        traveler.classList.remove('balloon-falling');
-        traveler.dataset.mode = 'impact';
-      }, 1650);
-
-      window.setTimeout(() => {
-        traveler.dataset.mode = 'rewind';
-      }, 2180);
-
-      window.setTimeout(() => {
-        traveler.dataset.mode = 'walk';
-        setPosition(side, landingTop, true);
-        busy = false;
-      }, 3150);
-    }
-
-    function scheduleNext() {
-      window.clearTimeout(movementTimer);
-      movementTimer = window.setTimeout(() => {
-        if (busy) return scheduleNext();
-
-        if (Math.random() < 0.16) balloonDrop();
-        else crossToOtherSide();
-
-        scheduleNext();
-      }, 7000 + Math.random() * 4200);
-    }
-
-    button.addEventListener('click', () => {
-      clickCount += 1;
-      playRetroChime();
-      if (clickCount === 4) say('Quatro cliques. Estou começando a suspeitar que eu sou o projeto favorito.');
-      else if (clickCount === 7) say('Sete. Certo. Vou registrar isso como teste de estresse da assistente.');
-      else say(phrases[Math.floor(Math.random() * phrases.length)]);
-    });
-
-    const firstVisitKey = 'senhorita-minuto-welcome-v3';
-    try {
-      if (!window.localStorage.getItem(firstVisitKey)) {
-        window.setTimeout(() => {
-          say('Oi! Eu sou a Senhorita Minuto. Clique em “Ver projetos” para começar. Se houver texto no caminho, eu uso o portal — não vou passar na frente da sua leitura.', 8000);
-          window.localStorage.setItem(firstVisitKey, '1');
-        }, 700);
-      }
-    } catch {
-      window.setTimeout(() => say('Oi! Clique em “Ver projetos” para começar.', 6500), 700);
-    }
-
-    side = Math.random() < 0.5 ? 'left' : 'right';
-    setPosition(side, baseTop(), true);
-
-    if (!reducedMotion()) scheduleNext();
-
-    window.addEventListener('resize', () => {
-      setPosition(side, baseTop(), true);
-    });
-
-    window.addEventListener('pagehide', () => {
-      window.clearTimeout(speechTimer);
-      window.clearTimeout(movementTimer);
-    }, { once: true });
-  }
+  import '../scripts/mascot.js';
 </script>
