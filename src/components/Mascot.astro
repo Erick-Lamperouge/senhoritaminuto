@@ -15,7 +15,11 @@
 
       <svg class="mascot-svg" viewBox="0 0 92 108" role="img" aria-label="Senhorita Minuto, assistente digital pixelada">
         <g shape-rendering="crispEdges">
-          <path class="antenna" d="M44 4h8v12h-8zM52 4h12v6H52zM64 0h8v10h-8z" />
+          <!-- Presilha/pompom em duas folhas: substitui a antiga forma de manivela. -->
+          <path class="hair-leaf hair-leaf-left" d="M46 20H34v-4h-8V8h8V4h12v4h4v12z" />
+          <path class="hair-leaf hair-leaf-right" d="M50 20h12v-4h8V8h-8V4H50v4h-4v12z" />
+          <path class="hair-clip" d="M43 15h10v9H43z" />
+
           <path class="hair-back" d="M18 30h56v48H18z" />
           <path class="body" d="M26 20h40v8h8v50h-8v10H26V78h-8V28h8z" />
           <path class="screen" d="M30 32h32v30H30z" />
@@ -43,6 +47,11 @@
   </div>
 </div>
 
+<style>
+  .mascot-svg .hair-leaf { fill: #6db8ad; }
+  .mascot-svg .hair-clip { fill: #e5ad55; }
+</style>
+
 <script>
   const traveler = document.querySelector('#mascotTraveler');
   const button = document.querySelector('#mascotButton');
@@ -67,7 +76,7 @@
       'Curiosidade é um projeto antes de ganhar uma pasta no GitHub.',
       'O Jack-UP chegou ao arquivo. Mascotes devem apoiar outros mascotes.',
       'Você clicou em mim. Excelente decisão. Cientificamente questionável, mas excelente.',
-      'Portais economizam caminhada. E eu considero isso otimização.'
+      'Portal para texto; skate para pista livre. Eu também tenho regras de trânsito.'
     ];
 
     let speechTimer;
@@ -78,15 +87,14 @@
 
     const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const wideLayout = () => window.innerWidth >= 1180;
-
-    function randomTop() {
-      const min = 108;
-      const max = Math.max(min, window.innerHeight - 170);
-      return Math.round(min + Math.random() * (max - min));
-    }
+    const baseTop = () => Math.max(108, window.innerHeight - 148);
 
     function xFor(whichSide) {
       return whichSide === 'left' ? 20 : Math.max(20, window.innerWidth - 116);
+    }
+
+    function faceInward(whichSide = side) {
+      traveler.style.setProperty('--facing', whichSide === 'left' ? '1' : '-1');
     }
 
     function setPosition(whichSide, top, instant = false) {
@@ -94,7 +102,7 @@
       traveler.dataset.side = whichSide;
       traveler.style.left = `${xFor(whichSide)}px`;
       traveler.style.top = `${top}px`;
-      traveler.style.setProperty('--facing', whichSide === 'left' ? '1' : '-1');
+      faceInward(whichSide);
       if (instant) {
         traveler.getBoundingClientRect();
         traveler.classList.remove('no-travel-transition');
@@ -117,16 +125,16 @@
         const ctx = new AudioCtx();
         const master = ctx.createGain();
         master.gain.setValueAtTime(0.0001, ctx.currentTime);
-        master.gain.exponentialRampToValueAtTime(0.028, ctx.currentTime + 0.015);
+        master.gain.exponentialRampToValueAtTime(0.025, ctx.currentTime + 0.015);
         master.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.24);
         master.connect(ctx.destination);
 
-        [660, 990].forEach((frequency, index) => {
+        [620, 930].forEach((frequency, index) => {
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.type = 'triangle';
           osc.frequency.setValueAtTime(frequency, ctx.currentTime + index * 0.055);
-          gain.gain.setValueAtTime(index === 0 ? 0.55 : 0.34, ctx.currentTime);
+          gain.gain.setValueAtTime(index === 0 ? 0.5 : 0.3, ctx.currentTime);
           osc.connect(gain);
           gain.connect(master);
           osc.start(ctx.currentTime + index * 0.055);
@@ -139,29 +147,74 @@
       }
     }
 
-    function ordinaryMove() {
-      if (!wideLayout()) {
-        traveler.dataset.mode = 'walk';
-        setPosition(side, Math.max(110, window.innerHeight - 142));
-        return;
-      }
+    /*
+     * Decide se existe uma faixa horizontal livre no ponto em que a mascote está.
+     * Se texto/cards/iframe ocupam a faixa central, ela NÃO cruza por cima do conteúdo:
+     * abre um portal. Se o corredor estiver livre, atravessa de skate.
+     */
+    function isHorizontalPathClear() {
+      if (!wideLayout()) return false;
 
-      traveler.dataset.mode = Math.random() < 0.3 ? 'skate' : 'walk';
-      setPosition(side, randomTop());
+      const mascotRect = traveler.getBoundingClientRect();
+      const routeTop = mascotRect.top - 10;
+      const routeBottom = mascotRect.bottom + 10;
+      const centerLeft = 125;
+      const centerRight = window.innerWidth - 125;
+
+      const blockers = document.querySelectorAll(
+        'main h1, main h2, main h3, main p, main a, main button, main iframe, main .project-card, main .hero-console, main .fernando-hero, main .embed-shell, footer'
+      );
+
+      return !Array.from(blockers).some((node) => {
+        if (!(node instanceof HTMLElement)) return false;
+        const style = window.getComputedStyle(node);
+        if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0) return false;
+        const rect = node.getBoundingClientRect();
+        const verticalCollision = rect.bottom > routeTop && rect.top < routeBottom;
+        const centralCollision = rect.right > centerLeft && rect.left < centerRight;
+        return verticalCollision && centralCollision;
+      });
+    }
+
+    function skateAcross() {
+      if (busy || reducedMotion() || !wideLayout()) return;
+      busy = true;
+
+      const to = side === 'left' ? 'right' : 'left';
+      const y = baseTop();
+
+      traveler.dataset.mode = 'skate';
+      traveler.style.top = `${y}px`;
+      traveler.style.setProperty('--facing', to === 'right' ? '1' : '-1');
+      traveler.style.transition = 'left 4.2s linear, opacity .28s ease, transform .35s ease, filter .35s ease';
+
+      traveler.getBoundingClientRect();
+      traveler.dataset.side = to;
+      traveler.style.left = `${xFor(to)}px`;
+
+      window.setTimeout(() => {
+        side = to;
+        traveler.dataset.mode = 'walk';
+        traveler.style.transition = '';
+        faceInward(side);
+        busy = false;
+      }, 4300);
     }
 
     function portalJump() {
-      if (busy || reducedMotion() || !wideLayout()) return ordinaryMove();
+      if (busy || reducedMotion() || !wideLayout()) return;
       busy = true;
+
       const from = side;
       const to = side === 'left' ? 'right' : 'left';
       const sourcePortal = from === 'left' ? portalLeft : portalRight;
       const targetPortal = to === 'left' ? portalLeft : portalRight;
-      const currentTop = traveler.getBoundingClientRect().top + 22;
-      const targetTop = randomTop();
+      const currentTop = traveler.getBoundingClientRect().top;
+      const portalTop = currentTop + 54;
 
-      sourcePortal.style.top = `${currentTop}px`;
-      targetPortal.style.top = `${targetTop + 22}px`;
+      traveler.style.transition = '';
+      sourcePortal.style.top = `${portalTop}px`;
+      targetPortal.style.top = `${portalTop}px`;
       sourcePortal.classList.add('is-open');
       traveler.dataset.mode = 'portal';
 
@@ -169,9 +222,8 @@
 
       window.setTimeout(() => {
         targetPortal.classList.add('is-open');
-        traveler.classList.add('no-travel-transition');
         side = to;
-        setPosition(side, targetTop, true);
+        setPosition(side, currentTop, true);
         traveler.classList.remove('portal-enter');
         traveler.classList.add('portal-exit');
       }, 650);
@@ -185,12 +237,19 @@
       }, 1320);
     }
 
+    function crossToOtherSide() {
+      if (!wideLayout()) return;
+      if (isHorizontalPathClear()) skateAcross();
+      else portalJump();
+    }
+
     function balloonDrop() {
-      if (busy || reducedMotion()) return ordinaryMove();
+      if (busy || reducedMotion()) return;
       busy = true;
       traveler.dataset.mode = 'balloon-drop';
-      const landingTop = Math.max(120, window.innerHeight - 148);
+      const landingTop = baseTop();
 
+      traveler.style.transition = '';
       setPosition(side, -170, true);
       traveler.getBoundingClientRect();
       traveler.classList.add('balloon-falling');
@@ -207,7 +266,7 @@
 
       window.setTimeout(() => {
         traveler.dataset.mode = 'walk';
-        setPosition(side, wideLayout() ? randomTop() : landingTop);
+        setPosition(side, landingTop, true);
         busy = false;
       }, 3150);
     }
@@ -216,12 +275,12 @@
       window.clearTimeout(movementTimer);
       movementTimer = window.setTimeout(() => {
         if (busy) return scheduleNext();
-        const roll = Math.random();
-        if (roll < 0.16) portalJump();
-        else if (roll < 0.27) balloonDrop();
-        else ordinaryMove();
+
+        if (Math.random() < 0.16) balloonDrop();
+        else crossToOtherSide();
+
         scheduleNext();
-      }, 6200 + Math.random() * 3600);
+      }, 7000 + Math.random() * 4200);
     }
 
     button.addEventListener('click', () => {
@@ -232,11 +291,11 @@
       else say(phrases[Math.floor(Math.random() * phrases.length)]);
     });
 
-    const firstVisitKey = 'senhorita-minuto-welcome-v2';
+    const firstVisitKey = 'senhorita-minuto-welcome-v3';
     try {
       if (!window.localStorage.getItem(firstVisitKey)) {
         window.setTimeout(() => {
-          say('Oi! Eu sou a Senhorita Minuto. Clique em “Ver projetos” para começar — eu fico pelas laterais para não atrapalhar sua leitura.', 7600);
+          say('Oi! Eu sou a Senhorita Minuto. Clique em “Ver projetos” para começar. Se houver texto no caminho, eu uso o portal — não vou passar na frente da sua leitura.', 8000);
           window.localStorage.setItem(firstVisitKey, '1');
         }, 700);
       }
@@ -245,12 +304,12 @@
     }
 
     side = Math.random() < 0.5 ? 'left' : 'right';
-    setPosition(side, wideLayout() ? randomTop() : Math.max(110, window.innerHeight - 142), true);
+    setPosition(side, baseTop(), true);
 
     if (!reducedMotion()) scheduleNext();
 
     window.addEventListener('resize', () => {
-      setPosition(side, wideLayout() ? Math.min(randomTop(), Math.max(110, window.innerHeight - 170)) : Math.max(110, window.innerHeight - 142), true);
+      setPosition(side, baseTop(), true);
     });
 
     window.addEventListener('pagehide', () => {
