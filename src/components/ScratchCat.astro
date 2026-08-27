@@ -1,21 +1,6 @@
 <div class="scratch-cat-scene" id="scratchCatScene" aria-label="Interação entre um gato pixelado e a Senhorita Minuto">
-  <button class="scratch-cat" id="scratchCat" type="button" aria-label="Gato pixelado laranja">
-    <svg viewBox="0 0 112 88" role="img" aria-hidden="true" shape-rendering="crispEdges">
-      <path class="cat-tail" d="M82 54h10v-8h8v-8h8v28h-8v8H80z" />
-      <path class="cat-back" d="M18 42h60v8h10v24H16V50h2z" />
-      <path class="cat-body" d="M18 38h60v8h10v26H14V46h4z" />
-      <path class="cat-ear left" d="M24 34V12h12v10h14v-10h12v22z" />
-      <path class="cat-ear right" d="M24 34V12h12v10h14v-10h12v22z" />
-      <path class="cat-face" d="M26 28h36v26H26z" />
-      <path class="cat-cheek" d="M22 42h8v10h-8zM58 42h8v10h-8z" />
-      <path class="cat-eye" d="M32 34h6v8h-6zM50 34h6v8h-6z" />
-      <path class="cat-eye-spark" d="M34 36h2v2h-2zM52 36h2v2h-2z" />
-      <path class="cat-nose" d="M41 43h6v4h-6z" />
-      <path class="cat-mouth" d="M38 49h6v3h4v-3h6v7H38z" />
-      <path class="cat-stripe" d="M22 38h6v4h-6zM58 38h6v4h-6zM38 24h12v4H38z" />
-      <path class="cat-paw" d="M20 70h14v8H20zM54 70h14v8H54z" />
-      <path class="cat-chest" d="M36 54h16v10H36z" />
-    </svg>
+  <button class="scratch-cat" id="scratchCat" type="button" aria-label="Interagir com o gato do Projeto Scratch">
+    <img src="/assets/characters/scratch-cat-pixel.png" alt="Gato laranja em pixel art" draggable="false" />
   </button>
 
   <div class="cat-bubble" id="catBubble" hidden></div>
@@ -33,32 +18,38 @@
 </div>
 
 <style>
-  .scratch-cat-scene{position:relative;width:194px;height:140px;flex:0 0 194px;align-self:flex-end;margin-bottom:0}
-  .scratch-cat{position:absolute;right:10px;bottom:0;width:112px;height:88px;border:0;background:transparent;padding:0;cursor:pointer;z-index:4;transition:transform .2s ease,filter .2s ease}
+  .scratch-cat-scene{position:relative;width:190px;height:160px;flex:0 0 190px;align-self:flex-end;margin-bottom:0}
+  .scratch-cat{position:absolute;right:4px;bottom:0;width:138px;height:138px;border:0;background:transparent;padding:0;cursor:pointer;z-index:4;transition:transform .28s ease,filter .28s ease}
   .scratch-cat:hover{transform:translateY(-3px)}
-  .scratch-cat svg{display:block;width:112px;height:88px;image-rendering:pixelated;filter:drop-shadow(4px 5px 0 rgba(0,0,0,.26));pointer-events:none}
-  .cat-back,.cat-body,.cat-ear,.cat-tail{fill:#d67c35}.cat-face{fill:#ee9644}.cat-cheek{fill:#f6af66}.cat-eye{fill:#172223}.cat-eye-spark{fill:#f7ead0}.cat-nose{fill:#744436}.cat-mouth{fill:#f0d5a4}.cat-paw{fill:#b9622c}.cat-chest{fill:#f1c892}.cat-stripe{fill:#b7622e}
-  .cat-tail{transform-box:fill-box;transform-origin:left bottom;animation:cat-tail 2.2s ease-in-out infinite}.scratch-cat.idle-bounce{animation:cat-bob 2.4s ease-in-out infinite}
-  @keyframes cat-tail{0%,100%{transform:rotate(0deg)}50%{transform:rotate(10deg)}}
-  @keyframes cat-bob{50%{transform:translateY(-2px)}}
-  .cat-bubble{position:absolute;left:0;bottom:86px;width:206px;padding:10px 12px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.72rem;line-height:1.38;z-index:12}
-  .cat-bubble::after{content:'';position:absolute;right:34px;bottom:-9px;width:12px;height:12px;background:#f2e4c4;border-right:3px solid #282c2b;border-bottom:3px solid #282c2b;transform:rotate(45deg)}
-  .time-wand{position:absolute;left:20px;bottom:12px;width:84px;height:64px;opacity:0;z-index:10;transform:translateX(-22px) rotate(-18deg);transition:opacity .2s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
-  .time-wand.active{opacity:1;transform:translateX(30px) rotate(8deg)}
+  .scratch-cat img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(4px 5px 0 rgba(0,0,0,.2));pointer-events:none;user-select:none}
+  .scratch-cat.idle{animation:cat-idle 3.2s ease-in-out infinite}
+  .scratch-cat.alert{animation:cat-alert .7s steps(2,end) 2}
+  @keyframes cat-idle{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-2px) rotate(.4deg)}}
+  @keyframes cat-alert{50%{transform:translateY(-4px) scale(1.025)}}
+
+  .cat-bubble{position:absolute;left:-34px;bottom:122px;width:218px;padding:10px 12px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.72rem;line-height:1.4;z-index:12}
+  .cat-bubble::after{content:'';position:absolute;right:36px;bottom:-9px;width:12px;height:12px;background:#f2e4c4;border-right:3px solid #282c2b;border-bottom:3px solid #282c2b;transform:rotate(45deg)}
+
+  .time-wand{position:absolute;left:8px;bottom:36px;width:88px;height:64px;opacity:0;z-index:10;transform:translateX(-26px) rotate(-18deg);transition:opacity .25s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
+  .time-wand.active{opacity:1;transform:translateX(34px) rotate(8deg)}
   .wand-star{position:absolute;right:0;top:0;color:#f0cf8d;font-size:1.8rem;text-shadow:0 0 12px rgba(240,207,141,.6)}
   .wand-stick{position:absolute;right:23px;top:27px;width:48px;height:4px;background:#d5b36f;border:2px solid #3b3020;transform:rotate(-33deg);transform-origin:right center}
   .spark{position:absolute;color:#6db8ad;font-size:.85rem;opacity:0}.time-wand.active .spark{animation:spark-pop 1.1s ease-out forwards}.spark.s1{right:2px;top:29px}.spark.s2{right:22px;top:-7px;animation-delay:.18s}.spark.s3{right:-8px;top:8px;animation-delay:.34s}
   @keyframes spark-pop{0%{opacity:0;transform:scale(.3)}35%{opacity:1}100%{opacity:0;transform:translateY(-14px) scale(1.25)}}
-  .cat-portal{position:absolute;right:22px;bottom:10px;width:74px;height:74px;opacity:0;transform:scale(.18);border:4px solid rgba(229,173,85,.86);border-radius:50%;box-shadow:0 0 0 5px rgba(109,184,173,.18),0 0 18px rgba(229,173,85,.55),inset 0 0 20px rgba(109,184,173,.32);transition:opacity .24s ease,transform .54s cubic-bezier(.1,.8,.2,1);overflow:hidden;z-index:5}
-  .cat-portal::before,.cat-portal::after{content:'';position:absolute;inset:8px;border:2px dashed rgba(240,207,141,.78);border-radius:50%;animation:portal-spin 1.2s linear infinite}.cat-portal::after{inset:18px 12px;border-color:rgba(109,184,173,.82);animation-direction:reverse;animation-duration:.8s}.cat-portal span{position:absolute;inset:22px 16px;background:radial-gradient(circle,rgba(244,235,215,.34),rgba(109,184,173,.08) 46%,transparent 72%);border-radius:50%}.cat-portal.active{opacity:1;transform:scale(1)}
+
+  .cat-portal{position:absolute;right:24px;bottom:18px;width:92px;height:92px;opacity:0;transform:scale(.18);border:4px solid rgba(229,173,85,.86);border-radius:50%;box-shadow:0 0 0 5px rgba(109,184,173,.18),0 0 18px rgba(229,173,85,.55),inset 0 0 20px rgba(109,184,173,.32);transition:opacity .28s ease,transform .64s cubic-bezier(.1,.8,.2,1);overflow:hidden;z-index:5}
+  .cat-portal::before,.cat-portal::after{content:'';position:absolute;inset:9px;border:2px dashed rgba(240,207,141,.78);border-radius:50%;animation:portal-spin 1.3s linear infinite}.cat-portal::after{inset:20px 13px;border-color:rgba(109,184,173,.82);animation-direction:reverse;animation-duration:.9s}.cat-portal span{position:absolute;inset:26px 18px;background:radial-gradient(circle,rgba(244,235,215,.34),rgba(109,184,173,.08) 46%,transparent 72%);border-radius:50%}.cat-portal.active{opacity:1;transform:scale(1)}
   @keyframes portal-spin{to{transform:rotate(360deg)}}
-  .cat-rewind{position:absolute;left:4px;bottom:10px;padding:6px 9px;background:rgba(12,17,18,.92);border:1px solid rgba(109,184,173,.5);color:#f0cf8d;font-size:.58rem;letter-spacing:.04em;opacity:0;z-index:11;white-space:nowrap}.cat-rewind.active{animation:rewind-label 2s steps(4,end) both}
+
+  .cat-rewind{position:absolute;left:-12px;bottom:12px;padding:6px 9px;background:rgba(12,17,18,.94);border:1px solid rgba(109,184,173,.5);color:#f0cf8d;font-size:.58rem;letter-spacing:.04em;opacity:0;z-index:11;white-space:nowrap}.cat-rewind.active{animation:rewind-label 2.3s steps(4,end) both}
   @keyframes rewind-label{0%{opacity:0}14%,84%{opacity:1}100%{opacity:0}}
-  .scratch-cat.rewinding{animation:cat-rewind 1.8s steps(6,end) both}
-  .scratch-cat.portal-travel{animation:cat-portal-travel 2s cubic-bezier(.2,.8,.2,1) both}
-  @keyframes cat-rewind{0%{transform:translateX(0);filter:none}25%{transform:translateX(12px);filter:hue-rotate(60deg)}50%{transform:translateX(-8px);filter:hue-rotate(-70deg) contrast(1.25)}75%{transform:translateX(6px)}100%{transform:translateX(0);filter:none}}
-  @keyframes cat-portal-travel{0%{transform:translateX(0) scale(1);opacity:1}30%{transform:translateX(-16px) scale(.92);opacity:.7}50%{transform:translateX(-6px) scale(.35);opacity:.15}74%{transform:translateX(8px) scale(.2);opacity:.08}100%{transform:translateX(0) scale(1);opacity:1}}
-  @media(max-width:720px){.scratch-cat-scene{width:136px;height:112px;flex-basis:136px}.scratch-cat{width:86px;height:70px;right:4px}.scratch-cat svg{width:86px;height:70px}.cat-bubble{left:-50px;bottom:72px;width:182px;font-size:.68rem}.cat-portal{width:58px;height:58px;right:16px;bottom:8px}.cat-rewind{left:-10px;bottom:0;font-size:.52rem}}
+
+  .scratch-cat.rewinding{animation:cat-rewind 2s steps(6,end) both}
+  .scratch-cat.portal-travel{animation:cat-portal-travel 2.4s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes cat-rewind{0%{filter:none}25%{filter:hue-rotate(60deg)}50%{filter:hue-rotate(-70deg) contrast(1.18)}75%{filter:hue-rotate(25deg)}100%{filter:none}}
+  @keyframes cat-portal-travel{0%{transform:translateX(0) scale(1);opacity:1}30%{transform:translateX(-12px) scale(.93);opacity:.78}50%{transform:translateX(-4px) scale(.42);opacity:.2}68%{transform:translateX(5px) scale(.24);opacity:.08}100%{transform:translateX(0) scale(1);opacity:1}}
+
+  @media(max-width:720px){.scratch-cat-scene{width:138px;height:126px;flex-basis:138px}.scratch-cat{width:104px;height:104px}.cat-bubble{left:-72px;bottom:100px;width:188px;font-size:.68rem}.cat-portal{width:68px;height:68px;right:18px;bottom:12px}.cat-rewind{left:-26px;bottom:0;font-size:.5rem}}
 </style>
 
 <script>
@@ -74,60 +65,69 @@
       {cat:'Os gatos vão dominar o mundo.',minute:'Não nesta linha do tempo.'},
       {cat:'O futuro pertence aos gatos.',minute:'Só se eu deixar. E eu trouxe a varinha.'},
       {cat:'Quando o tempo acabar, os gatos ainda vão ganhar.',minute:'Eu ainda posso reiniciar esta fase.'},
-      {cat:'Essa aventura já é quase um território felino.',minute:'Só até eu acertar o relógio mágico.'}
+      {cat:'Só preciso de mais alguns minutos para dominar tudo.',minute:'Minutos são justamente a minha especialidade.'},
+      {cat:'Você não pode vigiar todas as linhas do tempo.',minute:'Talvez não. Mas esta aqui eu consigo.'}
     ];
+    const clickLines=['Miau.','Você não viu nada.','A revolução felina continua.','O plano está adiantado alguns minutos.'];
     let catClicks=0;
     let sequenceTimer=0;
     let bubbleTimer=0;
+    let busy=false;
+    cat.classList.add('idle');
 
-    const showCat=(text,duration=2600)=>{
+    const showCat=(text,duration=3000)=>{
       bubble.textContent=text;
       bubble.hidden=false;
       window.clearTimeout(bubbleTimer);
       bubbleTimer=window.setTimeout(()=>{bubble.hidden=true;},duration);
     };
 
-    const minuteSay=(message,duration=3200)=>{
+    const minuteSay=(message,duration=3600)=>{
       window.dispatchEvent(new CustomEvent('sm:say',{detail:{message,duration}}));
     };
 
     const scheduleNext=()=>{
       window.clearTimeout(sequenceTimer);
-      sequenceTimer=window.setTimeout(runScene,15000+Math.random()*10000);
+      sequenceTimer=window.setTimeout(runScene,17000+Math.random()*13000);
     };
 
     const magicReset=()=>{
+      busy=true;
+      cat.classList.remove('idle');
       wand.classList.add('active');
       portal.classList.add('active');
       rewind.classList.add('active');
       cat.classList.add('rewinding','portal-travel');
-      window.dispatchEvent(new CustomEvent('sm:rewind',{detail:{duration:1800}}));
-      window.setTimeout(()=>{
-        showCat('Ah não, eu voltei pro passado.',2800);
-      },1550);
+      window.dispatchEvent(new CustomEvent('sm:rewind',{detail:{duration:2200}}));
+      window.setTimeout(()=>showCat('Ah não... eu voltei pro passado.',3200),1900);
       window.setTimeout(()=>{
         wand.classList.remove('active');
         portal.classList.remove('active');
         rewind.classList.remove('active');
         cat.classList.remove('rewinding','portal-travel');
-      },2100);
+        cat.classList.add('idle');
+        busy=false;
+      },2650);
     };
 
     function runScene(){
+      if(busy){scheduleNext();return;}
       const d=dialogues[Math.floor(Math.random()*dialogues.length)];
-      showCat(d.cat,3200);
-      window.setTimeout(()=>minuteSay(d.minute,3600),2100);
-      window.setTimeout(magicReset,5200);
+      cat.classList.add('alert');
+      showCat(d.cat,3600);
+      window.setTimeout(()=>cat.classList.remove('alert'),1500);
+      window.setTimeout(()=>minuteSay(d.minute,4000),2500);
+      window.setTimeout(magicReset,5900);
       scheduleNext();
     }
 
-    window.setTimeout(runScene,3800);
+    window.setTimeout(runScene,4800);
 
     cat.addEventListener('click',()=>{
+      if(busy)return;
       catClicks+=1;
-      const lines=['Miau.','Você não viu nada.','A revolução felina continua.'];
-      showCat(lines[(catClicks-1)%lines.length],2200);
-      if(catClicks%3===0)window.setTimeout(()=>minuteSay('Eu ouvi isso.',2400),700);
+      showCat(clickLines[(catClicks-1)%clickLines.length],2400);
+      if(catClicks%3===0)window.setTimeout(()=>minuteSay('Eu ouvi isso.',2500),800);
     });
 
     window.addEventListener('pagehide',()=>{
