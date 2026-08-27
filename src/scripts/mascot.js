@@ -1,34 +1,480 @@
-const traveler=document.querySelector('#mascotTraveler'),button=document.querySelector('#mascotButton'),speech=document.querySelector('#mascotSpeech'),portalLeft=document.querySelector('#portalLeft'),portalRight=document.querySelector('#portalRight'),climbRouteLeft=document.querySelector('#climbRouteLeft'),climbRouteRight=document.querySelector('#climbRouteRight'),windStreaks=document.querySelector('#windStreaks'),rewindClock=document.querySelector('#rewindClock'),projectToken=document.querySelector('#projectToken'),projectTokenName=document.querySelector('#projectTokenName'),mineEvent=document.querySelector('#mineEvent'),mineBlast=document.querySelector('#mineBlast'),musicNotes=document.querySelector('#musicNotes');
-if(traveler instanceof HTMLElement&&button instanceof HTMLButtonElement&&speech instanceof HTMLElement&&portalLeft instanceof HTMLElement&&portalRight instanceof HTMLElement&&climbRouteLeft instanceof HTMLElement&&climbRouteRight instanceof HTMLElement&&windStreaks instanceof HTMLElement&&rewindClock instanceof HTMLElement&&projectToken instanceof HTMLAnchorElement&&projectTokenName instanceof HTMLElement&&mineEvent instanceof HTMLElement&&mineBlast instanceof HTMLElement&&musicNotes instanceof HTMLElement){
-const phrases=['Eu cuido do tempo. Dos bugs, a gente negocia.','Projetos em destaque ficam logo ali.','Portal para texto; skate para pista livre.','A curiosidade quase sempre acaba em projeto.','O Jack-UP já está no arquivo.'],eggs=new Map([[5,'5 cliques. Curiosidade insistente detectada.'],[7,'7 cliques. Isso já é afeto temporal.'],[12,'12 cliques. Você e eu já temos um histórico.'],[20,'20 cliques. Isso conta como teste de qualidade.'],[25,'25 cliques. Estou considerando pedir crachá.'],[50,'50 cliques. Meio século de teimosia excelente.'],[90,'90 cliques. O tempo está do nosso lado.'],[100,'100 cliques! Você encontrou um segredo centenário.'],[200,'200 cliques. A linha do tempo aprovou você.'],[500,'500 cliques. Isso virou um rito de passagem.'],[1000,'1000 cliques. Você transcendeu o usuário comum.']]),projects=[{name:'Projeto Scratch',href:'/projetos/scratch'},{name:'FERNANDO',href:'/projetos/fernando'},{name:'Jack-UP',href:'/projetos/jack-up'}];
-let speechTimer=0,actionTimer=0,patrolTimer=0,projectTimer=0,busy=false,side=Math.random()<.5?'left':'right',clickCount=0,patrolIndex=0;
-const reducedMotion=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches,wideLayout=()=>window.innerWidth>=1180,baseTop=()=>Math.max(110,window.innerHeight-148),laneLeft=()=>side==='left'?18:Math.max(18,window.innerWidth-140),laneRight=()=>side==='left'?42:Math.max(42,window.innerWidth-116),lanePoints=()=>[{x:laneLeft(),y:baseTop()-18},{x:laneRight(),y:Math.max(86,baseTop()-116)}];
-function say(msg,duration=4800){speech.textContent=msg;speech.hidden=false;clearTimeout(speechTimer);speechTimer=setTimeout(()=>speech.hidden=true,duration)}
-function playRetroChime(){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ctx=new C(),master=ctx.createGain();master.gain.setValueAtTime(.0001,ctx.currentTime);master.gain.exponentialRampToValueAtTime(.025,ctx.currentTime+.015);master.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.24);master.connect(ctx.destination);[620,930].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.setValueAtTime(f,ctx.currentTime+i*.055);g.gain.setValueAtTime(i===0?.5:.3,ctx.currentTime);o.connect(g);g.connect(master);o.start(ctx.currentTime+i*.055);o.stop(ctx.currentTime+.18+i*.055)});setTimeout(()=>ctx.close(),380)}catch{}}
-function clearEphemera(){windStreaks.classList.remove('active');rewindClock.classList.remove('active');projectToken.classList.remove('active');climbRouteLeft.classList.remove('active');climbRouteRight.classList.remove('active');mineEvent.classList.remove('active');mineBlast.classList.remove('active');musicNotes.classList.remove('active');clearTimeout(projectTimer)}
-function setFacing(f){traveler.style.setProperty('--facing',String(f))}function applyFacingBySide(which=side){setFacing(which==='left'?1:-1)}
-function setPosition(left,top,instant=false){if(instant)traveler.classList.add('no-travel-transition');traveler.style.left=`${left}px`;traveler.style.top=`${top}px`;if(instant){traveler.getBoundingClientRect();traveler.classList.remove('no-travel-transition')}}
-function setSide(which){side=which;traveler.dataset.side=which;applyFacingBySide(which)}
-function ordinaryBase(){const p=lanePoints()[patrolIndex%2];traveler.dataset.mode='walk';setSide(side);setPosition(p.x,p.y,true)}
-function startPatrol(){clearTimeout(patrolTimer);if(busy||reducedMotion())return;const loop=()=>{if(busy)return;const pts=lanePoints();patrolIndex=(patrolIndex+1)%2;traveler.dataset.mode='lane-walk';traveler.style.transition='left 1.7s ease-in-out, top 1.7s ease-in-out, opacity .28s ease, transform .35s ease, filter .35s ease';setPosition(pts[patrolIndex].x,pts[patrolIndex].y);patrolTimer=setTimeout(loop,1850)};loop()}
-function stopPatrol(){clearTimeout(patrolTimer)}
-function placeMine(){const r=traveler.getBoundingClientRect();mineEvent.style.left=`${r.left+26}px`;mineEvent.style.top=`${r.bottom-6}px`;mineBlast.style.left=`${r.left-4}px`;mineBlast.style.top=`${r.bottom-58}px`}
-function placeWindAndClock(top){const left=side==='left'?10:Math.max(10,window.innerWidth-150);windStreaks.style.left=`${left}px`;windStreaks.style.top=`${Math.max(40,top-10)}px`;rewindClock.style.left=`${side==='left'?70:Math.max(10,window.innerWidth-130)}px`;rewindClock.style.top=`${Math.max(24,top-40)}px`}
-function chooseProject(){const p=projects[Math.floor(Math.random()*projects.length)];projectToken.href=p.href;projectTokenName.textContent=p.name;projectTokenName.parentElement?.setAttribute('aria-label',p.name);projectToken.style.left=`${side==='left'?106:Math.max(24,window.innerWidth-290)}px`;projectToken.style.top='18px';return p}
-function placeNotes(){const r=traveler.getBoundingClientRect();musicNotes.style.left=`${r.left+66}px`;musicNotes.style.top=`${r.top+18}px`}
-function isHorizontalPathClear(){if(!wideLayout())return false;const rect=traveler.getBoundingClientRect(),routeTop=rect.top-10,routeBottom=rect.bottom+10,centerLeft=125,centerRight=window.innerWidth-125,blockers=document.querySelectorAll('main h1, main h2, main h3, main p, main a, main button, main iframe, main .project-card, main .hero-console, main .fernando-hero, main .embed-shell, main .integration-ready, footer');return !Array.from(blockers).some(n=>{if(!(n instanceof HTMLElement))return false;const st=getComputedStyle(n);if(st.display==='none'||st.visibility==='hidden'||Number(st.opacity)===0)return false;const rc=n.getBoundingClientRect();return rc.bottom>routeTop&&rc.top<routeBottom&&rc.right>centerLeft&&rc.left<centerRight})}
-function resetToPatrol(){busy=false;traveler.style.transition='left .95s cubic-bezier(.2,.72,.25,1),top .95s cubic-bezier(.2,.72,.25,1),opacity .28s ease,transform .35s ease,filter .35s ease';clearEphemera();ordinaryBase();startPatrol()}
-function laneWalkOnly(){if(busy)return;stopPatrol();busy=true;traveler.dataset.mode='lane-walk';const pts=lanePoints();const next=(patrolIndex+1)%2;traveler.style.transition='left 2.2s ease-in-out, top 2.2s ease-in-out, opacity .28s ease, transform .35s ease, filter .35s ease';setPosition(pts[next].x,pts[next].y);patrolIndex=next;setTimeout(resetToPatrol,2250)}
-function skateAcross(){if(busy||reducedMotion()||!wideLayout())return;busy=true;stopPatrol();clearEphemera();const to=side==='left'?'right':'left',currentTop=traveler.getBoundingClientRect().top;traveler.dataset.mode='skate';setFacing(to==='right'?1:-1);traveler.style.transition='left 4.2s linear, opacity .28s ease, transform .35s ease, filter .35s ease';traveler.dataset.side=to;setPosition(to==='left'?18:Math.max(18,window.innerWidth-116),currentTop);setTimeout(()=>{setSide(to);resetToPatrol()},4300)}
-function portalJump(){if(busy||reducedMotion()||!wideLayout())return;busy=true;stopPatrol();clearEphemera();const from=side,to=side==='left'?'right':'left',source=from==='left'?portalLeft:portalRight,target=to==='left'?portalLeft:portalRight,currentTop=traveler.getBoundingClientRect().top,portalTop=currentTop+54;traveler.style.transition='';source.style.top=`${portalTop}px`;target.style.top=`${portalTop}px`;source.classList.add('is-open');traveler.dataset.mode='portal';setTimeout(()=>traveler.classList.add('portal-enter'),180);setTimeout(()=>{target.classList.add('is-open');setSide(to);setPosition(to==='left'?18:Math.max(18,window.innerWidth-116),currentTop,true);traveler.classList.remove('portal-enter');traveler.classList.add('portal-exit')},650);setTimeout(()=>{traveler.classList.remove('portal-exit');traveler.dataset.mode='walk';source.classList.remove('is-open');target.classList.remove('is-open');resetToPatrol()},1320)}
-function crossToOtherSide(){if(isHorizontalPathClear())skateAcross();else portalJump()}
-function balloonDrop(){if(busy||reducedMotion())return;busy=true;stopPatrol();clearEphemera();traveler.style.transition='';traveler.dataset.mode='mine-step';placeMine();mineEvent.classList.add('active');setTimeout(()=>{traveler.dataset.mode='blast';mineBlast.classList.add('active')},650);setTimeout(()=>{mineEvent.classList.remove('active');mineBlast.classList.remove('active');traveler.dataset.mode='balloon-drop';say('uuuh...',1800);const startLeft=traveler.getBoundingClientRect().left,currentTop=-170,landingTop=baseTop(),swing=side==='left'?32:-32;setPosition(startLeft,currentTop,true);traveler.classList.add('balloon-falling');traveler.style.left=`${startLeft+swing}px`;traveler.style.top=`${landingTop}px`},1150);setTimeout(()=>{traveler.classList.remove('balloon-falling');traveler.dataset.mode='impact'},1880);setTimeout(()=>traveler.dataset.mode='rewind',2600);setTimeout(resetToPatrol,4200)}
-function guitarSolo(){if(busy||reducedMotion())return;busy=true;stopPatrol();clearEphemera();traveler.dataset.mode='guitar';say('♪ Tempo tempo tempo... ♫',4200);placeNotes();musicNotes.classList.add('active');setTimeout(resetToPatrol,4300)}
-function climbAdventure(){if(busy||reducedMotion()||!wideLayout())return;busy=true;stopPatrol();clearEphemera();const route=side==='left'?climbRouteLeft:climbRouteRight;route.classList.add('active');traveler.style.transition='left .5s ease, top .55s cubic-bezier(.38,.03,.26,.98), opacity .28s ease, transform .35s ease, filter .35s ease';const sideX=side==='left'?26:Math.max(26,window.innerWidth-118),climbXs=[side==='left'?22:Math.max(22,window.innerWidth-114),side==='left'?54:Math.max(54,window.innerWidth-146),side==='left'?22:Math.max(22,window.innerWidth-114),side==='left'?54:Math.max(54,window.innerWidth-146),side==='left'?22:Math.max(22,window.innerWidth-114),side==='left'?54:Math.max(54,window.innerWidth-146),side==='left'?22:Math.max(22,window.innerWidth-114),side==='left'?54:Math.max(54,window.innerWidth-146)],climbYs=[baseTop()-24,baseTop()-86,baseTop()-148,baseTop()-210,baseTop()-272,baseTop()-334,baseTop()-396,94],fallChance=Math.random()<.45;traveler.dataset.mode='climb';setPosition(sideX,baseTop()-18,true);let t=220;climbYs.slice(0,fallChance?4:8).forEach((y,i)=>{setTimeout(()=>setPosition(climbXs[i],y),t);t+=560});if(fallChance){const fallFromY=climbYs[3],fallToY=climbYs[1]+16;setTimeout(()=>{traveler.dataset.mode='climb-fall';placeWindAndClock(fallFromY);windStreaks.classList.add('active');traveler.style.transition='left .25s ease, top .9s cubic-bezier(.52,.03,.92,.36), opacity .28s ease, transform .35s ease, filter .35s ease';setPosition(climbXs[2],fallToY)},2500);setTimeout(()=>{windStreaks.classList.remove('active');rewindClock.classList.add('active');traveler.dataset.mode='climb-rewind';traveler.style.transition='left .25s ease, top 1.05s cubic-bezier(.14,.82,.24,1), opacity .28s ease, transform .35s ease, filter .35s ease';setPosition(climbXs[3],fallFromY)},3600);setTimeout(()=>{rewindClock.classList.remove('active');traveler.dataset.mode='climb-recover';traveler.style.transition='left .5s ease, top .55s cubic-bezier(.38,.03,.26,.98), opacity .28s ease, transform .35s ease, filter .35s ease';let tt=200;climbYs.slice(4).forEach((y,i)=>{setTimeout(()=>setPosition(climbXs[i+4],y),tt);tt+=560})},4850);setTimeout(()=>finishClimb(),6900)}else setTimeout(()=>finishClimb(),4780);
-function finishClimb(){traveler.dataset.mode='project-found';applyFacingBySide(side);const p=chooseProject();projectToken.classList.add('active');say(`Olha esse projeto que incrível: ${p.name}. Clica nele pra olhar.`,5400);projectTimer=setTimeout(()=>projectToken.classList.remove('active'),3500);setTimeout(()=>{traveler.dataset.mode='parachute-drop';traveler.style.transition='left .3s ease, top 1.8s ease-in-out, opacity .28s ease, transform .35s ease, filter .35s ease';setPosition(side==='left'?30:Math.max(30,window.innerWidth-122),baseTop()-16)},2100);setTimeout(()=>{projectToken.classList.remove('active');resetToPatrol()},4250)} }
-function scheduleAction(){clearTimeout(actionTimer);actionTimer=setTimeout(()=>{if(busy){scheduleAction();return}const roll=Math.random();if(!wideLayout()){if(roll<.35)guitarSolo();else if(roll<.7)balloonDrop();else laneWalkOnly()}else if(roll<.18)climbAdventure();else if(roll<.34)balloonDrop();else if(roll<.5)guitarSolo();else if(roll<.69)laneWalkOnly();else crossToOtherSide();scheduleAction()},6800+Math.random()*3200)}
-button.addEventListener('click',()=>{clickCount+=1;playRetroChime();const key='senhorita-minuto-clickcount-v2';try{localStorage.setItem(key,String(clickCount))}catch{}if(eggs.has(clickCount))say(eggs.get(clickCount),6200);else say(phrases[Math.floor(Math.random()*phrases.length)])});
-try{const saved=localStorage.getItem('senhorita-minuto-clickcount-v2');if(saved)clickCount=Number(saved)||0}catch{}
-const firstVisitKey='senhorita-minuto-welcome-v5';try{if(!localStorage.getItem(firstVisitKey)){setTimeout(()=>{say('Oi! Eu sou a Senhorita Minuto. Eu fico sempre patrulhando as laterais — e às vezes faço outras coisas pelo caminho.',7600);localStorage.setItem(firstVisitKey,'1')},700)}}catch{setTimeout(()=>say('Oi! Eu sou a Senhorita Minuto.',6500),700)}
-setSide(side);ordinaryBase();if(!reducedMotion()){startPatrol();scheduleAction()}window.addEventListener('resize',()=>{if(busy)return;clearEphemera();ordinaryBase();startPatrol()});window.addEventListener('pagehide',()=>{clearTimeout(speechTimer);clearTimeout(actionTimer);clearTimeout(projectTimer);clearTimeout(patrolTimer)},{once:true})
+const traveler=document.querySelector('#mascotTraveler');
+const button=document.querySelector('#mascotButton');
+const speech=document.querySelector('#mascotSpeech');
+const portalLeft=document.querySelector('#portalLeft');
+const portalRight=document.querySelector('#portalRight');
+const climbRouteLeft=document.querySelector('#climbRouteLeft');
+const climbRouteRight=document.querySelector('#climbRouteRight');
+const windStreaks=document.querySelector('#windStreaks');
+const rewindClock=document.querySelector('#rewindClock');
+const projectToken=document.querySelector('#projectToken');
+const projectTokenName=document.querySelector('#projectTokenName');
+const mineEvent=document.querySelector('#mineEvent');
+const mineBlast=document.querySelector('#mineBlast');
+const musicNotes=document.querySelector('#musicNotes');
+const clickCounterValue=document.querySelector('#clickCounterValue');
+
+if(
+  traveler instanceof HTMLElement &&
+  button instanceof HTMLButtonElement &&
+  speech instanceof HTMLElement &&
+  portalLeft instanceof HTMLElement &&
+  portalRight instanceof HTMLElement &&
+  climbRouteLeft instanceof HTMLElement &&
+  climbRouteRight instanceof HTMLElement &&
+  windStreaks instanceof HTMLElement &&
+  rewindClock instanceof HTMLElement &&
+  projectToken instanceof HTMLAnchorElement &&
+  projectTokenName instanceof HTMLElement &&
+  mineEvent instanceof HTMLElement &&
+  mineBlast instanceof HTMLElement &&
+  musicNotes instanceof HTMLElement &&
+  clickCounterValue instanceof HTMLElement
+){
+  const phrases=[
+    'Eu fico patrulhando as laterais. É o meu jeito de cuidar do arquivo.',
+    'O tempo ajuda muito, mas curiosidade ajuda mais.',
+    'Se algo sumir, talvez eu tenha passado por um portal.',
+    'Os projetos estão por aqui. Eu só faço a introdução dramática.',
+    'Jack-UP, FERNANDO e Scratch: todos têm um cantinho nesse arquivo.'
+  ];
+
+  const eggs=new Map([
+    [5,'5 cliques. Curiosidade insistente detectada.'],
+    [7,'7 cliques. Isso já é afeto temporal.'],
+    [12,'12 cliques. Você e eu já temos um histórico.'],
+    [20,'20 cliques. Isso conta como teste de qualidade.'],
+    [25,'25 cliques. Estou considerando pedir crachá.'],
+    [50,'50 cliques. Meio século de teimosia excelente.'],
+    [90,'90 cliques. O tempo está do nosso lado.'],
+    [100,'100 cliques! Você encontrou um segredo centenário.'],
+    [200,'200 cliques. A linha do tempo aprovou você.'],
+    [500,'500 cliques. Isso virou um rito de passagem.'],
+    [1000,'1000 cliques. Você transcendeu o usuário comum.']
+  ]);
+
+  const projects=[
+    {name:'Projeto Scratch',href:'/projetos/scratch'},
+    {name:'FERNANDO',href:'/projetos/fernando'},
+    {name:'Jack-UP',href:'/projetos/jack-up'}
+  ];
+
+  let speechTimer=0;
+  let actionTimer=0;
+  let patrolTimer=0;
+  let projectTimer=0;
+  let busy=false;
+  let side=Math.random()<0.5?'left':'right';
+  let patrolTargetIndex=0;
+  let clickCount=0;
+
+  const reducedMotion=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wideLayout=()=>window.innerWidth>=1180;
+  const baseY=()=>Math.max(112,window.innerHeight-148);
+  const rangeForSide=(which)=>which==='left'?[14,86]:[Math.max(14,window.innerWidth-188),Math.max(92,window.innerWidth-112)];
+  const currentRect=()=>traveler.getBoundingClientRect();
+
+  function updateCounter(){clickCounterValue.textContent=String(clickCount);}
+
+  function setFacing(value){traveler.style.setProperty('--facing',String(value));}
+  function setFacingForDirection(nextX,currentX){setFacing(nextX>=currentX?1:-1);}
+  function setSide(which){side=which;traveler.dataset.side=which;}
+
+  function say(message,duration=4800){
+    speech.textContent=message;
+    speech.hidden=false;
+    window.clearTimeout(speechTimer);
+    speechTimer=window.setTimeout(()=>{speech.hidden=true;},duration);
+  }
+
+  function playRetroChime(){
+    try{
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;
+      if(!AudioCtx)return;
+      const ctx=new AudioCtx();
+      const master=ctx.createGain();
+      master.gain.setValueAtTime(0.0001,ctx.currentTime);
+      master.gain.exponentialRampToValueAtTime(0.025,ctx.currentTime+0.015);
+      master.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+0.24);
+      master.connect(ctx.destination);
+      [620,930].forEach((frequency,index)=>{
+        const osc=ctx.createOscillator();
+        const gain=ctx.createGain();
+        osc.type='triangle';
+        osc.frequency.setValueAtTime(frequency,ctx.currentTime+index*0.055);
+        gain.gain.setValueAtTime(index===0?0.5:0.3,ctx.currentTime);
+        osc.connect(gain);
+        gain.connect(master);
+        osc.start(ctx.currentTime+index*0.055);
+        osc.stop(ctx.currentTime+0.18+index*0.055);
+      });
+      window.setTimeout(()=>ctx.close(),380);
+    }catch{}
+  }
+
+  function clearEphemera(){
+    windStreaks.classList.remove('active');
+    rewindClock.classList.remove('active');
+    projectToken.classList.remove('active');
+    climbRouteLeft.classList.remove('active');
+    climbRouteRight.classList.remove('active');
+    mineEvent.classList.remove('active');
+    mineBlast.classList.remove('active');
+    musicNotes.classList.remove('active');
+    window.clearTimeout(projectTimer);
+  }
+
+  function setPosition(left,top,instant=false){
+    if(instant)traveler.classList.add('no-travel-transition');
+    traveler.style.left=`${left}px`;
+    traveler.style.top=`${top}px`;
+    if(instant){traveler.getBoundingClientRect();traveler.classList.remove('no-travel-transition');}
+  }
+
+  function patrolPoints(){
+    const [a,b]=rangeForSide(side);
+    const y=baseY()-18;
+    return [{x:a,y},{x:b,y}];
+  }
+
+  function alignToPatrolBase(instant=false){
+    const points=patrolPoints();
+    const chosen=points[patrolTargetIndex%2];
+    traveler.dataset.mode='walk';
+    setPosition(chosen.x,chosen.y,instant);
+  }
+
+  function startPatrol(){
+    window.clearTimeout(patrolTimer);
+    if(busy||reducedMotion())return;
+    const step=()=>{
+      if(busy)return;
+      const points=patrolPoints();
+      patrolTargetIndex=(patrolTargetIndex+1)%2;
+      const target=points[patrolTargetIndex];
+      const current=currentRect();
+      traveler.dataset.mode='side-walk';
+      traveler.style.transition='left 1.8s ease-in-out, top .8s ease, opacity .28s ease, transform .35s ease, filter .35s ease';
+      setFacingForDirection(target.x,current.left);
+      setPosition(target.x,target.y);
+      patrolTimer=window.setTimeout(step,1900);
+    };
+    step();
+  }
+
+  function stopPatrol(){window.clearTimeout(patrolTimer);}
+
+  function resetToPatrol(delay=0){
+    window.setTimeout(()=>{
+      clearEphemera();
+      traveler.style.transition='left .95s cubic-bezier(.2,.72,.25,1), top .95s cubic-bezier(.2,.72,.25,1), opacity .28s ease, transform .35s ease, filter .35s ease';
+      const points=patrolPoints();
+      const current=currentRect();
+      const nearest=Math.abs(current.left-points[0].x)<=Math.abs(current.left-points[1].x)?0:1;
+      patrolTargetIndex=nearest;
+      setFacingForDirection(points[nearest].x,current.left);
+      traveler.dataset.mode='walk';
+      setPosition(points[nearest].x,points[nearest].y);
+      window.setTimeout(()=>{busy=false;startPatrol();},980);
+    },delay);
+  }
+
+  function placeMine(){
+    const rect=currentRect();
+    mineEvent.style.left=`${rect.left+26}px`;
+    mineEvent.style.top=`${rect.bottom-6}px`;
+    mineBlast.style.left=`${rect.left-4}px`;
+    mineBlast.style.top=`${rect.bottom-58}px`;
+  }
+
+  function placeWindAndClock(top){
+    const left=side==='left'?10:Math.max(10,window.innerWidth-150);
+    windStreaks.style.left=`${left}px`;
+    windStreaks.style.top=`${Math.max(40,top-10)}px`;
+    rewindClock.style.left=`${side==='left'?70:Math.max(10,window.innerWidth-130)}px`;
+    rewindClock.style.top=`${Math.max(24,top-40)}px`;
+  }
+
+  function placeNotes(){
+    const rect=currentRect();
+    musicNotes.style.left=`${rect.left+64}px`;
+    musicNotes.style.top=`${rect.top+20}px`;
+  }
+
+  function chooseProject(){
+    const project=projects[Math.floor(Math.random()*projects.length)];
+    projectToken.href=project.href;
+    projectTokenName.textContent=project.name;
+    projectToken.style.left=`${side==='left'?106:Math.max(18,window.innerWidth-300)}px`;
+    return project;
+  }
+
+  function isHorizontalPathClear(){
+    if(!wideLayout())return false;
+    const rect=currentRect();
+    const routeTop=rect.top-10;
+    const routeBottom=rect.bottom+10;
+    const centerLeft=125;
+    const centerRight=window.innerWidth-125;
+    const blockers=document.querySelectorAll('main h1, main h2, main h3, main p, main a, main button, main iframe, main .project-card, main .hero-console, main .fernando-hero, main .embed-shell, main .integration-ready, footer');
+    return !Array.from(blockers).some((node)=>{
+      if(!(node instanceof HTMLElement))return false;
+      const style=window.getComputedStyle(node);
+      if(style.display==='none'||style.visibility==='hidden'||Number(style.opacity)===0)return false;
+      const r=node.getBoundingClientRect();
+      return r.bottom>routeTop&&r.top<routeBottom&&r.right>centerLeft&&r.left<centerRight;
+    });
+  }
+
+  function crossToOtherSide(){
+    if(busy||reducedMotion()||!wideLayout())return;
+    busy=true;
+    stopPatrol();
+    clearEphemera();
+    if(isHorizontalPathClear())skateAcross();
+    else portalJump();
+  }
+
+  function skateAcross(){
+    const to=side==='left'?'right':'left';
+    const targetRange=rangeForSide(to);
+    const current=currentRect();
+    traveler.dataset.mode='skate';
+    traveler.style.transition='left 4.2s linear, top .8s ease, opacity .28s ease, transform .35s ease, filter .35s ease';
+    setFacingForDirection(targetRange[0],current.left);
+    traveler.dataset.side=to;
+    setPosition(targetRange[0],baseY()-18);
+    window.setTimeout(()=>{setSide(to);patrolTargetIndex=0;resetToPatrol(0);},4300);
+  }
+
+  function portalJump(){
+    const from=side;
+    const to=side==='left'?'right':'left';
+    const source=from==='left'?portalLeft:portalRight;
+    const target=to==='left'?portalLeft:portalRight;
+    const current=currentRect();
+    const portalTop=current.top+54;
+    source.style.top=`${portalTop}px`;
+    target.style.top=`${portalTop}px`;
+    source.classList.add('is-open');
+    traveler.dataset.mode='portal';
+    window.setTimeout(()=>traveler.classList.add('portal-enter'),180);
+    window.setTimeout(()=>{
+      const [targetX]=rangeForSide(to);
+      target.classList.add('is-open');
+      setSide(to);
+      setPosition(targetX,current.top,true);
+      setFacingForDirection(targetX,current.left);
+      traveler.classList.remove('portal-enter');
+      traveler.classList.add('portal-exit');
+    },650);
+    window.setTimeout(()=>{
+      traveler.classList.remove('portal-exit');
+      source.classList.remove('is-open');
+      target.classList.remove('is-open');
+      patrolTargetIndex=0;
+      resetToPatrol(0);
+    },1320);
+  }
+
+  function balloonDrop(){
+    if(busy||reducedMotion())return;
+    busy=true;
+    stopPatrol();
+    clearEphemera();
+
+    const start=currentRect();
+    const sideRange=rangeForSide(side);
+    const targetX=Math.abs(start.left-sideRange[0])<Math.abs(start.left-sideRange[1])?sideRange[1]:sideRange[0];
+
+    traveler.dataset.mode='mine-step';
+    traveler.style.transition='left .3s ease, top .3s ease, opacity .28s ease, transform .35s ease, filter .35s ease';
+    placeMine();
+    mineEvent.classList.add('active');
+
+    window.setTimeout(()=>{
+      traveler.dataset.mode='blast';
+      mineBlast.classList.add('active');
+      setPosition(start.left,start.top-120);
+    },650);
+
+    window.setTimeout(()=>{
+      mineEvent.classList.remove('active');
+      mineBlast.classList.remove('active');
+      traveler.dataset.mode='balloon-drop';
+      say('uuuh...',1900);
+      setPosition(start.left,-170,true);
+      traveler.classList.add('balloon-falling');
+      setFacingForDirection(targetX,start.left);
+      setPosition(targetX,baseY()-18);
+    },1150);
+
+    window.setTimeout(()=>{
+      traveler.classList.remove('balloon-falling');
+      traveler.dataset.mode='impact';
+    },2550);
+
+    window.setTimeout(()=>{traveler.dataset.mode='rewind';},3450);
+    window.setTimeout(()=>resetToPatrol(0),4600);
+  }
+
+  function guitarSolo(){
+    if(busy||reducedMotion())return;
+    busy=true;
+    stopPatrol();
+    clearEphemera();
+    traveler.dataset.mode='guitar';
+    say('♪ Tempo tempo tempo... ♫',4200);
+    placeNotes();
+    musicNotes.classList.add('active');
+    window.setTimeout(()=>resetToPatrol(0),4300);
+  }
+
+  function climbAdventure(){
+    if(busy||reducedMotion()||!wideLayout())return;
+    busy=true;
+    stopPatrol();
+    clearEphemera();
+
+    const route=side==='left'?climbRouteLeft:climbRouteRight;
+    route.classList.add('active');
+
+    const leftSteps=side==='left'
+      ? [20,56,18,58,20,60,24,60]
+      : [window.innerWidth-116,window.innerWidth-152,window.innerWidth-118,window.innerWidth-154,window.innerWidth-120,window.innerWidth-156,window.innerWidth-122,window.innerWidth-156];
+    const ySteps=[baseY()-20,baseY()-92,baseY()-164,baseY()-236,324,264,204,46];
+    const willFall=Math.random()<0.45;
+
+    traveler.dataset.mode='climb';
+    setFacing(side==='left'?1:-1);
+    setPosition(leftSteps[0],baseY()-18,true);
+    traveler.style.transition='left .52s ease, top .56s cubic-bezier(.38,.03,.26,.98), opacity .28s ease, transform .35s ease, filter .35s ease';
+
+    let delay=260;
+    const climbTo=willFall?4:8;
+    for(let i=0;i<climbTo;i+=1){
+      window.setTimeout(()=>setPosition(leftSteps[i],ySteps[i]),delay);
+      delay+=560;
+    }
+
+    const finishClimb=()=>{
+      traveler.dataset.mode='project-found';
+      traveler.style.transition='left .4s ease, top .4s ease, opacity .28s ease, transform .35s ease, filter .35s ease';
+      const topX=side==='left'?18:Math.max(18,window.innerWidth-118);
+      setFacing(side==='left'?1:-1);
+      setPosition(topX,46);
+      const project=chooseProject();
+      projectToken.classList.add('active');
+      say(`Olha esse projeto que incrível: ${project.name}. Clica nele pra olhar.`,5600);
+      projectTimer=window.setTimeout(()=>projectToken.classList.remove('active'),3600);
+
+      window.setTimeout(()=>{
+        traveler.dataset.mode='parachute-drop';
+        traveler.style.transition='left .9s ease-in-out, top 1.9s ease-in-out, opacity .28s ease, transform .35s ease, filter .35s ease';
+        const midX=side==='left'?46:Math.max(46,window.innerWidth-146);
+        setPosition(midX,baseY()-22);
+      },2200);
+
+      window.setTimeout(()=>resetToPatrol(0),4400);
+    };
+
+    if(willFall){
+      const fallFromY=ySteps[3];
+      const fallToY=ySteps[1]+22;
+      window.setTimeout(()=>{
+        traveler.dataset.mode='climb-fall';
+        placeWindAndClock(fallFromY);
+        windStreaks.classList.add('active');
+        traveler.style.transition='left .25s ease, top .95s cubic-bezier(.52,.03,.92,.36), opacity .28s ease, transform .35s ease, filter .35s ease';
+        setPosition(leftSteps[2],fallToY);
+      },2500);
+
+      window.setTimeout(()=>{
+        windStreaks.classList.remove('active');
+        rewindClock.classList.add('active');
+        traveler.dataset.mode='climb-rewind';
+        traveler.style.transition='left .25s ease, top 1.18s cubic-bezier(.14,.82,.24,1), opacity .28s ease, transform .35s ease, filter .35s ease';
+        setPosition(leftSteps[3],fallFromY);
+      },3800);
+
+      window.setTimeout(()=>{
+        rewindClock.classList.remove('active');
+        traveler.dataset.mode='climb-recover';
+        traveler.style.transition='left .52s ease, top .56s cubic-bezier(.38,.03,.26,.98), opacity .28s ease, transform .35s ease, filter .35s ease';
+        let recoverDelay=220;
+        for(let i=4;i<8;i+=1){
+          window.setTimeout(()=>setPosition(leftSteps[i],ySteps[i]),recoverDelay);
+          recoverDelay+=560;
+        }
+      },5100);
+
+      window.setTimeout(finishClimb,7400);
+    } else {
+      window.setTimeout(finishClimb,5000);
+    }
+  }
+
+  function scheduleAction(){
+    window.clearTimeout(actionTimer);
+    actionTimer=window.setTimeout(()=>{
+      if(busy){scheduleAction();return;}
+      const roll=Math.random();
+      if(!wideLayout()){
+        if(roll<0.25)balloonDrop();
+        else if(roll<0.45)guitarSolo();
+      } else if(roll<0.18)climbAdventure();
+      else if(roll<0.34)balloonDrop();
+      else if(roll<0.5)guitarSolo();
+      else if(roll<0.68)crossToOtherSide();
+      scheduleAction();
+    },7200+Math.random()*3200);
+  }
+
+  button.addEventListener('click',()=>{
+    clickCount+=1;
+    updateCounter();
+    try{window.localStorage.setItem('senhorita-minuto-clickcount-v3',String(clickCount));}catch{}
+    playRetroChime();
+    if(eggs.has(clickCount))say(eggs.get(clickCount),6200);
+    else say(phrases[Math.floor(Math.random()*phrases.length)]);
+  });
+
+  try{
+    const saved=window.localStorage.getItem('senhorita-minuto-clickcount-v3');
+    if(saved)clickCount=Number(saved)||0;
+  }catch{}
+  updateCounter();
+
+  const firstVisitKey='senhorita-minuto-welcome-v6';
+  try{
+    if(!window.localStorage.getItem(firstVisitKey)){
+      window.setTimeout(()=>{
+        say('Oi! Eu sou a Senhorita Minuto. Eu patrulho as laterais o tempo todo — e às vezes faço umas entradas mais dramáticas.',7600);
+        window.localStorage.setItem(firstVisitKey,'1');
+      },700);
+    }
+  }catch{
+    window.setTimeout(()=>say('Oi! Eu sou a Senhorita Minuto.',6500),700);
+  }
+
+  setSide(side);
+  alignToPatrolBase(true);
+  if(!reducedMotion()){
+    startPatrol();
+    scheduleAction();
+  }
+
+  window.addEventListener('resize',()=>{
+    if(busy)return;
+    clearEphemera();
+    alignToPatrolBase(true);
+    startPatrol();
+  });
+
+  window.addEventListener('pagehide',()=>{
+    window.clearTimeout(speechTimer);
+    window.clearTimeout(actionTimer);
+    window.clearTimeout(projectTimer);
+    window.clearTimeout(patrolTimer);
+  },{once:true});
 }
