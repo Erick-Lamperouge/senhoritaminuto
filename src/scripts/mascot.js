@@ -13,6 +13,7 @@ const mineEvent=document.querySelector('#mineEvent');
 const mineBlast=document.querySelector('#mineBlast');
 const musicNotes=document.querySelector('#musicNotes');
 const leafShower=document.querySelector('#leafShower');
+const clickCounter=document.querySelector('#clickCounter');
 const clickCounterValue=document.querySelector('#clickCounterValue');
 
 if(
@@ -31,6 +32,7 @@ if(
   mineBlast instanceof HTMLElement &&
   musicNotes instanceof HTMLElement &&
   leafShower instanceof HTMLElement &&
+  clickCounter instanceof HTMLElement &&
   clickCounterValue instanceof HTMLElement
 ){
   const phrases=[
@@ -69,6 +71,7 @@ if(
   let side=Math.random()<0.5?'left':'right';
   let patrolTargetIndex=0;
   let clickCount=0;
+  let clickCounterTimer=0;
 
   const reducedMotion=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const wideLayout=()=>window.innerWidth>=1180;
@@ -77,6 +80,12 @@ if(
   const currentRect=()=>traveler.getBoundingClientRect();
 
   function updateCounter(){clickCounterValue.textContent=String(clickCount);}
+
+  function showClickCounter(duration=3000){
+    clickCounter.hidden=false;
+    window.clearTimeout(clickCounterTimer);
+    clickCounterTimer=window.setTimeout(()=>{clickCounter.hidden=true;},duration);
+  }
 
   function setFacing(value){traveler.style.setProperty('--facing',String(value));}
   function setFacingForDirection(nextX,currentX){setFacing(nextX>=currentX?1:-1);}
@@ -299,7 +308,7 @@ if(
     const centerX=(minX+maxX)/2;
     const launchTop=-170;
     const landingTop=baseY()-18;
-    const fallDuration=2700;
+    const fallDuration=5200;
 
     traveler.dataset.mode='mine-step';
     traveler.style.transition='left .3s ease, top .3s ease, opacity .28s ease, transform .35s ease, filter .35s ease';
@@ -317,18 +326,19 @@ if(
       mineEvent.classList.remove('active');
       mineBlast.classList.remove('active');
       traveler.dataset.mode='balloon-drop';
-      say('uuuh...',fallDuration);
+      say('uuuh...',3200);
       setPosition(centerX,launchTop,true);
       placeLeaves();
       leafShower.classList.add('active');
 
       const travelerFrames=[
         {left:`${centerX}px`,top:`${launchTop}px`},
-        {left:`${maxX}px`,top:`${launchTop+(landingTop-launchTop)*.16}px`},
-        {left:`${minX}px`,top:`${launchTop+(landingTop-launchTop)*.34}px`},
-        {left:`${maxX}px`,top:`${launchTop+(landingTop-launchTop)*.53}px`},
-        {left:`${minX}px`,top:`${launchTop+(landingTop-launchTop)*.72}px`},
-        {left:`${maxX}px`,top:`${launchTop+(landingTop-launchTop)*.88}px`},
+        {left:`${centerX+10}px`,top:`${launchTop+(landingTop-launchTop)*.10}px`},
+        {left:`${maxX-4}px`,top:`${launchTop+(landingTop-launchTop)*.24}px`},
+        {left:`${centerX-8}px`,top:`${launchTop+(landingTop-launchTop)*.38}px`},
+        {left:`${minX+4}px`,top:`${launchTop+(landingTop-launchTop)*.52}px`},
+        {left:`${centerX+12}px`,top:`${launchTop+(landingTop-launchTop)*.66}px`},
+        {left:`${maxX-10}px`,top:`${launchTop+(landingTop-launchTop)*.80}px`},
         {left:`${centerX}px`,top:`${landingTop}px`}
       ];
       const leafFrames=travelerFrames.map((frame)=>({
@@ -485,9 +495,13 @@ if(
   button.addEventListener('click',()=>{
     clickCount+=1;
     updateCounter();
+  clickCounter.hidden=true;
     try{window.localStorage.setItem('senhorita-minuto-clickcount-v3',String(clickCount));}catch{}
     playRetroChime();
-    if(eggs.has(clickCount))say(eggs.get(clickCount),3000);
+    if(eggs.has(clickCount)){
+      showClickCounter(3000);
+      say(eggs.get(clickCount),3000);
+    }
   });
 
   try{
@@ -495,6 +509,7 @@ if(
     if(saved)clickCount=Number(saved)||0;
   }catch{}
   updateCounter();
+  clickCounter.hidden=true;
 
   const firstVisitKey='senhorita-minuto-welcome-v6';
   try{
@@ -544,5 +559,6 @@ if(
     window.clearTimeout(actionTimer);
     window.clearTimeout(projectTimer);
     window.clearTimeout(patrolTimer);
+    window.clearTimeout(clickCounterTimer);
   },{once:true});
 }
