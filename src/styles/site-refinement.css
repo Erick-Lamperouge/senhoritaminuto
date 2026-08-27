@@ -109,3 +109,61 @@
 .project-card-cta{display:inline-flex;align-items:center;gap:6px}
 .project-page-standardized .project-hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:28px;align-items:end;margin-top:8px}.project-page-standardized .project-hero-main{min-width:0}.project-page-standardized .project-showcase-slot{display:flex;justify-content:flex-end}.project-page-standardized .showcase-shell{width:260px;min-height:190px;border:1px solid rgba(240,207,141,.16);background:linear-gradient(180deg,rgba(255,255,255,.024),rgba(255,255,255,.008));display:flex;align-items:flex-end;justify-content:center;padding:12px 12px 8px;position:relative;overflow:visible}.project-page-standardized .showcase-shell::before{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,rgba(240,207,141,.45),rgba(109,184,173,.2),transparent 85%)}.project-page-standardized .showcase-scratch{align-items:flex-end}.project-page-standardized .showcase-fernando{align-items:center;justify-content:center;padding-top:8px}.project-page-standardized .showcase-generic{align-items:flex-start;justify-content:flex-start;flex-direction:column;gap:10px;padding:18px}.project-page-standardized .showcase-generic strong{font-size:1.05rem;color:var(--amber-soft);letter-spacing:.05em}.project-page-standardized .showcase-generic p{margin:0;color:var(--muted);font-size:.85rem;line-height:1.5}.project-page-standardized .showcase-label{font-size:.68rem;letter-spacing:.12em;color:var(--teal);font-weight:800}.project-page-standardized .project-actions{margin-top:18px;margin-bottom:0}
 @media(max-width:900px){.project-page-standardized .project-hero-grid{grid-template-columns:1fr}.project-page-standardized .project-showcase-slot{justify-content:flex-start}.project-page-standardized .showcase-shell{width:min(100%,280px)}}
+
+
+/* Ajuste v2 — hero padronizado sem caixa ao redor do personagem */
+.project-page-standardized .project-hero-grid{
+  grid-template-columns:minmax(0,1fr) 300px;
+  gap:48px;
+  align-items:center;
+  margin-top:12px;
+  padding-bottom:54px;
+}
+.project-page-standardized .project-hero-main{align-self:center}
+.project-page-standardized .project-lead{margin-bottom:0;max-width:720px}
+.project-page-standardized .project-actions{margin-top:28px;margin-bottom:0;gap:14px}
+.project-page-standardized .project-actions .button{min-height:50px;padding-inline:20px}
+.project-page-standardized .project-showcase-slot{
+  min-height:220px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.project-page-standardized .showcase-shell{
+  width:100%;
+  min-height:220px;
+  border:0;
+  background:transparent;
+  padding:0;
+  overflow:visible;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.project-page-standardized .showcase-shell::before{display:none}
+.project-page-standardized .showcase-shell::after{
+  content:'';
+  position:absolute;
+  left:50%;
+  bottom:18px;
+  width:130px;
+  height:18px;
+  transform:translateX(-50%);
+  background:radial-gradient(ellipse,rgba(0,0,0,.32),transparent 68%);
+  filter:blur(3px);
+  opacity:.7;
+  pointer-events:none;
+}
+.project-page-standardized .showcase-scratch,
+.project-page-standardized .showcase-fernando{position:relative;align-items:center;justify-content:center}
+.project-page-standardized .top-embed-shell,
+.project-page-standardized .top-metrics-shell{margin-top:0}
+.project-page-standardized .top-embed-shell{margin-bottom:62px}
+.project-page-standardized .project-details{scroll-margin-top:32px}
+
+@media(max-width:900px){
+  .project-page-standardized .project-hero-grid{grid-template-columns:1fr;gap:24px;padding-bottom:42px}
+  .project-page-standardized .project-showcase-slot{justify-content:flex-start;min-height:170px}
+  .project-page-standardized .showcase-shell{width:220px;min-height:170px;justify-content:flex-start}
+  .project-page-standardized .showcase-shell::after{left:92px;bottom:10px}
+}
