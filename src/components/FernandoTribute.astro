@@ -3,8 +3,8 @@
     <span class="eyebrow">POR TRÁS DO NOME</span>
     <h2 id="fernando-tribute-title">Uma homenagem que virou personagem.</h2>
     <p>
-      O nome FERNANDO também é uma homenagem ao meu sogro. Nesta página, a homenagem ganha uma versão em pixel art,
-      com algumas frases e lembranças que fazem parte do jeito dele.
+      O nome FERNANDO também é uma homenagem ao meu sogro. Nesta página, a homenagem ganha uma presença interativa,
+      com frases e lembranças que fazem parte do jeito dele.
     </p>
     <p class="tribute-note">A interação é opcional: clique no personagem para ouvir uma das falas.</p>
   </div>
@@ -12,108 +12,190 @@
   <div class="tribute-character-wrap">
     <div class="tribute-bubble" id="fernandoBubble" hidden></div>
     <button class="fernando-character" id="fernandoCharacter" type="button" aria-label="Conversar com Fernando">
-      <img src="/assets/characters/fernando-pixel.png" alt="Fernando em caricatura pixelada" draggable="false" />
+      <img id="fernandoCharacterImg" src="/assets/characters/fernando-pixel.png" alt="Fernando em caricatura pixelada" draggable="false" />
     </button>
     <div class="tribute-prop" id="fernandoProp" aria-hidden="true"></div>
   </div>
 </section>
 
 <style>
-  .fernando-tribute{margin:72px 0 54px;padding:34px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.022),rgba(255,255,255,.005));display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:36px;align-items:center;overflow:visible}
+  .fernando-tribute{margin:72px 0 54px;padding:34px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.022),rgba(255,255,255,.005));display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:36px;align-items:center;overflow:visible}
   .tribute-copy h2{font-family:Georgia,'Times New Roman',serif;font-weight:500;font-size:clamp(1.9rem,3.5vw,3rem);line-height:1.04;margin:10px 0 18px;letter-spacing:-.03em}
-  .tribute-copy p{color:var(--muted);max-width:680px}.tribute-note{font-size:.76rem;opacity:.82;margin-top:20px}
-  .tribute-character-wrap{position:relative;min-height:290px;display:flex;align-items:flex-end;justify-content:center}
-  .fernando-character{width:200px;height:280px;padding:0;border:0;background:transparent;cursor:pointer;position:relative;z-index:3;transform-origin:center bottom;animation:fernando-idle 4.2s ease-in-out infinite}
+  .tribute-copy p{color:var(--muted);max-width:680px}
+  .tribute-note{font-size:.76rem;opacity:.82;margin-top:20px}
+
+  .tribute-character-wrap{position:relative;min-height:308px;display:flex;align-items:flex-end;justify-content:center;padding-right:92px}
+  .fernando-character{width:212px;height:286px;padding:0;border:0;background:transparent;cursor:pointer;position:relative;z-index:3;transform-origin:center bottom;animation:fernando-idle 4.2s ease-in-out infinite}
   .fernando-character:hover{animation-play-state:paused;transform:translateY(-3px)}
   .fernando-character img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;pointer-events:none;user-select:none;filter:drop-shadow(5px 7px 0 rgba(0,0,0,.22))}
   @keyframes fernando-idle{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-3px) rotate(.45deg)}}
-  .fernando-character.greet{animation:fernando-greet .72s ease-in-out 4}
-  @keyframes fernando-greet{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-4px) translateX(4px) rotate(1.6deg)}}
-  .tribute-bubble{position:absolute;right:178px;top:24px;width:240px;padding:11px 13px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.74rem;line-height:1.42;z-index:8}
+  .fernando-character.pose-pop{animation:fernando-pose-pop .72s ease-in-out 2}
+  @keyframes fernando-pose-pop{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-4px) scale(1.015)}}
+
+  .tribute-bubble{position:absolute;right:214px;top:20px;width:254px;padding:11px 13px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.74rem;line-height:1.42;z-index:8}
   .tribute-bubble::after{content:'';position:absolute;right:-9px;top:48px;width:13px;height:13px;background:#f2e4c4;border-right:3px solid #282c2b;border-top:3px solid #282c2b;transform:rotate(45deg)}
-  .tribute-prop{position:absolute;right:-4px;bottom:24px;min-width:62px;min-height:56px;opacity:0;transform:translateY(8px) scale(.8);transition:opacity .22s ease,transform .3s ease;z-index:5;background:rgba(8,12,14,.42);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(4px);border-radius:14px;padding:6px 8px;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+
+  .tribute-prop{position:absolute;right:8px;bottom:112px;min-width:76px;min-height:64px;opacity:0;transform:translateY(8px) scale(.8);transition:opacity .22s ease,transform .3s ease;z-index:2;background:rgba(8,12,14,.42);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(4px);border-radius:14px;padding:8px 10px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);pointer-events:none}
   .tribute-prop.active{opacity:1;transform:translateY(0) scale(1)}
-  .tribute-prop img{display:block;image-rendering:pixelated;user-select:none;pointer-events:none}
-  .tribute-prop[data-prop='domino'] img{width:30px;height:auto}
-  .tribute-prop[data-prop='checkers'] img{width:42px;height:auto}
-  .tribute-prop[data-prop='heart'] img{width:38px;height:auto}
-  @media(max-width:900px){.fernando-tribute{grid-template-columns:1fr}.tribute-character-wrap{min-height:260px;justify-content:flex-start}.tribute-bubble{left:210px;right:auto;top:28px}.tribute-bubble::after{left:-9px;right:auto;border-right:0;border-top:0;border-left:3px solid #282c2b;border-bottom:3px solid #282c2b}}
-  @media(max-width:620px){.fernando-tribute{padding:24px}.fernando-character{width:170px;height:240px}.tribute-character-wrap{min-height:230px}.tribute-bubble{left:122px;top:8px;width:190px;font-size:.69rem}.tribute-prop{right:auto;left:150px;bottom:12px}}
+  .tribute-prop img{display:block;image-rendering:pixelated;user-select:none;pointer-events:none;max-width:100%;height:auto}
+
+  .tribute-prop[data-prop='domino']{right:0;bottom:102px;min-width:88px;min-height:68px}
+  .tribute-prop[data-prop='domino'] img{width:28px}
+
+  .tribute-prop[data-prop='checkers']{right:8px;bottom:116px;min-width:96px;min-height:72px}
+  .tribute-prop[data-prop='checkers'] img{width:68px}
+
+  .tribute-prop[data-prop='heart']{right:18px;bottom:134px;min-width:70px;min-height:62px}
+  .tribute-prop[data-prop='heart'] img{width:42px}
+
+  @media(max-width:980px){
+    .fernando-tribute{grid-template-columns:1fr}
+    .tribute-character-wrap{min-height:270px;justify-content:flex-start;padding-right:0;padding-left:12px}
+    .tribute-bubble{left:214px;right:auto;top:24px}
+    .tribute-bubble::after{left:-9px;right:auto;border-right:0;border-top:0;border-left:3px solid #282c2b;border-bottom:3px solid #282c2b}
+    .tribute-prop,.tribute-prop[data-prop='domino'],.tribute-prop[data-prop='checkers'],.tribute-prop[data-prop='heart']{right:auto;left:176px;bottom:20px}
+  }
+  @media(max-width:620px){
+    .fernando-tribute{padding:24px}
+    .fernando-character{width:170px;height:232px}
+    .tribute-character-wrap{min-height:236px;padding-left:0}
+    .tribute-bubble{left:118px;top:8px;width:194px;font-size:.69rem}
+    .tribute-prop,.tribute-prop[data-prop='domino'],.tribute-prop[data-prop='checkers'],.tribute-prop[data-prop='heart']{left:138px;bottom:8px}
+    .tribute-prop[data-prop='checkers'] img{width:58px}
+  }
 </style>
 
 <script>
-  const fernando=document.querySelector('#fernandoCharacter');
-  const bubble=document.querySelector('#fernandoBubble');
-  const prop=document.querySelector('#fernandoProp');
+  const fernando = document.querySelector('#fernandoCharacter');
+  const bubble = document.querySelector('#fernandoBubble');
+  const prop = document.querySelector('#fernandoProp');
+  const fernandoImg = document.querySelector('#fernandoCharacterImg');
 
-  if(fernando instanceof HTMLButtonElement&&bubble instanceof HTMLElement&&prop instanceof HTMLElement){
-    const lines=[
-      {text:'Arigó!',prop:''},
-      {text:'Minha família é do sertão. Povo arretado de bom!',prop:''},
-      {text:'Bora jogar dominó? Aí a conversa fica séria.',prop:'domino'},
-      {text:'Sou muito bom na dama, viu?',prop:'checkers'},
-      {text:'A primeira fala de Valentina foi “Vovô”. Essa eu guardo comigo.',prop:'heart'}
-    ];
-    let bubbleTimer=0;
-    let autoTimer=0;
-    let last=-1;
-
-    const clearProp=()=>{
-      prop.className='tribute-prop';
-      prop.removeAttribute('data-prop');
-      prop.innerHTML='';
+  if (fernando instanceof HTMLButtonElement && bubble instanceof HTMLElement && prop instanceof HTMLElement && fernandoImg instanceof HTMLImageElement) {
+    const POSES = {
+      base: '/assets/characters/fernando-pixel.png',
+      thumbs: '/assets/characters/fernando-thumbsup.png',
+      thinking: '/assets/characters/fernando-thinking.png'
     };
 
-    const renderProp=(kind)=>{
-      clearProp();
-      if(!kind) return;
-      prop.dataset.prop=kind;
-      if(kind==='domino'){
-        prop.innerHTML=`<img src="/assets/props/domino_piece_1.png" alt="" draggable="false" /><img src="/assets/props/domino_piece_2.png" alt="" draggable="false" style="transform:rotate(12deg) translateY(2px)" />`;
-      } else if(kind==='checkers'){
-        prop.innerHTML=`<img src="/assets/props/checker_piece.png" alt="" draggable="false" />`;
-      } else if(kind==='heart'){
-        prop.innerHTML=`<img src="/assets/props/heart_small.png" alt="" draggable="false" />`;
+    const LINES = [
+      {
+        text: 'Arigó!',
+        pose: 'thumbs',
+        prop: null,
+        duration: 3600
+      },
+      {
+        text: 'Minha família é do sertão. Povo arretado de bom!',
+        pose: 'thinking',
+        prop: null,
+        duration: 4200
+      },
+      {
+        text: 'Bora jogar dominó? Aí a conversa fica séria.',
+        pose: 'base',
+        prop: 'domino',
+        duration: 4400
+      },
+      {
+        text: 'Sou muito bom na dama, viu?',
+        pose: 'thumbs',
+        prop: 'checkers',
+        duration: 4200
+      },
+      {
+        text: 'A primeira fala de Valentina foi “Vovô”. Essa eu guardo comigo.',
+        pose: 'thinking',
+        prop: 'heart',
+        duration: 5200
       }
+    ];
+
+    let bubbleTimer = 0;
+    let autoTimer = 0;
+    let lastIndex = -1;
+
+    const resetPose = () => {
+      fernandoImg.src = POSES.base;
+    };
+
+    const clearProp = () => {
+      prop.className = 'tribute-prop';
+      prop.removeAttribute('data-prop');
+      prop.innerHTML = '';
+    };
+
+    const renderProp = (kind) => {
+      clearProp();
+      if (!kind) return;
+
+      prop.dataset.prop = kind;
+
+      if (kind === 'domino') {
+        prop.innerHTML = `
+          <img src="/assets/props/domino_piece_1.png" alt="" draggable="false" />
+          <img src="/assets/props/domino_piece_2.png" alt="" draggable="false" />
+        `;
+      }
+
+      if (kind === 'checkers') {
+        prop.innerHTML = `
+          <img src="/assets/props/checker_piece.png" alt="" draggable="false" />
+        `;
+      }
+
+      if (kind === 'heart') {
+        prop.innerHTML = `
+          <img src="/assets/props/heart_small.png" alt="" draggable="false" />
+        `;
+      }
+
       prop.classList.add('active');
     };
 
-    const showLine=(line,duration=4200)=>{
-      bubble.textContent=line.text;
-      bubble.hidden=false;
-      fernando.classList.remove('greet');
+    const showLine = (entry) => {
+      bubble.textContent = entry.text;
+      bubble.hidden = false;
+      fernandoImg.src = POSES[entry.pose] || POSES.base;
+
+      fernando.classList.remove('pose-pop');
       void fernando.offsetWidth;
-      fernando.classList.add('greet');
-      renderProp(line.prop);
+      fernando.classList.add('pose-pop');
+
+      renderProp(entry.prop);
+
       window.clearTimeout(bubbleTimer);
-      bubbleTimer=window.setTimeout(()=>{
-        bubble.hidden=true;
-        fernando.classList.remove('greet');
+      bubbleTimer = window.setTimeout(() => {
+        bubble.hidden = true;
+        fernando.classList.remove('pose-pop');
         clearProp();
-      },duration);
+        resetPose();
+      }, entry.duration);
     };
 
-    const randomLine=()=>{
-      let index=Math.floor(Math.random()*lines.length);
-      if(lines.length>1&&index===last)index=(index+1)%lines.length;
-      last=index;
-      showLine(lines[index]);
+    const randomLine = () => {
+      let next = Math.floor(Math.random() * LINES.length);
+      if (LINES.length > 1 && next === lastIndex) {
+        next = (next + 1) % LINES.length;
+      }
+      lastIndex = next;
+      showLine(LINES[next]);
     };
 
-    const scheduleAuto=()=>{
+    const scheduleAuto = () => {
       window.clearTimeout(autoTimer);
-      autoTimer=window.setTimeout(()=>{
-        if(document.visibilityState==='visible')randomLine();
+      autoTimer = window.setTimeout(() => {
+        if (document.visibilityState === 'visible') randomLine();
         scheduleAuto();
-      },24000+Math.random()*18000);
+      }, 24000 + Math.random() * 18000);
     };
 
-    fernando.addEventListener('click',randomLine);
+    fernando.addEventListener('click', randomLine);
     scheduleAuto();
 
-    window.addEventListener('pagehide',()=>{
+    window.addEventListener('pagehide', () => {
       window.clearTimeout(bubbleTimer);
       window.clearTimeout(autoTimer);
-    },{once:true});
+    }, { once: true });
   }
 </script>
