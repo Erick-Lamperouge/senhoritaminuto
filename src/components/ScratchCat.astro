@@ -70,61 +70,49 @@
   const rewind=document.querySelector('#catRewind');
 
   if(scene instanceof HTMLElement&&cat instanceof HTMLButtonElement&&bubble instanceof HTMLElement&&wand instanceof HTMLElement&&portal instanceof HTMLElement&&rewind instanceof HTMLElement){
-    const dialogues=[
-      {cat:'Os gatos vão dominar o mundo.',minute:'Não nesta linha do tempo.'},
-      {cat:'O futuro pertence aos gatos.',minute:'Só se eu deixar. E eu trouxe a varinha.'},
-      {cat:'Quando o tempo acabar, os gatos ainda vão ganhar.',minute:'Eu ainda posso reiniciar esta fase.'},
-      {cat:'Só preciso de mais alguns minutos para dominar tudo.',minute:'Minutos são justamente a minha especialidade.'}
+    const tx=(key,fallback)=>window.SM_I18N?.t?.(key,fallback) ?? fallback;
+    const dialogues=()=>[
+      {cat:tx('cat.1','Os gatos vão dominar o mundo.'),minute:tx('cat.1r','Não nesta linha do tempo.'),mood:'evil',power:true},
+      {cat:tx('cat.2','O futuro pertence aos gatos.'),minute:tx('cat.2r','Só se eu deixar. E eu trouxe a varinha.'),mood:'evil',power:true},
+      {cat:tx('cat.3','Quando o tempo acabar, os gatos ainda vão ganhar.'),minute:tx('cat.3r','Eu ainda posso reiniciar esta fase.'),mood:'evil',power:true},
+      {cat:tx('cat.4','Só preciso de mais alguns minutos para dominar tudo.'),minute:tx('cat.4r','Minutos são justamente a minha especialidade.'),mood:'happy',power:false}
     ];
-    const clickLines=['Miau.','Você não viu nada.','A revolução felina continua.','O plano está adiantado alguns minutos.'];
+    const clickLines=()=>[
+      tx('cat.click1','Miau.'),tx('cat.click2','Você não viu nada.'),tx('cat.click3','A revolução felina continua.'),tx('cat.click4','O plano está adiantado alguns minutos.')
+    ];
     let catClicks=0, sequenceTimer=0, bubbleTimer=0, busy=false;
-
     cat.classList.add('idle');
 
-    const showCat=(text,duration=3000)=>{
-      bubble.textContent=text;
-      bubble.hidden=false;
-      window.clearTimeout(bubbleTimer);
-      bubbleTimer=window.setTimeout(()=>{bubble.hidden=true;},duration);
+    const inView=()=>{const r=scene.getBoundingClientRect();return r.bottom>0&&r.top<window.innerHeight&&r.right>0&&r.left<window.innerWidth;};
+    const showCat=(message,duration=3000)=>{bubble.textContent=message;bubble.hidden=false;window.clearTimeout(bubbleTimer);bubbleTimer=window.setTimeout(()=>{bubble.hidden=true;},duration);};
+    const interactMinute=(message,{mood='happy',power=false,hold=7600,duration=3800}={})=>{
+      window.dispatchEvent(new CustomEvent('sm:interact',{detail:{target:'#scratchCatScene',message,duration,mood,power,hold}}));
     };
-
-    const minuteSay=(message,duration=3600)=>{
-      window.dispatchEvent(new CustomEvent('sm:say',{detail:{message,duration}}));
-    };
-
-    const scheduleNext=()=>{
-      window.clearTimeout(sequenceTimer);
-      sequenceTimer=window.setTimeout(runScene,17000+Math.random()*13000);
-    };
+    const scheduleNext=()=>{window.clearTimeout(sequenceTimer);sequenceTimer=window.setTimeout(runScene,17000+Math.random()*13000);};
 
     const magicReset=()=>{
-      busy=true;
-      cat.classList.remove('idle');
       wand.classList.add('active');
       portal.classList.add('active');
       rewind.classList.add('active');
+      cat.classList.remove('idle');
       cat.classList.add('rewinding','portal-travel');
-      window.dispatchEvent(new CustomEvent('sm:rewind',{detail:{duration:2200}}));
-      window.setTimeout(()=>showCat('Ah não... eu voltei pro passado.',3200),1900);
+      window.dispatchEvent(new CustomEvent('sm:rewind',{detail:{duration:2500,power:true}}));
+      window.setTimeout(()=>showCat(tx('cat.back','Ah não... eu voltei pro passado.'),3200),1900);
       window.setTimeout(()=>{
-        wand.classList.remove('active');
-        portal.classList.remove('active');
-        rewind.classList.remove('active');
-        cat.classList.remove('rewinding','portal-travel');
-        cat.classList.add('idle');
-        busy=false;
-      },2650);
+        wand.classList.remove('active');portal.classList.remove('active');rewind.classList.remove('active');cat.classList.remove('rewinding','portal-travel');cat.classList.add('idle');busy=false;
+      },2850);
     };
 
     function runScene(){
-      if(busy){scheduleNext();return;}
+      if(busy||!inView()){scheduleNext();return;}
       busy=true;
-      const d=dialogues[Math.floor(Math.random()*dialogues.length)];
+      const list=dialogues();
+      const d=list[Math.floor(Math.random()*list.length)];
       cat.classList.add('alert');
       showCat(d.cat,3600);
       window.setTimeout(()=>cat.classList.remove('alert'),1500);
-      window.setTimeout(()=>minuteSay(d.minute,4000),2500);
-      window.setTimeout(magicReset,5900);
+      window.setTimeout(()=>interactMinute(d.minute,{mood:d.mood,power:d.power,hold:9000,duration:4000}),2400);
+      window.setTimeout(magicReset,5700);
       scheduleNext();
     }
 
@@ -133,13 +121,13 @@
     cat.addEventListener('click',()=>{
       if(busy)return;
       catClicks+=1;
-      showCat(clickLines[(catClicks-1)%clickLines.length],2400);
-      if(catClicks%3===0)window.setTimeout(()=>minuteSay('Eu ouvi isso.',2500),800);
+      const lines=clickLines();
+      showCat(lines[(catClicks-1)%lines.length],2400);
+      if(catClicks%3===0){
+        window.setTimeout(()=>interactMinute(tx('cat.heard','Eu ouvi isso.'),{mood:'happy',power:false,hold:4200,duration:2400}),700);
+      }
     });
 
-    window.addEventListener('pagehide',()=>{
-      window.clearTimeout(sequenceTimer);
-      window.clearTimeout(bubbleTimer);
-    },{once:true});
+    window.addEventListener('pagehide',()=>{window.clearTimeout(sequenceTimer);window.clearTimeout(bubbleTimer);},{once:true});
   }
 </script>

@@ -23,15 +23,16 @@
   const inlineBubble=document.querySelector('#fernandoInlineBubble');
   if(inlineRoot instanceof HTMLElement && inlineButton instanceof HTMLButtonElement && inlineImg instanceof HTMLImageElement && inlineBubble instanceof HTMLElement){
     const POSES={ base:'/assets/characters/fernando-pixel.png', thumbs:'/assets/characters/fernando-thumbsup.png', thinking:'/assets/characters/fernando-thinking.png' };
-    const LINES=[
-      {text:'Arigó!', pose:'thumbs', duration:2200},
-      {text:'Bora jogar dominó?', pose:'base', duration:2600},
-      {text:'Sou muito bom na dama, viu?', pose:'thumbs', duration:2800},
-      {text:'Minha família é do sertão. Povo arretado de bom!', pose:'thinking', duration:3400}
+    const tx=(key,fallback)=>window.SM_I18N?.t?.(key,fallback) ?? fallback;
+    const LINES=()=>[
+      {text:tx('fernando.line1','Arigó!'), pose:'thumbs', duration:2200},
+      {text:tx('fernando.line3','Bora jogar dominó?'), pose:'base', duration:2600},
+      {text:tx('fernando.line4','Sou muito bom na dama, viu?'), pose:'thumbs', duration:2800},
+      {text:tx('fernando.line2','Minha família é do sertão. Povo arretado de bom!'), pose:'thinking', duration:3400}
     ];
     let timer=0; let idx=0;
     const speak=(entry)=>{inlineImg.src=POSES[entry.pose] || POSES.base; inlineBubble.textContent=entry.text; inlineBubble.hidden=false; window.clearTimeout(timer); timer=window.setTimeout(()=>{inlineBubble.hidden=true; inlineImg.src=POSES.base;},entry.duration);};
-    inlineButton.addEventListener('click',()=>{speak(LINES[idx % LINES.length]); idx+=1;});
+    inlineButton.addEventListener('click',()=>{const lines=LINES();speak(lines[idx % lines.length]); idx+=1;});
     window.addEventListener('pagehide',()=>window.clearTimeout(timer),{once:true});
   }
 </script>

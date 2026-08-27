@@ -6,18 +6,23 @@ interface Props {
   href: string;
   cta: string;
   status?: string;
+  eyebrowKey?: string;
+  titleKey?: string;
+  descriptionKey?: string;
+  ctaKey?: string;
+  statusKey?: string;
 }
 
-const { eyebrow, title, description, href, cta, status } = Astro.props;
+const { eyebrow, title, description, href, cta, status, eyebrowKey, titleKey, descriptionKey, ctaKey, statusKey } = Astro.props;
 ---
 <a class="project-card-link" href={href} aria-label={`${title} — ${cta}`}>
   <article class="project-card">
     <div class="project-card-topline">
-      <span class="eyebrow">{eyebrow}</span>
-      {status && <span class="status">{status}</span>}
+      <span class="eyebrow" data-i18n={eyebrowKey}>{eyebrow}</span>
+      {status && <span class="status" data-i18n={statusKey}>{status}</span>}
     </div>
-    <h3>{title}</h3>
-    <p>{description}</p>
-    <span class="text-link project-card-cta">{cta} <span aria-hidden="true">→</span></span>
+    <h3 data-i18n={titleKey}>{title}</h3>
+    <p data-i18n={descriptionKey}>{description}</p>
+    <span class="text-link project-card-cta"><span data-i18n={ctaKey}>{cta}</span> <span aria-hidden="true">→</span></span>
   </article>
 </a>

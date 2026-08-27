@@ -3,8 +3,22 @@ import '../styles/site-refinement.css';
 ---
 <header class="site-header refined-header">
   <a class="brand refined-brand" href="/" aria-label="Senhorita Minuto — início">Senhorita Minuto</a>
-  <nav aria-label="Navegação principal">
-    <a href="/#projetos">Projetos</a>
-    <a href="/#sobre">Sobre</a>
-  </nav>
+  <div class="header-actions">
+    <nav aria-label="Navegação principal">
+      <a href="/#projetos" data-i18n="nav.projects">Projetos</a>
+      <a href="/#sobre" data-i18n="nav.about">Sobre</a>
+    </nav>
+    <div class="language-switcher" aria-label="Idioma / Language">
+      <button class="language-button" type="button" data-language="pt" aria-pressed="true" title="Português">
+        <span class="language-flag" aria-hidden="true">🇧🇷</span><span class="language-code">PT</span>
+      </button>
+      <button class="language-button" type="button" data-language="en" aria-pressed="false" title="English">
+        <span class="language-flag" aria-hidden="true">🇺🇸</span><span class="language-code">EN</span>
+      </button>
+    </div>
+  </div>
 </header>
+
+<script>
+  import '../scripts/i18n.js';
+</script>

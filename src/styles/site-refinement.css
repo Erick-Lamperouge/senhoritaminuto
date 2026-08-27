@@ -167,3 +167,30 @@
   .project-page-standardized .showcase-shell{width:220px;min-height:170px;justify-content:flex-start}
   .project-page-standardized .showcase-shell::after{left:92px;bottom:10px}
 }
+
+/* idioma, tempo e chamadas de ação */
+.header-actions{display:flex;align-items:center;gap:14px}
+.language-switcher{display:flex;align-items:center;gap:5px;padding-left:8px;border-left:1px solid rgba(240,207,141,.14)}
+.language-button{min-width:48px;height:34px;padding:0 8px;border:1px solid rgba(240,207,141,.16);background:rgba(255,255,255,.018);color:var(--muted);display:inline-flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;font:inherit;font-size:.67rem;letter-spacing:.04em;transition:border-color .18s ease,background .18s ease,color .18s ease,transform .18s ease}
+.language-button:hover{border-color:rgba(240,207,141,.36);color:var(--text);transform:translateY(-1px)}
+.language-button.active{border-color:rgba(109,184,173,.52);background:rgba(109,184,173,.09);color:var(--text)}
+.language-flag{font-size:1rem;line-height:1}.language-code{font-weight:800}
+.time-kicker-icon{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;margin-right:7px;border:1px solid rgba(229,173,85,.38);border-radius:50%;color:var(--amber-soft);font-size:.88rem;vertical-align:-2px;box-shadow:0 0 10px rgba(229,173,85,.08)}
+.time-back-link{padding:8px 12px;border:1px solid rgba(109,184,173,.18);background:rgba(109,184,173,.035);transition:border-color .18s ease,color .18s ease,background .18s ease}
+.time-back-link:hover{color:var(--text);border-color:rgba(109,184,173,.42);background:rgba(109,184,173,.075)}
+.play-here-hint{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:8px 12px 12px 0;color:var(--amber-soft);font-size:.72rem;font-weight:800;letter-spacing:.045em;pointer-events:none}
+.play-here-arrow{display:inline-block;font-size:1.15rem;color:var(--amber);animation:play-here-bounce 1.05s ease-in-out infinite}
+@keyframes play-here-bounce{0%,100%{transform:translateY(-3px)}50%{transform:translateY(5px)}}
+#jogar,#sobre-projeto{scroll-margin-top:28px}
+.embedded-secondary-action{display:flex;justify-content:flex-end;margin:10px 4px 52px}
+
+@media(max-width:760px){
+  .refined-header{gap:10px}
+  .header-actions{gap:6px}
+  .refined-header nav{gap:2px}
+  .refined-header nav a{padding:8px 6px;font-size:.72rem}
+  .language-switcher{gap:3px;padding-left:4px}
+  .language-button{min-width:38px;height:32px;padding:0 5px}
+  .language-code{display:none}
+  .play-here-hint{justify-content:flex-start;margin-left:4px}
+}

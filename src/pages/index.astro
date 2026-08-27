@@ -7,31 +7,31 @@ import Mascot from '../components/Mascot.astro';
 <BaseLayout>
   <Header />
 
-  <main>
+  <main data-page-title-key="home.pageTitle">
     <section class="hero">
-      <div class="hero-kicker"><span class="pulse-dot"></span> SISTEMA ONLINE</div>
-      <h1>Ideias que saíram<br /><span>da cabeça e viraram projeto.</span></h1>
-      <p>
+      <div class="hero-kicker"><span class="time-kicker-icon" aria-hidden="true">◷</span> <span data-i18n="home.timeline">Linha do Tempo Principal</span></div>
+      <h1><span data-i18n="home.hero.1">Ideias que saíram</span><br /><span data-i18n="home.hero.2">da cabeça e viraram projeto.</span></h1>
+      <p data-i18n="home.description">
         Um espaço onde reúno projetos, experiências e ferramentas desenvolvidas a partir de
         curiosidade, estudo e vontade de transformar ideias em algo que realmente funcione.
       </p>
       <div class="hero-actions">
-        <a class="button primary" href="#projetos">Ver projetos</a>
-        <a class="button secondary" href="#sobre">Sobre este lugar</a>
+        <a class="button primary" href="#projetos" data-i18n="home.viewProjects">Ver projetos</a>
+        <a class="button secondary" href="#sobre" data-i18n="home.aboutPlace">Sobre este lugar</a>
       </div>
       <div class="hero-console" aria-label="Mensagem da Senhorita Minuto">
         <span class="console-prompt">SM&gt;</span>
-        <span>Bem-vindo. O tempo é curto; os projetos não precisam ser.</span>
+        <span data-i18n="home.console">Bem-vindo. O tempo é curto; os projetos não precisam ser.</span>
       </div>
     </section>
 
     <section class="projects-section" id="projetos">
       <div class="section-heading">
         <div>
-          <span class="eyebrow">SELEÇÃO / 001</span>
-          <h2>Projetos em destaque</h2>
+          <span class="eyebrow" data-i18n="home.selection">SELEÇÃO / 001</span>
+          <h2 data-i18n="home.featured">Projetos em destaque</h2>
         </div>
-        <p>Jogos, ferramentas e experiências desenvolvidas em contextos diferentes, mas reunidas pelo mesmo princípio: aprender construindo.</p>
+        <p data-i18n="home.projectsIntro">Jogos, ferramentas e experiências desenvolvidas em contextos diferentes, mas reunidas pelo mesmo princípio: aprender construindo.</p>
       </div>
 
       <div class="project-grid">
@@ -42,6 +42,11 @@ import Mascot from '../components/Mascot.astro';
           href="/projetos/scratch"
           cta="Jogar e conhecer"
           status="PRONTO"
+          eyebrowKey="card.scratch.eyebrow"
+          titleKey="card.scratch.title"
+          descriptionKey="card.scratch.desc"
+          ctaKey="card.scratch.cta"
+          statusKey="card.scratch.status"
         />
         <ProjectCard
           eyebrow="EDTECH / ACLS"
@@ -50,6 +55,11 @@ import Mascot from '../components/Mascot.astro';
           href="/projetos/fernando"
           cta="Conhecer o projeto"
           status="EM DESENVOLVIMENTO"
+          eyebrowKey="card.fernando.eyebrow"
+          titleKey="card.fernando.title"
+          descriptionKey="card.fernando.desc"
+          ctaKey="card.fernando.cta"
+          statusKey="card.fernando.status"
         />
         <ProjectCard
           eyebrow="JOGO EDUCACIONAL / SAÚDE"
@@ -58,6 +68,11 @@ import Mascot from '../components/Mascot.astro';
           href="/projetos/jack-up"
           cta="Jogar Jack-UP"
           status="JOGÁVEL"
+          eyebrowKey="card.jack.eyebrow"
+          titleKey="card.jack.title"
+          descriptionKey="card.jack.desc"
+          ctaKey="card.jack.cta"
+          statusKey="card.jack.status"
         />
       </div>
     </section>
@@ -65,26 +80,26 @@ import Mascot from '../components/Mascot.astro';
     <section class="about-section" id="sobre">
       <div class="about-index">02</div>
       <div>
-        <span class="eyebrow">SOBRE ESTE HUB</span>
-        <h2>Senhorita Minuto é a porta de entrada.</h2>
-        <p>
+        <span class="eyebrow" data-i18n="about.eyebrow">SOBRE ESTE HUB</span>
+        <h2 data-i18n="about.title">Senhorita Minuto é a porta de entrada.</h2>
+        <p data-i18n="about.p1">
           Aqui, compartilho a minha jornada e os meus projetos. No entanto, o verdadeiro alicerce
           de tudo isso tem nome: Lycia. Dedico este site à minha esposa, a pessoa mais importante
           do meu mundo. A sua força me sustenta todos os dias e a minha admiração por ela é
           infinita. Sem o seu apoio, nada disso seria possível.
         </p>
-        <p>
+        <p data-i18n="about.p2">
           Este espaço também funciona como um arquivo em constante expansão. Novos projetos,
           experiências e ideias vão sendo adicionados à medida que ganham forma.
         </p>
-        <a class="about-github" href="https://github.com/Erick-Lamperouge" target="_blank" rel="noreferrer">Ver meus projetos no GitHub ↗</a>
+        <a class="about-github" href="https://github.com/Erick-Lamperouge" target="_blank" rel="noreferrer" data-i18n="about.github">Ver meus projetos no GitHub ↗</a>
       </div>
     </section>
   </main>
 
   <footer>
     <span>© {new Date().getFullYear()} Senhorita Minuto</span>
-    <span class="footer-status">● arquivo em expansão</span>
+    <span class="footer-status" data-i18n="footer.expanding">● arquivo em expansão</span>
   </footer>
 
   <Mascot />

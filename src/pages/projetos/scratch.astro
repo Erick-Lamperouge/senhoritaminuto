@@ -6,35 +6,43 @@ import ScratchCat from '../../components/ScratchCat.astro';
 ---
 <BaseLayout title="Projeto Scratch — Senhorita Minuto" description="Jogue o projeto Scratch diretamente no portfólio Senhorita Minuto.">
   <Header />
-  <main class="project-page project-page-refined project-page-standardized">
-    <a class="back-link" href="/#projetos">← Voltar aos projetos</a>
-    <span class="eyebrow">JOGO / SCRATCH</span>
+  <main class="project-page project-page-refined project-page-standardized" data-page-title-key="scratch.pageTitle">
+    <a class="back-link time-back-link" href="/" data-i18n="common.backTime">← Voltar no Tempo (Início)</a>
+
     <section class="project-hero-grid">
       <div class="project-hero-main">
-        <h1>Projeto Scratch</h1>
-        <p class="project-lead">Narrativa, interação e uma ameaça felina improvável — tudo reunido em uma experiência jogável criada no Scratch.</p>
+        <h1 data-i18n="card.scratch.title">Projeto Scratch</h1>
+        <p class="project-lead" data-i18n="scratch.lead">Narrativa, interação e uma ameaça felina improvável — tudo reunido em uma experiência jogável criada no Scratch.</p>
         <div class="project-actions emphasis-actions">
-          <a class="button primary action-main" href="https://scratch.mit.edu/projects/1280541113/" target="_blank" rel="noreferrer">Jogar agora ↗</a>
-          <a class="button secondary" href="#detalhes-projeto">Ver detalhes</a>
+          <a class="button primary action-main" href="#jogar" data-i18n="common.goGame">Ir para o jogo</a>
+          <a class="button secondary" href="#sobre-projeto" data-i18n="common.aboutProject">Sobre o projeto</a>
         </div>
       </div>
+
       <aside class="project-showcase-slot" aria-label="Personagem do projeto Scratch">
         <div class="showcase-shell showcase-scratch"><ScratchCat /></div>
       </aside>
     </section>
-    <div class="embed-shell top-embed-shell">
+
+    <div class="play-here-hint" aria-hidden="true">
+      <span data-i18n="common.playHere">Dá para jogar aqui</span>
+      <span class="play-here-arrow">↓</span>
+    </div>
+
+    <div class="embed-shell top-embed-shell" id="jogar">
       <iframe src="https://scratch.mit.edu/projects/1280541113/embed" title="Jogo no Scratch" allowfullscreen loading="eager"></iframe>
     </div>
-    <div class="project-details" id="detalhes-projeto">
+
+    <div class="project-details" id="sobre-projeto">
       <section>
-        <h2>Sobre o projeto</h2>
-        <p>Aqui você pode conhecer um projeto desenvolvido no Scratch e experimentar sua proposta de forma integrada ao portfólio. A ideia é apresentar não apenas o resultado, mas também a experiência interativa que faz parte dele.</p>
-        <p>A história parte de uma premissa bem-humorada: gatos estão se preparando para dominar o mundo. Entre personagens, escolhas e acontecimentos inesperados, o jogador acompanha essa pequena conspiração felina enquanto avança pela experiência.</p>
+        <h2 data-i18n="common.aboutProject">Sobre o projeto</h2>
+        <p data-i18n="scratch.about1">Aqui você pode conhecer um projeto desenvolvido no Scratch e experimentar sua proposta de forma integrada ao portfólio. A ideia é apresentar não apenas o resultado, mas também a experiência interativa que faz parte dele.</p>
+        <p data-i18n="scratch.about2">A história parte de uma premissa bem-humorada: gatos estão se preparando para dominar o mundo. Entre personagens, escolhas e acontecimentos inesperados, o jogador acompanha essa pequena conspiração felina enquanto avança pela experiência.</p>
       </section>
       <section>
-        <h2>Origem</h2>
-        <p>O projeto nasceu no Scratch e continua disponível em sua página original, com a mesma experiência que aparece incorporada aqui.</p>
-        <p><a class="text-link" href="https://scratch.mit.edu/projects/1280541113/" target="_blank" rel="noreferrer">Abrir projeto original no Scratch →</a></p>
+        <h2 data-i18n="scratch.origin">Origem</h2>
+        <p data-i18n="scratch.originText">O projeto nasceu no Scratch e continua disponível em sua página original, com a mesma experiência que aparece incorporada aqui.</p>
+        <p><a class="text-link" href="https://scratch.mit.edu/projects/1280541113/" target="_blank" rel="noreferrer" data-i18n="scratch.original">Abrir projeto original no Scratch →</a></p>
       </section>
     </div>
   </main>

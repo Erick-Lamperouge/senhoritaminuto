@@ -17,98 +17,102 @@ import '../styles/mascot.css';
     <span class="climb-platform"></span>
   </div>
 
-  <div class="wind-streaks" id="windStreaks" aria-hidden="true">
-    <span></span><span></span><span></span><span></span><span></span>
-  </div>
+  <div class="wind-streaks" id="windStreaks" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="rewind-clock-badge" id="rewindClock" aria-hidden="true"><span class="clock-face"></span><span class="clock-hand hour"></span><span class="clock-hand minute"></span></div>
 
-  <div class="rewind-clock-badge" id="rewindClock" aria-hidden="true">
-    <span class="clock-face"></span>
-    <span class="clock-hand hour"></span>
-    <span class="clock-hand minute"></span>
-  </div>
-
-  <div class="mine-event" id="mineEvent" aria-hidden="true">
-    <span class="mine-body"></span>
-    <span class="mine-prong p1"></span><span class="mine-prong p2"></span><span class="mine-prong p3"></span>
-  </div>
-  <div class="mine-blast" id="mineBlast" aria-hidden="true">
-    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-  </div>
-
-  <div class="leaf-shower" id="leafShower" aria-hidden="true">
-    <span class="leaf l1"></span><span class="leaf l2"></span><span class="leaf l3"></span><span class="leaf l4"></span>
-  </div>
+  <div class="mine-event" id="mineEvent" aria-hidden="true"><span class="mine-body"></span><span class="mine-prong p1"></span><span class="mine-prong p2"></span><span class="mine-prong p3"></span></div>
+  <div class="mine-blast" id="mineBlast" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="leaf-shower" id="leafShower" aria-hidden="true"><span class="leaf l1"></span><span class="leaf l2"></span><span class="leaf l3"></span><span class="leaf l4"></span></div>
 
   <a class="project-token" id="projectToken" href="/#projetos">
-    <span class="token-label">PROJETO ENCONTRADO</span>
+    <span class="token-label" data-i18n="mascot.projectToken">PROJETO ENCONTRADO</span>
     <strong id="projectTokenName">clique para olhar</strong>
     <span class="project-token-arrow">↗</span>
   </a>
 
-  <div class="mascot-traveler" id="mascotTraveler" data-mode="walk" data-side="left">
+  <div class="future-visitor" id="futureVisitor" hidden aria-hidden="true">
+    <div class="future-speech" id="futureSpeech" hidden></div>
+    <svg class="future-mascot-svg" viewBox="0 0 100 118" role="img" aria-label="Senhorita Minuto do futuro">
+      <g shape-rendering="crispEdges">
+        <path class="future-shadow" d="M23 104h56v8H23z" />
+        <path class="future-body" d="M28 24h44v5h8v57h-8v10H28V86h-8V29h8z" />
+        <path class="future-cap" d="M33 16h34v9H33zM41 10h18v6H41z" />
+        <path class="future-screen" d="M31 34h38v34H31z" />
+        <path class="future-eye" d="M38 47h7v8h-7zM56 47h7v8h-7z" />
+        <path class="future-mouth" d="M43 59h15v4H43z" />
+        <path class="future-panel" d="M34 74h32v8H34z" />
+        <path class="future-arm" d="M12 48h11v9H12zM77 48h11v9H77z" />
+        <path class="future-glove" d="M5 55h12v10H5zM83 55h12v10H83z" />
+        <path class="future-leg" d="M34 96h9v11h-9zM58 96h9v11h-9z" />
+        <path class="future-boot" d="M27 106h18v7H27zM57 106h18v7H57z" />
+      </g>
+    </svg>
+    <div class="repair-beam" id="repairBeam" aria-hidden="true"><span></span><span></span><span></span></div>
+  </div>
+
+  <div class="mascot-traveler" id="mascotTraveler" data-mode="walk" data-side="left" data-mood="neutral" data-crack="0">
     <div class="mascot-balloon" aria-hidden="true"><span>◌</span></div>
-
-    <div class="mascot-parachute" aria-hidden="true">
-      <span class="parachute-canopy"></span>
-      <span class="parachute-line l1"></span>
-      <span class="parachute-line l2"></span>
-      <span class="parachute-line l3"></span>
-    </div>
-
+    <div class="mascot-parachute" aria-hidden="true"><span class="parachute-canopy"></span><span class="parachute-line l1"></span><span class="parachute-line l2"></span><span class="parachute-line l3"></span></div>
     <div class="music-notes" id="musicNotes" aria-hidden="true"><span>♪</span><span>♫</span><span>♪</span></div>
     <div class="mascot-speech" id="mascotSpeech" role="status" hidden></div>
 
-    <div class="click-counter" id="clickCounter" aria-live="polite" hidden>
-      <span>Cliques</span>
-      <strong id="clickCounterValue">0</strong>
-    </div>
+    <div class="click-counter" id="clickCounter" aria-live="polite" hidden><span data-i18n="mascot.clicks">Cliques</span><strong id="clickCounterValue">0</strong></div>
 
     <button class="mascot-button" id="mascotButton" type="button" aria-label="Conversar com a Senhorita Minuto">
-      <span class="mascot-skate" aria-hidden="true">
-        <span class="skate-board"></span>
-        <span class="skate-wheel one"></span>
-        <span class="skate-wheel two"></span>
-      </span>
-
-      <span class="mascot-guitar" aria-hidden="true">
-        <span class="guitar-body"></span>
-        <span class="guitar-hole"></span>
-        <span class="guitar-neck"></span>
-        <span class="guitar-head"></span>
-        <span class="guitar-string s1"></span>
-        <span class="guitar-string s2"></span>
-      </span>
+      <span class="mascot-skate" aria-hidden="true"><span class="skate-board"></span><span class="skate-wheel one"></span><span class="skate-wheel two"></span></span>
+      <span class="mascot-guitar" aria-hidden="true"><span class="guitar-body"></span><span class="guitar-hole"></span><span class="guitar-neck"></span><span class="guitar-head"></span><span class="guitar-string s1"></span><span class="guitar-string s2"></span></span>
 
       <svg class="mascot-svg" viewBox="0 0 92 108" role="img" aria-label="Senhorita Minuto, assistente digital pixelada">
         <g shape-rendering="crispEdges">
-          <path class="hair-bow-wing" d="M63 12h5V8h6v4h4v6h-4v4h-6v-4h-5z" />
-          <path class="hair-bow-wing" d="M61 13h-4v-3h-5v4h5v4h4z" />
-          <path class="hair-bow-knot" d="M60 12h5v7h-5z" />
-
-          <path class="hair-back" d="M18 30h56v48H18z" />
-          <path class="body" d="M26 20h40v8h8v50h-8v10H26V78h-8V28h8z" />
-          <path class="screen" d="M30 32h32v30H30z" />
-          <path class="back-screen" d="M30 32h32v30H30z" />
-          <path class="eye" d="M35 42h7v7h-7zM51 42h7v7h-7z" />
-          <path class="mouth" d="M40 54h13v4H40z" />
-          <path class="panel" d="M31 68h30v8H31z" />
-          <path class="button-one" d="M35 70h5v4h-5z" />
-          <path class="button-two" d="M44 70h5v4h-5z" />
-          <path class="button-three" d="M53 70h5v4h-5z" />
-
-          <path class="arm arm-left" d="M10 50h8v8h-8zM4 58h10v7H4z" />
-          <path class="arm arm-right" d="M74 50h8v8h-8zM78 58h10v7H78z" />
-
-          <g class="leg-group leg-left">
-            <path class="leg" d="M31 88h8v12h-8z" />
-            <path class="shoe" d="M24 98h16v7H24z" />
-          </g>
-          <g class="leg-group leg-right">
-            <path class="leg" d="M54 88h8v12h-8z" />
-            <path class="shoe" d="M53 98h16v7H53z" />
+          <g class="piece bow-piece">
+            <path class="hair-bow-wing" d="M63 12h5V8h6v4h4v6h-4v4h-6v-4h-5z" />
+            <path class="hair-bow-wing" d="M61 13h-4v-3h-5v4h5v4h4z" />
+            <path class="hair-bow-knot" d="M60 12h5v7h-5z" />
           </g>
 
-          <path class="clock" d="M43 24h7v3h-7zM45 21h3v8h-3z" />
+          <path class="hair-back piece hair-piece" d="M18 30h56v48H18z" />
+          <path class="body piece body-piece" d="M26 20h40v8h8v50h-8v10H26V78h-8V28h8z" />
+
+          <g class="face-group piece face-piece">
+            <path class="screen" d="M30 32h32v30H30z" />
+            <path class="back-screen" d="M30 32h32v30H30z" />
+            <path class="eye eye-left" d="M35 42h7v7h-7z" />
+            <path class="eye eye-right" d="M51 42h7v7h-7z" />
+            <path class="mouth" d="M40 54h13v4H40z" />
+            <g class="happy-face">
+              <path class="happy-eye" d="M34 47h3v-3h3v3h3v3h-3v-2h-3v2h-3zM50 47h3v-3h3v3h3v3h-3v-2h-3v2h-3z" />
+              <path class="happy-smile" d="M39 53h4v3h7v-3h4v4h-4v3h-7v-3h-4z" />
+            </g>
+            <g class="evil-brows">
+              <path d="M34 39h10v3H38v2h-4zM49 39h10v5h-4v-2h-6z" />
+            </g>
+            <g class="screen-cracks">
+              <path class="crack crack-1" d="M45 33v8l-4 4 4 3-5 5" />
+              <path class="crack crack-2" d="M58 36l-5 6 3 4-5 5 4 8" />
+              <path class="crack crack-3" d="M32 51l7-3 4 4-3 8" />
+              <path class="crack crack-4" d="M47 45l6 3-2 5 7 4" />
+            </g>
+          </g>
+
+          <g class="panel-group piece panel-piece">
+            <path class="panel" d="M31 68h30v8H31z" />
+            <path class="button-one" d="M35 70h5v4h-5z" />
+            <path class="button-two" d="M44 70h5v4h-5z" />
+            <path class="button-three" d="M53 70h5v4h-5z" />
+          </g>
+
+          <g class="arm-unit arm-left piece arm-left-piece">
+            <path class="arm" d="M10 50h8v8h-8zM4 58h10v7H4z" />
+            <path class="glove" d="M1 62h13v8H1z" />
+          </g>
+          <g class="arm-unit arm-right piece arm-right-piece">
+            <path class="arm" d="M74 50h8v8h-8zM78 58h10v7H78z" />
+            <path class="glove" d="M78 62h13v8H78z" />
+          </g>
+
+          <g class="leg-group leg-left piece leg-left-piece"><path class="leg" d="M31 88h8v12h-8z" /><path class="shoe" d="M24 98h16v7H24z" /></g>
+          <g class="leg-group leg-right piece leg-right-piece"><path class="leg" d="M54 88h8v12h-8z" /><path class="shoe" d="M53 98h16v7H53z" /></g>
+          <path class="clock piece clock-piece" d="M43 24h7v3h-7zM45 21h3v8h-3z" />
         </g>
       </svg>
     </button>
