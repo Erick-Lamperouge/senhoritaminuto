@@ -7,60 +7,42 @@ import FernandoInline from '../../components/FernandoInline.astro';
 ---
 <BaseLayout title="FERNANDO — Senhorita Minuto" description="FERNANDO, simulador educacional de ACLS e PCR.">
   <Header />
-  <main class="project-page project-page-refined">
+  <main class="project-page project-page-refined project-page-standardized">
     <a class="back-link" href="/#projetos">← Voltar aos projetos</a>
     <span class="eyebrow">EDTECH / ACLS</span>
-    <div class="project-heading-row fernando-title-row">
-      <div>
+    <section class="project-hero-grid">
+      <div class="project-hero-main">
         <h1>FERNANDO</h1>
         <p class="project-lead">Simulador educacional para treinamento de parada cardiorrespiratória e raciocínio em ACLS.</p>
+        <div class="project-actions emphasis-actions">
+          <a class="button primary action-main" href="https://fernando-acls.vercel.app/" target="_blank" rel="noreferrer">Abrir simulador ↗</a>
+          <a class="button secondary" href="#detalhes-projeto">Ver detalhes</a>
+        </div>
       </div>
-      <FernandoInline />
-    </div>
-
-    <div class="project-actions emphasis-actions">
-      <a class="button primary action-main" href="https://fernando-acls.vercel.app/" target="_blank" rel="noreferrer">Abrir simulador ↗</a>
-      <a class="button secondary" href="#detalhes-projeto">Ver detalhes</a>
-    </div>
-
+      <aside class="project-showcase-slot" aria-label="Homenagem visual do projeto Fernando">
+        <div class="showcase-shell showcase-fernando"><FernandoInline /></div>
+      </aside>
+    </section>
     <div class="fernando-hero top-metrics-shell">
-      <div>
-        <span class="terminal-label">STATUS</span>
-        <strong>EM DESENVOLVIMENTO</strong>
-      </div>
-      <div>
-        <span class="terminal-label">FOCO</span>
-        <strong>PCR · ACLS · 5H/5T</strong>
-      </div>
-      <div>
-        <span class="terminal-label">EXPERIÊNCIA</span>
-        <strong>SIMULAÇÃO GUIADA</strong>
-      </div>
+      <div><span class="terminal-label">STATUS</span><strong>EM DESENVOLVIMENTO</strong></div>
+      <div><span class="terminal-label">FOCO</span><strong>PCR · ACLS · 5H/5T</strong></div>
+      <div><span class="terminal-label">EXPERIÊNCIA</span><strong>SIMULAÇÃO GUIADA</strong></div>
     </div>
-
     <div class="project-preview-card" id="detalhes-projeto">
       <strong class="preview-label">Acesso rápido</strong>
       <p>Se preferir, abra o FERNANDO diretamente em uma aba própria para usar a experiência completa do simulador.</p>
       <a class="button secondary" href="https://fernando-acls.vercel.app/" target="_blank" rel="noreferrer">Abrir em tela própria ↗</a>
     </div>
-
     <div class="project-details">
       <section>
         <h2>Sobre o projeto</h2>
-        <p>
-          FERNANDO é um simulador educacional voltado ao treinamento de PCR e raciocínio em ACLS. O projeto foi pensado
-          para apoiar aprendizagem prática, tomada de decisão e revisão estruturada de condutas em cenários críticos.
-        </p>
+        <p>FERNANDO é um simulador educacional voltado ao treinamento de PCR e raciocínio em ACLS. O projeto foi pensado para apoiar aprendizagem prática, tomada de decisão e revisão estruturada de condutas em cenários críticos.</p>
       </section>
       <section>
         <h2>Como funciona</h2>
-        <p>
-          A experiência coloca o usuário diante de situações que exigem reconhecimento de ritmos, escolha de intervenções,
-          administração de medicamentos e organização dos ciclos de atendimento, transformando conteúdo teórico em uma sequência de decisões.
-        </p>
+        <p>A experiência coloca o usuário diante de situações que exigem reconhecimento de ritmos, escolha de intervenções, administração de medicamentos e organização dos ciclos de atendimento, transformando conteúdo teórico em uma sequência de decisões.</p>
       </section>
     </div>
-
     <FernandoTribute />
   </main>
   <Mascot />

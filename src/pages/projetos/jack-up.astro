@@ -9,67 +9,40 @@ const hasLiveJackUp = jackUpUrl.length > 0;
 ---
 <BaseLayout title="Jack-UP — Senhorita Minuto" description="Jack-UP, jogo educacional em inglês voltado à área da saúde e ao estudo de fraturas.">
   <Header />
-  <main class="project-page project-page-refined">
+  <main class="project-page project-page-refined project-page-standardized">
     <a class="back-link" href="/#projetos">← Voltar aos projetos</a>
     <span class="eyebrow">JOGO EDUCACIONAL / SAÚDE</span>
-    <h1>Jack-UP</h1>
-    <p class="project-lead">Um jogo educacional em inglês que leva conteúdos sobre fraturas para uma experiência interativa e jogável.</p>
-
-    {hasLiveJackUp ? (
-      <div class="project-actions emphasis-actions">
-        <a class="button primary action-main" href={jackUpUrl} target="_blank" rel="noreferrer">Jogar agora ↗</a>
-        <a class="button secondary" href="#detalhes-projeto">Ver detalhes</a>
-      </div>
-    ) : (
-      <div class="project-actions emphasis-actions">
-        <a class="button secondary" href="#detalhes-projeto">Ver detalhes</a>
-      </div>
-    )}
-
-    <div class="fernando-hero top-metrics-shell">
-      <div>
-        <span class="terminal-label">FORMATO</span>
-        <strong>JOGO EDUCACIONAL</strong>
-      </div>
-      <div>
-        <span class="terminal-label">IDIOMA</span>
-        <strong>ENGLISH</strong>
-      </div>
-      <div>
-        <span class="terminal-label">CONTEÚDO</span>
-        <strong>FRATURAS · SAÚDE</strong>
-      </div>
-    </div>
-
-    {hasLiveJackUp ? (
-      <>
-        <div class="embed-shell jackup-shell top-embed-shell">
-          <iframe src={jackUpUrl} title="Jack-UP" allowfullscreen loading="eager"></iframe>
+    <section class="project-hero-grid">
+      <div class="project-hero-main">
+        <h1>Jack-UP</h1>
+        <p class="project-lead">Um jogo educacional em inglês que leva conteúdos sobre fraturas para uma experiência interativa e jogável.</p>
+        <div class="project-actions emphasis-actions">
+          {hasLiveJackUp ? (<a class="button primary action-main" href={jackUpUrl} target="_blank" rel="noreferrer">Jogar agora ↗</a>) : null}
+          <a class="button secondary" href="#detalhes-projeto">Ver detalhes</a>
         </div>
-      </>
-    ) : (
-      <section class="integration-ready">
-        <span class="eyebrow">INDISPONÍVEL NO MOMENTO</span>
-        <h2>O jogo ainda não está carregando nesta página.</h2>
-        <p>Assim que a versão pública estiver disponível, o Jack-UP poderá ser jogado diretamente por aqui.</p>
-      </section>
-    )}
-
+      </div>
+      <aside class="project-showcase-slot" aria-label="Resumo visual do projeto Jack-UP">
+        <div class="showcase-shell showcase-generic">
+          <span class="showcase-label">JOGO EDUCACIONAL</span>
+          <strong>ENGLISH</strong>
+          <p>Perguntas e desafios sobre fraturas em uma experiência voltada à área da saúde.</p>
+        </div>
+      </aside>
+    </section>
+    <div class="fernando-hero top-metrics-shell">
+      <div><span class="terminal-label">FORMATO</span><strong>JOGO EDUCACIONAL</strong></div>
+      <div><span class="terminal-label">IDIOMA</span><strong>ENGLISH</strong></div>
+      <div><span class="terminal-label">CONTEÚDO</span><strong>FRATURAS · SAÚDE</strong></div>
+    </div>
+    {hasLiveJackUp ? (<div class="embed-shell jackup-shell top-embed-shell"><iframe src={jackUpUrl} title="Jack-UP" allowfullscreen loading="eager"></iframe></div>) : (<section class="integration-ready"><span class="eyebrow">INDISPONÍVEL NO MOMENTO</span><h2>O jogo ainda não está carregando nesta página.</h2><p>Assim que a versão pública estiver disponível, o Jack-UP poderá ser jogado diretamente por aqui.</p></section>)}
     <div class="project-details" id="detalhes-projeto">
       <section>
         <h2>Sobre o projeto</h2>
-        <p>
-          Jack-UP é um jogo educacional em inglês desenvolvido para explorar conteúdos da área da saúde de forma interativa.
-          Ao longo da experiência, o jogador encontra perguntas e desafios relacionados a fraturas, avançando pelo jogo à medida
-          que responde às situações apresentadas.
-        </p>
+        <p>Jack-UP é um jogo educacional em inglês desenvolvido para explorar conteúdos da área da saúde de forma interativa. Ao longo da experiência, o jogador encontra perguntas e desafios relacionados a fraturas, avançando pelo jogo à medida que responde às situações apresentadas.</p>
       </section>
       <section>
         <h2>A experiência</h2>
-        <p>
-          O projeto combina aprendizagem e mecânicas de jogo em uma experiência simples e acessível, utilizando o inglês tanto
-          na interface quanto no conteúdo apresentado ao jogador.
-        </p>
+        <p>O projeto combina aprendizagem e mecânicas de jogo em uma experiência simples e acessível, utilizando o inglês tanto na interface quanto no conteúdo apresentado ao jogador.</p>
       </section>
     </div>
   </main>

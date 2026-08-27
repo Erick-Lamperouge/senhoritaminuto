@@ -6,14 +6,14 @@
 </div>
 
 <style>
-  .fernando-inline{position:relative;display:inline-flex;align-items:flex-end;justify-content:center;width:130px;height:118px;flex:0 0 130px}
-  .fernando-inline-button{width:100px;height:118px;border:0;background:transparent;padding:0;cursor:pointer;animation:fernando-inline-idle 4s ease-in-out infinite;transform-origin:center bottom}
+  .fernando-inline{position:relative;display:flex;align-items:center;justify-content:center;width:180px;height:170px;flex:0 0 180px}
+  .fernando-inline-button{width:130px;height:160px;border:0;background:transparent;padding:0;cursor:pointer;animation:fernando-inline-idle 4s ease-in-out infinite;transform-origin:center bottom}
   .fernando-inline-button img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.18));pointer-events:none;user-select:none}
   .fernando-inline-button:hover{animation-play-state:paused;transform:translateY(-2px)}
-  .fernando-inline-bubble{position:absolute;right:78px;bottom:56px;max-width:210px;width:fit-content;padding:8px 10px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.28);font-size:.69rem;line-height:1.34;z-index:10}
+  .fernando-inline-bubble{position:absolute;right:116px;bottom:88px;max-width:180px;width:fit-content;padding:8px 10px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.28);font-size:.67rem;line-height:1.32;z-index:10}
   .fernando-inline-bubble::after{content:'';position:absolute;right:-9px;top:50%;margin-top:-6px;width:12px;height:12px;background:#f2e4c4;border-right:3px solid #282c2b;border-top:3px solid #282c2b;transform:rotate(45deg)}
   @keyframes fernando-inline-idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
-  @media(max-width:720px){.fernando-inline{width:92px;height:88px;flex-basis:92px}.fernando-inline-button{width:76px;height:88px}.fernando-inline-bubble{right:54px;bottom:44px;max-width:170px;font-size:.62rem}}
+  @media(max-width:720px){.fernando-inline{width:116px;height:112px;flex-basis:116px}.fernando-inline-button{width:86px;height:108px}.fernando-inline-bubble{right:66px;bottom:54px;max-width:156px;font-size:.62rem}}
 </style>
 
 <script>
@@ -24,10 +24,10 @@
   if(inlineRoot instanceof HTMLElement && inlineButton instanceof HTMLButtonElement && inlineImg instanceof HTMLImageElement && inlineBubble instanceof HTMLElement){
     const POSES={ base:'/assets/characters/fernando-pixel.png', thumbs:'/assets/characters/fernando-thumbsup.png', thinking:'/assets/characters/fernando-thinking.png' };
     const LINES=[
-      {text:'Arigó!', pose:'thumbs', duration:2400},
-      {text:'Bora jogar dominó?', pose:'base', duration:2800},
-      {text:'Sou muito bom na dama, viu?', pose:'thumbs', duration:3200},
-      {text:'Minha família é do sertão. Povo arretado de bom!', pose:'thinking', duration:3600}
+      {text:'Arigó!', pose:'thumbs', duration:2200},
+      {text:'Bora jogar dominó?', pose:'base', duration:2600},
+      {text:'Sou muito bom na dama, viu?', pose:'thumbs', duration:2800},
+      {text:'Minha família é do sertão. Povo arretado de bom!', pose:'thinking', duration:3400}
     ];
     let timer=0; let idx=0;
     const speak=(entry)=>{inlineImg.src=POSES[entry.pose] || POSES.base; inlineBubble.textContent=entry.text; inlineBubble.hidden=false; window.clearTimeout(timer); timer=window.setTimeout(()=>{inlineBubble.hidden=true; inlineImg.src=POSES.base;},entry.duration);};

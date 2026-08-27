@@ -10,12 +10,14 @@ interface Props {
 
 const { eyebrow, title, description, href, cta, status } = Astro.props;
 ---
-<article class="project-card">
-  <div class="project-card-topline">
-    <span class="eyebrow">{eyebrow}</span>
-    {status && <span class="status">{status}</span>}
-  </div>
-  <h3>{title}</h3>
-  <p>{description}</p>
-  <a class="text-link" href={href}>{cta} <span aria-hidden="true">→</span></a>
-</article>
+<a class="project-card-link" href={href} aria-label={`${title} — ${cta}`}>
+  <article class="project-card">
+    <div class="project-card-topline">
+      <span class="eyebrow">{eyebrow}</span>
+      {status && <span class="status">{status}</span>}
+    </div>
+    <h3>{title}</h3>
+    <p>{description}</p>
+    <span class="text-link project-card-cta">{cta} <span aria-hidden="true">→</span></span>
+  </article>
+</a>
