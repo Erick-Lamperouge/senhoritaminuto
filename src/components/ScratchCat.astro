@@ -6,42 +6,36 @@
   <div class="cat-bubble" id="catBubble" hidden></div>
 
   <div class="time-wand" id="timeWand" aria-hidden="true">
-    <span class="wand-star">✦</span>
-    <span class="wand-stick"></span>
-    <span class="spark s1">✦</span>
-    <span class="spark s2">✧</span>
-    <span class="spark s3">✦</span>
+    <img src="/assets/props/scratch-wand.png" alt="" draggable="false" />
   </div>
 
-  <div class="cat-portal" id="catPortal" aria-hidden="true"><span></span></div>
+  <div class="cat-portal" id="catPortal" aria-hidden="true">
+    <img src="/assets/props/scratch-portal.png" alt="" draggable="false" />
+  </div>
   <div class="cat-rewind" id="catRewind" aria-hidden="true">REWIND&nbsp;&nbsp;00:03 ← 00:02 ← 00:01</div>
 </div>
 
 <style>
-  .scratch-cat-scene{position:relative;width:190px;height:160px;flex:0 0 190px;align-self:flex-end;margin-bottom:0}
-  .scratch-cat{position:absolute;right:4px;bottom:0;width:138px;height:138px;border:0;background:transparent;padding:0;cursor:pointer;z-index:4;transition:transform .28s ease,filter .28s ease}
+  .scratch-cat-scene{position:relative;width:210px;height:170px;flex:0 0 210px;align-self:flex-end;margin-bottom:0}
+  .scratch-cat{position:absolute;right:0;bottom:0;width:148px;height:148px;border:0;background:transparent;padding:0;cursor:pointer;z-index:4;transition:transform .28s ease,filter .28s ease}
   .scratch-cat:hover{transform:translateY(-3px)}
-  .scratch-cat img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(4px 5px 0 rgba(0,0,0,.2));pointer-events:none;user-select:none}
+  .scratch-cat img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(4px 5px 0 rgba(0,0,0,.22));pointer-events:none;user-select:none}
   .scratch-cat.idle{animation:cat-idle 3.2s ease-in-out infinite}
   .scratch-cat.alert{animation:cat-alert .7s steps(2,end) 2}
   @keyframes cat-idle{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-2px) rotate(.4deg)}}
   @keyframes cat-alert{50%{transform:translateY(-4px) scale(1.025)}}
 
-  .cat-bubble{position:absolute;left:-34px;bottom:122px;width:218px;padding:10px 12px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.72rem;line-height:1.4;z-index:12}
-  .cat-bubble::after{content:'';position:absolute;right:36px;bottom:-9px;width:12px;height:12px;background:#f2e4c4;border-right:3px solid #282c2b;border-bottom:3px solid #282c2b;transform:rotate(45deg)}
+  .cat-bubble{position:absolute;left:-18px;bottom:124px;width:226px;padding:10px 12px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.72rem;line-height:1.4;z-index:12}
+  .cat-bubble::after{content:'';position:absolute;right:40px;bottom:-9px;width:12px;height:12px;background:#f2e4c4;border-right:3px solid #282c2b;border-bottom:3px solid #282c2b;transform:rotate(45deg)}
 
-  .time-wand{position:absolute;left:8px;bottom:36px;width:88px;height:64px;opacity:0;z-index:10;transform:translateX(-26px) rotate(-18deg);transition:opacity .25s ease,transform .9s cubic-bezier(.2,.8,.2,1)}
-  .time-wand.active{opacity:1;transform:translateX(34px) rotate(8deg)}
-  .wand-star{position:absolute;right:0;top:0;color:#f0cf8d;font-size:1.8rem;text-shadow:0 0 12px rgba(240,207,141,.6)}
-  .wand-stick{position:absolute;right:23px;top:27px;width:48px;height:4px;background:#d5b36f;border:2px solid #3b3020;transform:rotate(-33deg);transform-origin:right center}
-  .spark{position:absolute;color:#6db8ad;font-size:.85rem;opacity:0}.time-wand.active .spark{animation:spark-pop 1.1s ease-out forwards}.spark.s1{right:2px;top:29px}.spark.s2{right:22px;top:-7px;animation-delay:.18s}.spark.s3{right:-8px;top:8px;animation-delay:.34s}
-  @keyframes spark-pop{0%{opacity:0;transform:scale(.3)}35%{opacity:1}100%{opacity:0;transform:translateY(-14px) scale(1.25)}}
+  .time-wand{position:absolute;left:4px;bottom:40px;width:98px;height:84px;opacity:0;z-index:10;transform:translateX(-26px) rotate(-18deg);transition:opacity .25s ease,transform .95s cubic-bezier(.2,.8,.2,1)}
+  .time-wand.active{opacity:1;transform:translateX(38px) rotate(8deg)}
+  .time-wand img,.cat-portal img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;user-select:none;pointer-events:none;mix-blend-mode:screen}
 
-  .cat-portal{position:absolute;right:24px;bottom:18px;width:92px;height:92px;opacity:0;transform:scale(.18);border:4px solid rgba(229,173,85,.86);border-radius:50%;box-shadow:0 0 0 5px rgba(109,184,173,.18),0 0 18px rgba(229,173,85,.55),inset 0 0 20px rgba(109,184,173,.32);transition:opacity .28s ease,transform .64s cubic-bezier(.1,.8,.2,1);overflow:hidden;z-index:5}
-  .cat-portal::before,.cat-portal::after{content:'';position:absolute;inset:9px;border:2px dashed rgba(240,207,141,.78);border-radius:50%;animation:portal-spin 1.3s linear infinite}.cat-portal::after{inset:20px 13px;border-color:rgba(109,184,173,.82);animation-direction:reverse;animation-duration:.9s}.cat-portal span{position:absolute;inset:26px 18px;background:radial-gradient(circle,rgba(244,235,215,.34),rgba(109,184,173,.08) 46%,transparent 72%);border-radius:50%}.cat-portal.active{opacity:1;transform:scale(1)}
-  @keyframes portal-spin{to{transform:rotate(360deg)}}
+  .cat-portal{position:absolute;right:10px;bottom:8px;width:118px;height:118px;opacity:0;transform:scale(.18);transition:opacity .28s ease,transform .68s cubic-bezier(.1,.8,.2,1);overflow:visible;z-index:5}
+  .cat-portal.active{opacity:1;transform:scale(1)}
 
-  .cat-rewind{position:absolute;left:-12px;bottom:12px;padding:6px 9px;background:rgba(12,17,18,.94);border:1px solid rgba(109,184,173,.5);color:#f0cf8d;font-size:.58rem;letter-spacing:.04em;opacity:0;z-index:11;white-space:nowrap}.cat-rewind.active{animation:rewind-label 2.3s steps(4,end) both}
+  .cat-rewind{position:absolute;left:-6px;bottom:8px;padding:6px 9px;background:rgba(12,17,18,.94);border:1px solid rgba(109,184,173,.5);color:#f0cf8d;font-size:.58rem;letter-spacing:.04em;opacity:0;z-index:11;white-space:nowrap}.cat-rewind.active{animation:rewind-label 2.3s steps(4,end) both}
   @keyframes rewind-label{0%{opacity:0}14%,84%{opacity:1}100%{opacity:0}}
 
   .scratch-cat.rewinding{animation:cat-rewind 2s steps(6,end) both}
@@ -49,7 +43,7 @@
   @keyframes cat-rewind{0%{filter:none}25%{filter:hue-rotate(60deg)}50%{filter:hue-rotate(-70deg) contrast(1.18)}75%{filter:hue-rotate(25deg)}100%{filter:none}}
   @keyframes cat-portal-travel{0%{transform:translateX(0) scale(1);opacity:1}30%{transform:translateX(-12px) scale(.93);opacity:.78}50%{transform:translateX(-4px) scale(.42);opacity:.2}68%{transform:translateX(5px) scale(.24);opacity:.08}100%{transform:translateX(0) scale(1);opacity:1}}
 
-  @media(max-width:720px){.scratch-cat-scene{width:138px;height:126px;flex-basis:138px}.scratch-cat{width:104px;height:104px}.cat-bubble{left:-72px;bottom:100px;width:188px;font-size:.68rem}.cat-portal{width:68px;height:68px;right:18px;bottom:12px}.cat-rewind{left:-26px;bottom:0;font-size:.5rem}}
+  @media(max-width:720px){.scratch-cat-scene{width:148px;height:130px;flex-basis:148px}.scratch-cat{width:108px;height:108px}.cat-bubble{left:-76px;bottom:104px;width:190px;font-size:.68rem}.cat-portal{width:78px;height:78px;right:10px;bottom:8px}.time-wand{width:70px;height:60px;left:-2px;bottom:30px}.cat-rewind{left:-26px;bottom:0;font-size:.5rem}}
 </style>
 
 <script>
