@@ -7,10 +7,14 @@ import '../styles/mascot.css';
   <div class="time-portal portal-right" id="portalRight" aria-hidden="true"><span></span></div>
 
   <div class="climb-route climb-route-left" id="climbRouteLeft" aria-hidden="true">
-    <span class="hold h1"></span><span class="hold h2"></span><span class="hold h3"></span><span class="hold h4"></span><span class="hold h5"></span>
+    <span class="hold h1"></span><span class="hold h2"></span><span class="hold h3"></span><span class="hold h4"></span>
+    <span class="hold h5"></span><span class="hold h6"></span><span class="hold h7"></span><span class="hold h8"></span>
+    <span class="climb-platform"></span>
   </div>
   <div class="climb-route climb-route-right" id="climbRouteRight" aria-hidden="true">
-    <span class="hold h1"></span><span class="hold h2"></span><span class="hold h3"></span><span class="hold h4"></span><span class="hold h5"></span>
+    <span class="hold h1"></span><span class="hold h2"></span><span class="hold h3"></span><span class="hold h4"></span>
+    <span class="hold h5"></span><span class="hold h6"></span><span class="hold h7"></span><span class="hold h8"></span>
+    <span class="climb-platform"></span>
   </div>
 
   <div class="wind-streaks" id="windStreaks" aria-hidden="true">
@@ -34,10 +38,12 @@ import '../styles/mascot.css';
   <a class="project-token" id="projectToken" href="/#projetos">
     <span class="token-label">PROJETO ENCONTRADO</span>
     <strong id="projectTokenName">clique para olhar</strong>
+    <span class="project-token-arrow">↗</span>
   </a>
 
   <div class="mascot-traveler" id="mascotTraveler" data-mode="walk" data-side="left">
     <div class="mascot-balloon" aria-hidden="true"><span>◌</span></div>
+    <div class="music-notes" id="musicNotes" aria-hidden="true"><span>♪</span><span>♫</span><span>♪</span></div>
     <div class="mascot-speech" id="mascotSpeech" role="status" hidden></div>
 
     <button class="mascot-button" id="mascotButton" type="button" aria-label="Conversar com a Senhorita Minuto">
@@ -45,6 +51,15 @@ import '../styles/mascot.css';
         <span class="skate-board"></span>
         <span class="skate-wheel one"></span>
         <span class="skate-wheel two"></span>
+      </span>
+
+      <span class="mascot-guitar" aria-hidden="true">
+        <span class="guitar-body"></span>
+        <span class="guitar-hole"></span>
+        <span class="guitar-neck"></span>
+        <span class="guitar-head"></span>
+        <span class="guitar-string s1"></span>
+        <span class="guitar-string s2"></span>
       </span>
 
       <svg class="mascot-svg" viewBox="0 0 92 108" role="img" aria-label="Senhorita Minuto, assistente digital pixelada">
@@ -62,8 +77,10 @@ import '../styles/mascot.css';
           <path class="button-one" d="M35 70h5v4h-5z" />
           <path class="button-two" d="M44 70h5v4h-5z" />
           <path class="button-three" d="M53 70h5v4h-5z" />
-          <path class="arm arm-left" d="M10 43h8v8h-8zM4 51h10v7H4z" />
-          <path class="arm arm-right" d="M74 43h8v8h-8zM78 51h10v7H78z" />
+
+          <!-- Braços mais baixos, aproximadamente no nível da boca. -->
+          <path class="arm arm-left" d="M10 50h8v8h-8zM4 58h10v7H4z" />
+          <path class="arm arm-right" d="M74 50h8v8h-8zM78 58h10v7H78z" />
 
           <g class="leg-group leg-left">
             <path class="leg" d="M31 88h8v12h-8z" />
