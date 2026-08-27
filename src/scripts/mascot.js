@@ -7,10 +7,12 @@ const climbRouteLeft=document.querySelector('#climbRouteLeft');
 const climbRouteRight=document.querySelector('#climbRouteRight');
 const windStreaks=document.querySelector('#windStreaks');
 const rewindClock=document.querySelector('#rewindClock');
+const mineEvent=document.querySelector('#mineEvent');
+const mineBlast=document.querySelector('#mineBlast');
 const projectToken=document.querySelector('#projectToken');
 const projectTokenName=document.querySelector('#projectTokenName');
 
-if(traveler instanceof HTMLElement&&button instanceof HTMLButtonElement&&speech instanceof HTMLElement&&portalLeft instanceof HTMLElement&&portalRight instanceof HTMLElement&&climbRouteLeft instanceof HTMLElement&&climbRouteRight instanceof HTMLElement&&windStreaks instanceof HTMLElement&&rewindClock instanceof HTMLElement&&projectToken instanceof HTMLAnchorElement&&projectTokenName instanceof HTMLElement){
+if(traveler instanceof HTMLElement&&button instanceof HTMLButtonElement&&speech instanceof HTMLElement&&portalLeft instanceof HTMLElement&&portalRight instanceof HTMLElement&&climbRouteLeft instanceof HTMLElement&&climbRouteRight instanceof HTMLElement&&windStreaks instanceof HTMLElement&&rewindClock instanceof HTMLElement&&mineEvent instanceof HTMLElement&&mineBlast instanceof HTMLElement&&projectToken instanceof HTMLAnchorElement&&projectTokenName instanceof HTMLElement){
   const phrases=[
     'Eu cuido do tempo. Dos bugs, a gente negocia.',
     'Projetos em destaque ficam logo ali. Eu recomendo começar por um deles.',
@@ -54,6 +56,7 @@ if(traveler instanceof HTMLElement&&button instanceof HTMLButtonElement&&speech 
   const wideLayout=()=>window.innerWidth>=1180;
   const baseTop=()=>Math.max(108,window.innerHeight-148);
   const xFor=s=>s==='left'?20:Math.max(20,window.innerWidth-116);
+  const laneX=(s,offset)=>s==='left'?Math.max(10,20+offset):Math.max(10,window.innerWidth-116-offset);
 
   function faceInward(){traveler.style.setProperty('--facing','1')}
   function setPosition(s,top,instant=false){
@@ -62,6 +65,7 @@ if(traveler instanceof HTMLElement&&button instanceof HTMLButtonElement&&speech 
     if(instant){traveler.getBoundingClientRect();traveler.classList.remove('no-travel-transition')}
   }
   function say(message,duration=4800){speech.textContent=message;speech.hidden=false;clearTimeout(speechTimer);speechTimer=setTimeout(()=>{speech.hidden=true},duration)}
+  function hideSpeech(){clearTimeout(speechTimer);speech.hidden=true}
 
   function playRetroChime(){
     try{
@@ -72,9 +76,12 @@ if(traveler instanceof HTMLElement&&button instanceof HTMLButtonElement&&speech 
     }catch{}
   }
 
-  function clearEphemera(){windStreaks.classList.remove('active');rewindClock.classList.remove('active');projectToken.classList.remove('active');climbRouteLeft.classList.remove('active');climbRouteRight.classList.remove('active');clearTimeout(projectTimer)}
+  function clearEphemera(){
+    windStreaks.classList.remove('active');rewindClock.classList.remove('active');projectToken.classList.remove('active');climbRouteLeft.classList.remove('active');climbRouteRight.classList.remove('active');mineEvent.classList.remove('active');mineBlast.classList.remove('active');clearTimeout(projectTimer)
+  }
   function placeWindAndClock(top){const left=side==='left'?10:Math.max(10,window.innerWidth-150);windStreaks.style.left=`${left}px`;windStreaks.style.top=`${Math.max(40,top-10)}px`;rewindClock.style.left=`${side==='left'?70:Math.max(10,window.innerWidth-130)}px`;rewindClock.style.top=`${Math.max(24,top-40)}px`}
   function chooseProject(){const p=projectTargets[Math.floor(Math.random()*projectTargets.length)];projectToken.href=p.href;projectTokenName.textContent=p.name;projectToken.style.left=`${side==='left'?86:Math.max(24,window.innerWidth-245)}px`;return p}
+  function placeMine(){const x=side==='left'?42:Math.max(18,window.innerWidth-92);mineEvent.style.left=`${x}px`;mineEvent.style.top=`${baseTop()+96}px`;mineBlast.style.left=`${x-26}px`;mineBlast.style.top=`${baseTop()+58}px`}
 
   function isHorizontalPathClear(){
     if(!wideLayout())return false;
@@ -100,23 +107,39 @@ if(traveler instanceof HTMLElement&&button instanceof HTMLButtonElement&&speech 
   function crossToOtherSide(){if(!wideLayout())return;if(isHorizontalPathClear())skateAcross();else portalJump()}
 
   function balloonDrop(){
-    if(busy||reducedMotion())return;busy=true;clearEphemera();traveler.dataset.mode='balloon-drop';const landingTop=baseTop();
-    say('uuuh...',1900);traveler.style.transition='';setPosition(side,-170,true);traveler.getBoundingClientRect();traveler.classList.add('balloon-falling');traveler.style.top=`${landingTop}px`;
-    setTimeout(()=>{traveler.classList.remove('balloon-falling');traveler.dataset.mode='impact'},1720);
-    setTimeout(()=>{traveler.dataset.mode='rewind'},2240);
-    setTimeout(()=>{traveler.dataset.mode='walk';setPosition(side,landingTop,true);busy=false},3180)
+    if(busy||reducedMotion())return;busy=true;clearEphemera();hideSpeech();
+    const landingTop=baseTop();placeMine();setPosition(side,landingTop,true);traveler.dataset.mode='mine-step';mineEvent.classList.add('active');
+    setTimeout(()=>say('...isso estava aí antes?',850),180);
+    setTimeout(()=>{
+      mineBlast.classList.add('active');mineEvent.classList.remove('active');traveler.dataset.mode='blast';traveler.style.transition='top .62s cubic-bezier(.18,.78,.25,1),left .25s ease';traveler.style.top='-118px';
+    },760);
+    setTimeout(()=>{
+      mineBlast.classList.remove('active');traveler.dataset.mode='balloon-drop';say('uuuh...',3100);
+      traveler.classList.add('balloon-falling');
+      const topPoints=[-70,Math.round(landingTop*.18),Math.round(landingTop*.4),Math.round(landingTop*.65),landingTop];
+      const offsets=[34,6,42,12,28];
+      const stepMs=490;
+      topPoints.forEach((top,index)=>setTimeout(()=>{
+        traveler.style.top=`${top}px`;traveler.style.left=`${laneX(side,offsets[index])}px`;
+      },index*stepMs));
+      setTimeout(()=>{
+        traveler.classList.remove('balloon-falling');traveler.dataset.mode='impact';traveler.style.left=`${xFor(side)}px`;
+      },stepMs*topPoints.length+40);
+      setTimeout(()=>{traveler.dataset.mode='rewind'},stepMs*topPoints.length+560);
+      setTimeout(()=>{traveler.dataset.mode='walk';setPosition(side,landingTop,true);busy=false},stepMs*topPoints.length+1500);
+    },1460)
   }
 
   function climbAdventure(){
-    if(busy||reducedMotion()||!wideLayout())return;busy=true;clearEphemera();
+    if(busy||reducedMotion()||!wideLayout())return;busy=true;clearEphemera();hideSpeech();
     const route=side==='left'?climbRouteLeft:climbRouteRight,positions=[baseTop(),baseTop()-88,baseTop()-178,baseTop()-268,98],fallFrom=positions[3],fallTo=positions[1]+18;
     route.classList.add('active');traveler.style.transition='top .46s cubic-bezier(.38,.03,.26,.98),left .2s ease,opacity .28s ease,transform .35s ease,filter .35s ease';traveler.dataset.mode='climb';setPosition(side,positions[0],true);
     positions.slice(1,4).forEach((pos,index)=>setTimeout(()=>{traveler.style.top=`${pos}px`},420+index*520));
-    setTimeout(()=>{traveler.dataset.mode='climb-fall';placeWindAndClock(fallFrom);windStreaks.classList.add('active');traveler.style.transition='top .72s cubic-bezier(.52,.03,.92,.36),left .2s ease,opacity .28s ease,transform .35s ease,filter .35s ease';traveler.style.top=`${fallTo}px`},2100);
-    setTimeout(()=>{windStreaks.classList.remove('active');rewindClock.classList.add('active');traveler.dataset.mode='climb-rewind';traveler.style.transition='top .58s cubic-bezier(.14,.82,.24,1),left .2s ease,opacity .28s ease,transform .35s ease,filter .35s ease';traveler.style.top=`${fallFrom}px`},2860);
-    setTimeout(()=>{rewindClock.classList.remove('active');traveler.dataset.mode='climb-recover';traveler.style.transition='top .52s cubic-bezier(.38,.03,.26,.98),left .2s ease,opacity .28s ease,transform .35s ease,filter .35s ease';traveler.style.top=`${positions[4]}px`},3520);
-    setTimeout(()=>{traveler.dataset.mode='walk';const project=chooseProject();projectToken.classList.add('active');say(`Olha esse projeto que incrível: ${project.name}. Clica nele pra olhar.`,7000);projectTimer=setTimeout(()=>projectToken.classList.remove('active'),5000)},4200);
-    setTimeout(()=>{route.classList.remove('active');setPosition(side,baseTop(),true);traveler.style.transition='';busy=false},7600)
+    setTimeout(()=>{traveler.dataset.mode='climb-fall';placeWindAndClock(fallFrom);windStreaks.classList.add('active');traveler.style.transition='top .92s cubic-bezier(.52,.03,.92,.36),left .2s ease,opacity .28s ease,transform .35s ease,filter .35s ease';traveler.style.top=`${fallTo}px`},2100);
+    setTimeout(()=>{windStreaks.classList.remove('active');rewindClock.classList.add('active');traveler.dataset.mode='climb-rewind';traveler.style.transition='top 1.08s cubic-bezier(.14,.82,.24,1),left .2s ease,opacity .28s ease,transform .35s ease,filter .35s ease';traveler.style.top=`${fallFrom}px`},3620);
+    setTimeout(()=>{rewindClock.classList.remove('active');traveler.dataset.mode='climb-recover';traveler.style.transition='top .72s cubic-bezier(.38,.03,.26,.98),left .2s ease,opacity .28s ease,transform .35s ease,filter .35s ease';traveler.style.top=`${positions[4]}px`},4900);
+    setTimeout(()=>{traveler.dataset.mode='project-found';const project=chooseProject();projectToken.classList.add('active');say(`Olha esse projeto que incrível: ${project.name}. Clica nele pra olhar.`,7600);projectTimer=setTimeout(()=>projectToken.classList.remove('active'),5600)},5750);
+    setTimeout(()=>{route.classList.remove('active');projectToken.classList.remove('active');setPosition(side,baseTop(),true);traveler.dataset.mode='walk';traveler.style.transition='';busy=false},9400)
   }
 
   function ordinaryMove(){traveler.dataset.mode='walk';setPosition(side,baseTop(),true)}
