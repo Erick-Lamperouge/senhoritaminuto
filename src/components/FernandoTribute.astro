@@ -11,7 +11,7 @@
 
   <div class="tribute-character-wrap">
     <div class="tribute-bubble" id="fernandoBubble" hidden></div>
-    <button class="fernando-character" id="fernandoCharacter" type="button" aria-label="Conversar com Fernando">
+    <button class="fernando-character" id="fernandoCharacter" type="button" aria-label="Conversar com Fernando" data-pose="base">
       <img id="fernandoCharacterImg" src="/assets/characters/fernando-pixel.png" alt="Fernando em caricatura pixelada" draggable="false" />
     </button>
     <div class="tribute-prop" id="fernandoProp" aria-hidden="true"></div>
@@ -19,49 +19,48 @@
 </section>
 
 <style>
-  .fernando-tribute{margin:72px 0 54px;padding:34px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.022),rgba(255,255,255,.005));display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:36px;align-items:center;overflow:visible}
+  .fernando-tribute{margin:72px 0 54px;padding:34px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.022),rgba(255,255,255,.005));display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:36px;align-items:center;overflow:visible}
   .tribute-copy h2{font-family:Georgia,'Times New Roman',serif;font-weight:500;font-size:clamp(1.9rem,3.5vw,3rem);line-height:1.04;margin:10px 0 18px;letter-spacing:-.03em}
   .tribute-copy p{color:var(--muted);max-width:680px}
   .tribute-note{font-size:.76rem;opacity:.82;margin-top:20px}
 
-  .tribute-character-wrap{position:relative;min-height:308px;display:flex;align-items:flex-end;justify-content:center;padding-right:92px}
-  .fernando-character{width:212px;height:286px;padding:0;border:0;background:transparent;cursor:pointer;position:relative;z-index:3;transform-origin:center bottom;animation:fernando-idle 4.2s ease-in-out infinite}
+  .tribute-character-wrap{position:relative;min-height:316px;display:flex;align-items:flex-end;justify-content:center;padding-right:106px}
+  .fernando-character{width:220px;height:294px;padding:0;border:0;background:transparent;cursor:pointer;position:relative;z-index:3;transform-origin:center bottom;animation:fernando-idle 4.2s ease-in-out infinite}
   .fernando-character:hover{animation-play-state:paused;transform:translateY(-3px)}
-  .fernando-character img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;pointer-events:none;user-select:none;filter:drop-shadow(5px 7px 0 rgba(0,0,0,.22))}
+  .fernando-character img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;pointer-events:none;user-select:none;filter:drop-shadow(5px 7px 0 rgba(0,0,0,.22));transform-origin:center bottom}
+  .fernando-character[data-pose='base'] img{transform:translateY(0) scale(1)}
+  .fernando-character[data-pose='thumbs'] img{transform:translateY(0) scale(1)}
+  .fernando-character[data-pose='thinking'] img{transform:translateY(0) scale(1)}
+
   @keyframes fernando-idle{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-3px) rotate(.45deg)}}
   .fernando-character.pose-pop{animation:fernando-pose-pop .72s ease-in-out 2}
   @keyframes fernando-pose-pop{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-4px) scale(1.015)}}
 
-  .tribute-bubble{position:absolute;right:214px;top:20px;width:254px;padding:11px 13px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.74rem;line-height:1.42;z-index:8}
-  .tribute-bubble::after{content:'';position:absolute;right:-9px;top:48px;width:13px;height:13px;background:#f2e4c4;border-right:3px solid #282c2b;border-top:3px solid #282c2b;transform:rotate(45deg)}
+  .tribute-bubble{position:absolute;right:250px;top:18px;width:244px;padding:12px 14px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.74rem;line-height:1.42;z-index:8}
+  .tribute-bubble::after{content:'';position:absolute;right:-9px;top:62px;width:13px;height:13px;background:#f2e4c4;border-right:3px solid #282c2b;border-top:3px solid #282c2b;transform:rotate(45deg)}
 
-  .tribute-prop{position:absolute;right:8px;bottom:112px;min-width:76px;min-height:64px;opacity:0;transform:translateY(8px) scale(.8);transition:opacity .22s ease,transform .3s ease;z-index:2;background:rgba(8,12,14,.42);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(4px);border-radius:14px;padding:8px 10px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);pointer-events:none}
+  .tribute-prop{position:absolute;right:0;bottom:118px;width:100px;height:76px;opacity:0;transform:translateY(8px) scale(.86);transition:opacity .22s ease,transform .3s ease;z-index:2;background:linear-gradient(180deg,rgba(15,20,22,.72),rgba(8,12,14,.52));border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(4px);border-radius:16px;padding:8px 10px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);pointer-events:none}
   .tribute-prop.active{opacity:1;transform:translateY(0) scale(1)}
   .tribute-prop img{display:block;image-rendering:pixelated;user-select:none;pointer-events:none;max-width:100%;height:auto}
-
-  .tribute-prop[data-prop='domino']{right:0;bottom:102px;min-width:88px;min-height:68px}
   .tribute-prop[data-prop='domino'] img{width:28px}
-
-  .tribute-prop[data-prop='checkers']{right:8px;bottom:116px;min-width:96px;min-height:72px}
-  .tribute-prop[data-prop='checkers'] img{width:68px}
-
-  .tribute-prop[data-prop='heart']{right:18px;bottom:134px;min-width:70px;min-height:62px}
-  .tribute-prop[data-prop='heart'] img{width:42px}
+  .tribute-prop[data-prop='checkers'] img{width:62px}
+  .tribute-prop[data-prop='heart'] img{width:40px}
 
   @media(max-width:980px){
     .fernando-tribute{grid-template-columns:1fr}
-    .tribute-character-wrap{min-height:270px;justify-content:flex-start;padding-right:0;padding-left:12px}
-    .tribute-bubble{left:214px;right:auto;top:24px}
+    .tribute-character-wrap{min-height:282px;justify-content:flex-start;padding-right:0;padding-left:10px}
+    .tribute-bubble{left:214px;right:auto;top:18px}
     .tribute-bubble::after{left:-9px;right:auto;border-right:0;border-top:0;border-left:3px solid #282c2b;border-bottom:3px solid #282c2b}
-    .tribute-prop,.tribute-prop[data-prop='domino'],.tribute-prop[data-prop='checkers'],.tribute-prop[data-prop='heart']{right:auto;left:176px;bottom:20px}
+    .tribute-prop{right:auto;left:176px;bottom:18px}
   }
+
   @media(max-width:620px){
     .fernando-tribute{padding:24px}
-    .fernando-character{width:170px;height:232px}
-    .tribute-character-wrap{min-height:236px;padding-left:0}
+    .fernando-character{width:176px;height:238px}
+    .tribute-character-wrap{min-height:240px;padding-left:0}
     .tribute-bubble{left:118px;top:8px;width:194px;font-size:.69rem}
-    .tribute-prop,.tribute-prop[data-prop='domino'],.tribute-prop[data-prop='checkers'],.tribute-prop[data-prop='heart']{left:138px;bottom:8px}
-    .tribute-prop[data-prop='checkers'] img{width:58px}
+    .tribute-prop{left:138px;bottom:8px;width:92px;height:70px}
+    .tribute-prop[data-prop='checkers'] img{width:54px}
   }
 </style>
 
@@ -79,36 +78,11 @@
     };
 
     const LINES = [
-      {
-        text: 'Arigó!',
-        pose: 'thumbs',
-        prop: null,
-        duration: 3600
-      },
-      {
-        text: 'Minha família é do sertão. Povo arretado de bom!',
-        pose: 'thinking',
-        prop: null,
-        duration: 4200
-      },
-      {
-        text: 'Bora jogar dominó? Aí a conversa fica séria.',
-        pose: 'base',
-        prop: 'domino',
-        duration: 4400
-      },
-      {
-        text: 'Sou muito bom na dama, viu?',
-        pose: 'thumbs',
-        prop: 'checkers',
-        duration: 4200
-      },
-      {
-        text: 'A primeira fala de Valentina foi “Vovô”. Essa eu guardo comigo.',
-        pose: 'thinking',
-        prop: 'heart',
-        duration: 5200
-      }
+      { text: 'Arigó!', pose: 'thumbs', prop: null, duration: 3600 },
+      { text: 'Minha família é do sertão. Povo arretado de bom!', pose: 'thinking', prop: null, duration: 4200 },
+      { text: 'Bora jogar dominó? Aí a conversa fica séria.', pose: 'base', prop: 'domino', duration: 4400 },
+      { text: 'Sou muito bom na dama, viu?', pose: 'thumbs', prop: 'checkers', duration: 4200 },
+      { text: 'A primeira fala de Valentina foi “Vovô”. Essa eu guardo comigo.', pose: 'thinking', prop: 'heart', duration: 5200 }
     ];
 
     let bubbleTimer = 0;
@@ -116,6 +90,7 @@
     let lastIndex = -1;
 
     const resetPose = () => {
+      fernando.dataset.pose = 'base';
       fernandoImg.src = POSES.base;
     };
 
@@ -128,7 +103,6 @@
     const renderProp = (kind) => {
       clearProp();
       if (!kind) return;
-
       prop.dataset.prop = kind;
 
       if (kind === 'domino') {
@@ -136,18 +110,10 @@
           <img src="/assets/props/domino_piece_1.png" alt="" draggable="false" />
           <img src="/assets/props/domino_piece_2.png" alt="" draggable="false" />
         `;
-      }
-
-      if (kind === 'checkers') {
-        prop.innerHTML = `
-          <img src="/assets/props/checker_piece.png" alt="" draggable="false" />
-        `;
-      }
-
-      if (kind === 'heart') {
-        prop.innerHTML = `
-          <img src="/assets/props/heart_small.png" alt="" draggable="false" />
-        `;
+      } else if (kind === 'checkers') {
+        prop.innerHTML = `<img src="/assets/props/checker_piece.png" alt="" draggable="false" />`;
+      } else if (kind === 'heart') {
+        prop.innerHTML = `<img src="/assets/props/heart_small.png" alt="" draggable="false" />`;
       }
 
       prop.classList.add('active');
@@ -156,6 +122,7 @@
     const showLine = (entry) => {
       bubble.textContent = entry.text;
       bubble.hidden = false;
+      fernando.dataset.pose = entry.pose;
       fernandoImg.src = POSES[entry.pose] || POSES.base;
 
       fernando.classList.remove('pose-pop');
@@ -175,9 +142,7 @@
 
     const randomLine = () => {
       let next = Math.floor(Math.random() * LINES.length);
-      if (LINES.length > 1 && next === lastIndex) {
-        next = (next + 1) % LINES.length;
-      }
+      if (LINES.length > 1 && next === lastIndex) next = (next + 1) % LINES.length;
       lastIndex = next;
       showLine(LINES[next]);
     };
