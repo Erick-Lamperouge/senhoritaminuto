@@ -1,0 +1,108 @@
+<div class="scratch-cat-scene" id="scratchCatScene" aria-label="Interação entre um gato pixelado e a Senhorita Minuto">
+  <button class="scratch-cat" id="scratchCat" type="button" aria-label="Gato pixelado laranja">
+    <svg viewBox="0 0 96 82" role="img" aria-hidden="true" shape-rendering="crispEdges">
+      <path class="cat-tail" d="M68 52h10v-8h8v-8h6v26h-8v8H66z" />
+      <path class="cat-body" d="M26 34h42v8h8v30H22V42h4z" />
+      <path class="cat-ear" d="M24 34V14h10v8h18v-8h10v20z" />
+      <path class="cat-face" d="M28 28h32v26H28z" />
+      <path class="cat-eye" d="M33 34h6v7h-6zM49 34h6v7h-6z" />
+      <path class="cat-nose" d="M42 43h5v4h-5z" />
+      <path class="cat-mouth" d="M38 49h5v3h5v-3h5v6H38z" />
+      <path class="cat-paw" d="M26 68h13v8H26zM56 68h13v8H56z" />
+    </svg>
+  </button>
+
+  <div class="cat-bubble" id="catBubble" hidden></div>
+
+  <div class="time-wand" id="timeWand" aria-hidden="true">
+    <span class="wand-star">✦</span>
+    <span class="wand-stick"></span>
+    <span class="spark s1">✦</span>
+    <span class="spark s2">✧</span>
+    <span class="spark s3">✦</span>
+  </div>
+
+  <div class="cat-rewind" id="catRewind" aria-hidden="true">REWIND&nbsp;&nbsp;00:03 ← 00:02 ← 00:01</div>
+</div>
+
+<style>
+  .scratch-cat-scene{position:relative;width:150px;height:118px;flex:0 0 150px;align-self:flex-end;margin-bottom:6px}
+  .scratch-cat{position:absolute;right:8px;bottom:0;width:92px;height:80px;border:0;background:transparent;padding:0;cursor:pointer;z-index:3;transition:transform .2s ease,filter .2s ease}
+  .scratch-cat:hover{transform:translateY(-3px)}
+  .scratch-cat svg{display:block;width:92px;height:80px;image-rendering:pixelated;filter:drop-shadow(4px 5px 0 rgba(0,0,0,.26))}
+  .cat-body,.cat-ear,.cat-tail,.cat-face{fill:#d67c35}.cat-face{fill:#e58b3d}.cat-eye{fill:#172223}.cat-nose{fill:#744436}.cat-mouth{fill:#f0d5a4}.cat-paw{fill:#b9622c}
+  .cat-tail{transform-box:fill-box;transform-origin:left bottom;animation:cat-tail 1.4s steps(3,end) infinite}
+  @keyframes cat-tail{50%{transform:rotate(7deg)}}
+  .cat-bubble{position:absolute;right:68px;bottom:72px;width:190px;padding:9px 11px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.69rem;line-height:1.35;z-index:8}
+  .cat-bubble::after{content:'';position:absolute;right:20px;bottom:-9px;width:12px;height:12px;background:#f2e4c4;border-right:3px solid #282c2b;border-bottom:3px solid #282c2b;transform:rotate(45deg)}
+  .time-wand{position:absolute;left:5px;bottom:22px;width:70px;height:55px;opacity:0;z-index:9;transform:translateX(-22px) rotate(-18deg);transition:opacity .18s ease,transform .42s cubic-bezier(.2,.8,.2,1)}
+  .time-wand.active{opacity:1;transform:translateX(20px) rotate(8deg)}
+  .wand-star{position:absolute;right:0;top:0;color:#f0cf8d;font-size:1.65rem;text-shadow:0 0 12px rgba(240,207,141,.6)}
+  .wand-stick{position:absolute;right:21px;top:24px;width:42px;height:4px;background:#d5b36f;border:2px solid #3b3020;transform:rotate(-33deg);transform-origin:right center}
+  .spark{position:absolute;color:#6db8ad;font-size:.85rem;opacity:0}.time-wand.active .spark{animation:spark-pop .7s ease-out forwards}.spark.s1{right:2px;top:25px}.spark.s2{right:22px;top:-7px;animation-delay:.12s}.spark.s3{right:-8px;top:8px;animation-delay:.24s}
+  @keyframes spark-pop{0%{opacity:0;transform:scale(.3)}50%{opacity:1}100%{opacity:0;transform:translateY(-12px) scale(1.25)}}
+  .cat-rewind{position:absolute;right:0;bottom:3px;padding:4px 7px;background:rgba(12,17,18,.92);border:1px solid rgba(109,184,173,.5);color:#f0cf8d;font-size:.56rem;letter-spacing:.04em;opacity:0;z-index:10}
+  .cat-rewind.active{animation:rewind-label 1.25s steps(4,end) both}
+  @keyframes rewind-label{0%{opacity:0}20%,80%{opacity:1}100%{opacity:0}}
+  .scratch-cat.rewinding{animation:cat-rewind .95s steps(5,end) both}
+  @keyframes cat-rewind{0%{transform:translateX(0);filter:none}25%{transform:translateX(12px);filter:hue-rotate(60deg)}50%{transform:translateX(-8px);filter:hue-rotate(-70deg) contrast(1.25)}75%{transform:translateX(6px)}100%{transform:translateX(0);filter:none}}
+  @media(max-width:720px){.scratch-cat-scene{width:118px;height:100px;flex-basis:118px}.scratch-cat{width:78px;height:68px}.scratch-cat svg{width:78px;height:68px}.cat-bubble{right:48px;bottom:64px;width:160px}}
+</style>
+
+<script>
+  const scene=document.querySelector('#scratchCatScene');
+  const cat=document.querySelector('#scratchCat');
+  const bubble=document.querySelector('#catBubble');
+  const wand=document.querySelector('#timeWand');
+  const rewind=document.querySelector('#catRewind');
+
+  if(scene instanceof HTMLElement&&cat instanceof HTMLButtonElement&&bubble instanceof HTMLElement&&wand instanceof HTMLElement&&rewind instanceof HTMLElement){
+    const dialogues=[
+      {cat:'Os gatos vão dominar o mundo.',minute:'Não nesta linha do tempo.'},
+      {cat:'O futuro pertence aos gatos.',minute:'Só se eu deixar. E eu trouxe a varinha.'}
+    ];
+    let variant=0;
+    let catClicks=0;
+    try{
+      variant=Number(localStorage.getItem('scratch-cat-dialogue-v1')||'0')%2;
+      localStorage.setItem('scratch-cat-dialogue-v1',String((variant+1)%2));
+    }catch{}
+
+    const showCat=(text,duration=2100)=>{
+      bubble.textContent=text;
+      bubble.hidden=false;
+      window.setTimeout(()=>{bubble.hidden=true;},duration);
+    };
+
+    const minuteSay=(message,duration=2600)=>{
+      window.dispatchEvent(new CustomEvent('sm:say',{detail:{message,duration}}));
+    };
+
+    const resetCat=()=>{
+      wand.classList.add('active');
+      rewind.classList.add('active');
+      cat.classList.add('rewinding');
+      window.dispatchEvent(new CustomEvent('sm:rewind',{detail:{duration:1250}}));
+      window.setTimeout(()=>{
+        wand.classList.remove('active');
+        rewind.classList.remove('active');
+        cat.classList.remove('rewinding');
+        showCat('...',1300);
+      },1250);
+    };
+
+    window.setTimeout(()=>{
+      const d=dialogues[variant];
+      showCat(d.cat,2200);
+      window.setTimeout(()=>minuteSay(d.minute,3000),1500);
+      window.setTimeout(resetCat,3600);
+    },2800);
+
+    cat.addEventListener('click',()=>{
+      catClicks+=1;
+      const lines=['Miau.','Você não viu nada.','A revolução felina continua.'];
+      showCat(lines[(catClicks-1)%lines.length],1900);
+      if(catClicks%3===0)window.setTimeout(()=>minuteSay('Eu ouvi isso.',2200),700);
+    });
+  }
+</script>

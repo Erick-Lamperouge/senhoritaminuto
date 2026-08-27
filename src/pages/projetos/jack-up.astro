@@ -7,28 +7,28 @@ import { projects } from '../../config/projects';
 const jackUpUrl = projects.jackUp.liveUrl.trim();
 const hasLiveJackUp = jackUpUrl.length > 0;
 ---
-<BaseLayout title="Jack-UP — Senhorita Minuto" description="Jack-UP, aventuras na saúde com o mascote Jack.">
+<BaseLayout title="Jack-UP — Senhorita Minuto" description="Jack-UP, jogo educacional em inglês voltado à área da saúde e ao estudo de fraturas.">
   <Header />
   <main class="project-page">
     <a class="back-link" href="/#projetos">← Voltar aos projetos</a>
-    <span class="eyebrow">JOGO / SAÚDE</span>
+    <span class="eyebrow">JOGO EDUCACIONAL / SAÚDE</span>
     <h1>Jack-UP</h1>
     <p class="project-lead">
-      Aventuras na saúde com o mascote Jack: um projeto interativo com navegação, pontuação e situações de cuidado.
+      Um jogo educacional em inglês que leva conteúdos sobre fraturas para uma experiência interativa e jogável.
     </p>
 
     <div class="fernando-hero">
       <div>
-        <span class="terminal-label">STATUS</span>
-        <strong>EM DESENVOLVIMENTO</strong>
+        <span class="terminal-label">FORMATO</span>
+        <strong>JOGO EDUCACIONAL</strong>
       </div>
       <div>
-        <span class="terminal-label">REPOSITÓRIO</span>
-        <strong>PRIVADO</strong>
+        <span class="terminal-label">IDIOMA</span>
+        <strong>ENGLISH</strong>
       </div>
       <div>
-        <span class="terminal-label">EXECUÇÃO</span>
-        <strong>{hasLiveJackUp ? 'DENTRO DO HUB' : 'DEPLOY PENDENTE'}</strong>
+        <span class="terminal-label">CONTEÚDO</span>
+        <strong>FRATURAS · SAÚDE</strong>
       </div>
     </div>
 
@@ -44,34 +44,30 @@ const hasLiveJackUp = jackUpUrl.length > 0;
         <div class="jackup-actions">
           <a class="button secondary" href={jackUpUrl} target="_blank" rel="noreferrer">Abrir em tela própria ↗</a>
         </div>
-        <p class="project-note">
-          A aplicação roda publicamente, mas o repositório original pode continuar privado no GitHub.
-        </p>
       </>
     ) : (
       <section class="integration-ready">
-        <span class="eyebrow">INTEGRAÇÃO PREPARADA</span>
-        <h2>O Jack-UP já tem um lugar dentro do hub.</h2>
-        <p>
-          Para preservar o repositório privado, publique o <strong>Jack-UP diretamente na Vercel</strong>
-          a partir do repositório privado. Depois copie a URL pública da Vercel para
-          <code>src/config/projects.ts</code>, no campo <code>jackUp.liveUrl</code>.
-        </p>
-        <p>
-          Assim, esta página passa automaticamente a carregar o jogo dentro do Senhorita Minuto
-          sem tornar o repositório Jack-UP público.
-        </p>
+        <span class="eyebrow">INDISPONÍVEL NO MOMENTO</span>
+        <h2>O jogo ainda não está carregando nesta página.</h2>
+        <p>Assim que a versão pública estiver disponível, o Jack-UP poderá ser jogado diretamente por aqui.</p>
       </section>
     )}
 
     <div class="project-details">
       <section>
         <h2>Sobre o projeto</h2>
-        <p>Jack-UP foi pensado como uma experiência lúdica em saúde, usando um mascote e mecânicas de jogo para conduzir o usuário.</p>
+        <p>
+          Jack-UP é um jogo educacional em inglês desenvolvido para explorar conteúdos da área da saúde de forma interativa.
+          Ao longo da experiência, o jogador encontra perguntas e desafios relacionados a fraturas, avançando pelo jogo à medida
+          que responde às situações apresentadas.
+        </p>
       </section>
       <section>
-        <h2>O que fica privado</h2>
-        <p>O repositório, histórico e arquivos-fonte no GitHub podem continuar privados. Já o JavaScript entregue ao navegador em qualquer app público pode ser inspecionado pelo visitante.</p>
+        <h2>A experiência</h2>
+        <p>
+          O projeto combina aprendizagem e mecânicas de jogo em uma experiência simples e acessível, utilizando o inglês tanto
+          na interface quanto no conteúdo apresentado ao jogador.
+        </p>
       </section>
     </div>
   </main>

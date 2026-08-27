@@ -294,8 +294,12 @@ if(
 
     const start=currentRect();
     const sideRange=rangeForSide(side);
-    const targetX=Math.abs(start.left-sideRange[0])<Math.abs(start.left-sideRange[1])?sideRange[1]:sideRange[0];
+    const minX=sideRange[0];
+    const maxX=sideRange[1];
+    const centerX=(minX+maxX)/2;
     const launchTop=-170;
+    const landingTop=baseY()-18;
+    const fallDuration=2700;
 
     traveler.dataset.mode='mine-step';
     traveler.style.transition='left .3s ease, top .3s ease, opacity .28s ease, transform .35s ease, filter .35s ease';
@@ -306,29 +310,46 @@ if(
       traveler.dataset.mode='blast';
       mineBlast.classList.add('active');
       traveler.style.transition='left .2s ease, top .85s cubic-bezier(.22,.78,.3,1), opacity .28s ease, transform .35s ease, filter .35s ease';
-      setPosition(start.left,launchTop);
+      setPosition(centerX,launchTop);
     },650);
 
     window.setTimeout(()=>{
       mineEvent.classList.remove('active');
       mineBlast.classList.remove('active');
       traveler.dataset.mode='balloon-drop';
-      say('uuuh...',2700);
+      say('uuuh...',fallDuration);
+      setPosition(centerX,launchTop,true);
       placeLeaves();
       leafShower.classList.add('active');
-      traveler.classList.add('balloon-falling');
-      setFacingForDirection(targetX,start.left);
-      setPosition(targetX,baseY()-18);
+
+      const travelerFrames=[
+        {left:`${centerX}px`,top:`${launchTop}px`},
+        {left:`${maxX}px`,top:`${launchTop+(landingTop-launchTop)*.16}px`},
+        {left:`${minX}px`,top:`${launchTop+(landingTop-launchTop)*.34}px`},
+        {left:`${maxX}px`,top:`${launchTop+(landingTop-launchTop)*.53}px`},
+        {left:`${minX}px`,top:`${launchTop+(landingTop-launchTop)*.72}px`},
+        {left:`${maxX}px`,top:`${launchTop+(landingTop-launchTop)*.88}px`},
+        {left:`${centerX}px`,top:`${landingTop}px`}
+      ];
+      const leafFrames=travelerFrames.map((frame)=>({
+        left:`${parseFloat(frame.left)-6}px`,
+        top:`${parseFloat(frame.top)-8}px`
+      }));
+
+      const fall=traveler.animate(travelerFrames,{duration:fallDuration,easing:'linear',fill:'forwards'});
+      const leaves=leafShower.animate(leafFrames,{duration:fallDuration,easing:'linear',fill:'forwards'});
+
+      window.setTimeout(()=>{
+        fall.cancel();
+        leaves.cancel();
+        setPosition(centerX,landingTop,true);
+        leafShower.classList.remove('active');
+        traveler.dataset.mode='impact';
+      },fallDuration+20);
     },1600);
 
-    window.setTimeout(()=>{
-      leafShower.classList.remove('active');
-      traveler.classList.remove('balloon-falling');
-      traveler.dataset.mode='impact';
-    },4350);
-
-    window.setTimeout(()=>{traveler.dataset.mode='rewind';},5200);
-    window.setTimeout(()=>resetToPatrol(0),6350);
+    window.setTimeout(()=>{traveler.dataset.mode='rewind';},1600+fallDuration+900);
+    window.setTimeout(()=>resetToPatrol(0),1600+fallDuration+2050);
   }
 
   function guitarSolo(){
@@ -466,7 +487,7 @@ if(
     updateCounter();
     try{window.localStorage.setItem('senhorita-minuto-clickcount-v3',String(clickCount));}catch{}
     playRetroChime();
-    if(eggs.has(clickCount))say(eggs.get(clickCount),6200);
+    if(eggs.has(clickCount))say(eggs.get(clickCount),3000);
   });
 
   try{
@@ -486,6 +507,23 @@ if(
   }catch{
     window.setTimeout(()=>say('Oi! Eu sou a Senhorita Minuto.',6500),700);
   }
+
+  window.addEventListener('sm:say',(event)=>{
+    const detail=event instanceof CustomEvent?event.detail:null;
+    if(!detail||typeof detail.message!=='string')return;
+    say(detail.message,Number(detail.duration)||2600);
+  });
+
+  window.addEventListener('sm:rewind',(event)=>{
+    const detail=event instanceof CustomEvent?event.detail:null;
+    const duration=Math.max(700,Number(detail?.duration)||1250);
+    const previousMode=traveler.dataset.mode||'walk';
+    traveler.dataset.mode='rewind';
+    window.setTimeout(()=>{
+      if(!busy)traveler.dataset.mode='side-walk';
+      else traveler.dataset.mode=previousMode;
+    },duration);
+  });
 
   setSide(side);
   alignToPatrolBase(true);
