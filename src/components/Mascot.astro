@@ -23,6 +23,14 @@ import '../styles/mascot.css';
     <span class="clock-hand minute"></span>
   </div>
 
+  <div class="mine-event" id="mineEvent" aria-hidden="true">
+    <span class="mine-body"></span>
+    <span class="mine-prong p1"></span><span class="mine-prong p2"></span><span class="mine-prong p3"></span>
+  </div>
+  <div class="mine-blast" id="mineBlast" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+
   <a class="project-token" id="projectToken" href="/#projetos">
     <span class="token-label">PROJETO ENCONTRADO</span>
     <strong id="projectTokenName">clique para olhar</strong>
@@ -41,7 +49,6 @@ import '../styles/mascot.css';
 
       <svg class="mascot-svg" viewBox="0 0 92 108" role="img" aria-label="Senhorita Minuto, assistente digital pixelada">
         <g shape-rendering="crispEdges">
-          <!-- Laço pequeno no lado direito da cabeça. -->
           <path class="hair-bow-wing" d="M63 12h5V8h6v4h4v6h-4v4h-6v-4h-5z" />
           <path class="hair-bow-wing" d="M61 13h-4v-3h-5v4h5v4h4z" />
           <path class="hair-bow-knot" d="M60 12h5v7h-5z" />
