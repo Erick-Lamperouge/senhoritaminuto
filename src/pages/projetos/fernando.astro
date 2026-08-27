@@ -3,16 +3,27 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Mascot from '../../components/Mascot.astro';
 import FernandoTribute from '../../components/FernandoTribute.astro';
+import FernandoInline from '../../components/FernandoInline.astro';
 ---
 <BaseLayout title="FERNANDO — Senhorita Minuto" description="FERNANDO, simulador educacional de ACLS e PCR.">
   <Header />
-  <main class="project-page">
+  <main class="project-page project-page-refined">
     <a class="back-link" href="/#projetos">← Voltar aos projetos</a>
     <span class="eyebrow">EDTECH / ACLS</span>
-    <h1>FERNANDO</h1>
-    <p class="project-lead">Simulador educacional para treinamento de parada cardiorrespiratória e raciocínio em ACLS.</p>
+    <div class="project-heading-row fernando-title-row">
+      <div>
+        <h1>FERNANDO</h1>
+        <p class="project-lead">Simulador educacional para treinamento de parada cardiorrespiratória e raciocínio em ACLS.</p>
+      </div>
+      <FernandoInline />
+    </div>
 
-    <div class="fernando-hero">
+    <div class="project-actions emphasis-actions">
+      <a class="button primary action-main" href="https://fernando-acls.vercel.app/" target="_blank" rel="noreferrer">Abrir simulador ↗</a>
+      <a class="button secondary" href="#detalhes-projeto">Ver detalhes</a>
+    </div>
+
+    <div class="fernando-hero top-metrics-shell">
       <div>
         <span class="terminal-label">STATUS</span>
         <strong>EM DESENVOLVIMENTO</strong>
@@ -25,6 +36,12 @@ import FernandoTribute from '../../components/FernandoTribute.astro';
         <span class="terminal-label">EXPERIÊNCIA</span>
         <strong>SIMULAÇÃO GUIADA</strong>
       </div>
+    </div>
+
+    <div class="project-preview-card" id="detalhes-projeto">
+      <strong class="preview-label">Acesso rápido</strong>
+      <p>Se preferir, abra o FERNANDO diretamente em uma aba própria para usar a experiência completa do simulador.</p>
+      <a class="button secondary" href="https://fernando-acls.vercel.app/" target="_blank" rel="noreferrer">Abrir em tela própria ↗</a>
     </div>
 
     <div class="project-details">
@@ -45,8 +62,6 @@ import FernandoTribute from '../../components/FernandoTribute.astro';
     </div>
 
     <FernandoTribute />
-
-    <a class="button primary external-cta" href="https://fernando-acls.vercel.app/" target="_blank" rel="noreferrer">Abrir o FERNANDO ↗</a>
   </main>
   <Mascot />
 </BaseLayout>
