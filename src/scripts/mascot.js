@@ -12,6 +12,7 @@ const projectTokenName=document.querySelector('#projectTokenName');
 const mineEvent=document.querySelector('#mineEvent');
 const mineBlast=document.querySelector('#mineBlast');
 const musicNotes=document.querySelector('#musicNotes');
+const leafShower=document.querySelector('#leafShower');
 const clickCounterValue=document.querySelector('#clickCounterValue');
 
 if(
@@ -29,6 +30,7 @@ if(
   mineEvent instanceof HTMLElement &&
   mineBlast instanceof HTMLElement &&
   musicNotes instanceof HTMLElement &&
+  leafShower instanceof HTMLElement &&
   clickCounterValue instanceof HTMLElement
 ){
   const phrases=[
@@ -121,6 +123,7 @@ if(
     mineEvent.classList.remove('active');
     mineBlast.classList.remove('active');
     musicNotes.classList.remove('active');
+    leafShower.classList.remove('active');
     window.clearTimeout(projectTimer);
   }
 
@@ -199,6 +202,12 @@ if(
     const rect=currentRect();
     musicNotes.style.left=`${rect.left+64}px`;
     musicNotes.style.top=`${rect.top+20}px`;
+  }
+
+  function placeLeaves(){
+    const rect=currentRect();
+    leafShower.style.left=`${rect.left-6}px`;
+    leafShower.style.top=`${Math.max(-8, rect.top-8)}px`;
   }
 
   function chooseProject(){
@@ -286,6 +295,7 @@ if(
     const start=currentRect();
     const sideRange=rangeForSide(side);
     const targetX=Math.abs(start.left-sideRange[0])<Math.abs(start.left-sideRange[1])?sideRange[1]:sideRange[0];
+    const launchTop=-170;
 
     traveler.dataset.mode='mine-step';
     traveler.style.transition='left .3s ease, top .3s ease, opacity .28s ease, transform .35s ease, filter .35s ease';
@@ -295,27 +305,30 @@ if(
     window.setTimeout(()=>{
       traveler.dataset.mode='blast';
       mineBlast.classList.add('active');
-      setPosition(start.left,start.top-120);
+      traveler.style.transition='left .2s ease, top .85s cubic-bezier(.22,.78,.3,1), opacity .28s ease, transform .35s ease, filter .35s ease';
+      setPosition(start.left,launchTop);
     },650);
 
     window.setTimeout(()=>{
       mineEvent.classList.remove('active');
       mineBlast.classList.remove('active');
       traveler.dataset.mode='balloon-drop';
-      say('uuuh...',1900);
-      setPosition(start.left,-170,true);
+      say('uuuh...',2700);
+      placeLeaves();
+      leafShower.classList.add('active');
       traveler.classList.add('balloon-falling');
       setFacingForDirection(targetX,start.left);
       setPosition(targetX,baseY()-18);
-    },1150);
+    },1600);
 
     window.setTimeout(()=>{
+      leafShower.classList.remove('active');
       traveler.classList.remove('balloon-falling');
       traveler.dataset.mode='impact';
-    },2550);
+    },4350);
 
-    window.setTimeout(()=>{traveler.dataset.mode='rewind';},3450);
-    window.setTimeout(()=>resetToPatrol(0),4600);
+    window.setTimeout(()=>{traveler.dataset.mode='rewind';},5200);
+    window.setTimeout(()=>resetToPatrol(0),6350);
   }
 
   function guitarSolo(){
@@ -340,9 +353,9 @@ if(
     route.classList.add('active');
 
     const leftSteps=side==='left'
-      ? [20,56,18,58,20,60,24,60]
-      : [window.innerWidth-116,window.innerWidth-152,window.innerWidth-118,window.innerWidth-154,window.innerWidth-120,window.innerWidth-156,window.innerWidth-122,window.innerWidth-156];
-    const ySteps=[baseY()-20,baseY()-92,baseY()-164,baseY()-236,324,264,204,46];
+      ? [16,54,16,56,18,58,22,58]
+      : [window.innerWidth-110,window.innerWidth-148,window.innerWidth-110,window.innerWidth-150,window.innerWidth-112,window.innerWidth-152,window.innerWidth-116,window.innerWidth-152];
+    const ySteps=[baseY()-18,baseY()-93,baseY()-168,baseY()-243,340,280,220,165];
     const willFall=Math.random()<0.45;
 
     traveler.dataset.mode='climb';
@@ -360,22 +373,40 @@ if(
     const finishClimb=()=>{
       traveler.dataset.mode='project-found';
       traveler.style.transition='left .4s ease, top .4s ease, opacity .28s ease, transform .35s ease, filter .35s ease';
-      const topX=side==='left'?18:Math.max(18,window.innerWidth-118);
+      const platformStartX=side==='left'?18:Math.max(18,window.innerWidth-118);
+      const platformEndX=side==='left'?72:Math.max(72,window.innerWidth-172);
+      const jumpX=side==='left'?88:Math.max(88,window.innerWidth-188);
+      const topY=46;
+      const projectSpeechDuration=5600;
+      const projectButtonExtra=3000;
       setFacing(side==='left'?1:-1);
-      setPosition(topX,46);
+      setPosition(platformStartX,topY);
       const project=chooseProject();
       projectToken.classList.add('active');
-      say(`Olha esse projeto que incrível: ${project.name}. Clica nele pra olhar.`,5600);
-      projectTimer=window.setTimeout(()=>projectToken.classList.remove('active'),3600);
+      say(`Olha esse projeto que incrível: ${project.name}. Clica nele pra olhar.`,projectSpeechDuration);
+      projectTimer=window.setTimeout(()=>projectToken.classList.remove('active'),projectSpeechDuration+projectButtonExtra);
+
+      window.setTimeout(()=>{
+        traveler.dataset.mode='side-walk';
+        traveler.style.transition='left 1.2s ease-in-out, top .4s ease, opacity .28s ease, transform .35s ease, filter .35s ease';
+        setFacingForDirection(platformEndX, platformStartX);
+        setPosition(platformEndX, topY);
+      },projectSpeechDuration);
+
+      window.setTimeout(()=>{
+        traveler.dataset.mode='jump';
+        traveler.style.transition='left .45s ease-in-out, top .45s ease-out, opacity .28s ease, transform .35s ease, filter .35s ease';
+        setPosition(jumpX, 12);
+      },projectSpeechDuration+1450);
 
       window.setTimeout(()=>{
         traveler.dataset.mode='parachute-drop';
-        traveler.style.transition='left .9s ease-in-out, top 1.9s ease-in-out, opacity .28s ease, transform .35s ease, filter .35s ease';
-        const midX=side==='left'?46:Math.max(46,window.innerWidth-146);
+        traveler.style.transition='left .9s ease-in-out, top 2.1s ease-in-out, opacity .28s ease, transform .35s ease, filter .35s ease';
+        const midX=side==='left'?50:Math.max(50,window.innerWidth-150);
         setPosition(midX,baseY()-22);
-      },2200);
+      },projectSpeechDuration+1900);
 
-      window.setTimeout(()=>resetToPatrol(0),4400);
+      window.setTimeout(()=>resetToPatrol(0),projectSpeechDuration+projectButtonExtra+900);
     };
 
     if(willFall){
@@ -436,7 +467,6 @@ if(
     try{window.localStorage.setItem('senhorita-minuto-clickcount-v3',String(clickCount));}catch{}
     playRetroChime();
     if(eggs.has(clickCount))say(eggs.get(clickCount),6200);
-    else say(phrases[Math.floor(Math.random()*phrases.length)]);
   });
 
   try{
