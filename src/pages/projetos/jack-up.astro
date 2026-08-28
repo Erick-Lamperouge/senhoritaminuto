@@ -22,26 +22,33 @@ const hasLiveJackUp = jackUpUrl.length > 0;
         </div>
       </div>
 
-      <aside class="project-showcase-slot" aria-label="Resumo visual do projeto Jack-UP">
-        <div class="showcase-shell showcase-generic">
-          <span class="showcase-label" data-i18n="jack.formatValue">JOGO EDUCACIONAL</span>
-          <strong>ENGLISH</strong>
-          <p data-i18n="card.jack.desc">Um jogo educacional em inglês voltado à área da saúde, com desafios e perguntas clínicas sobre fraturas.</p>
+      <aside class="project-showcase-slot" aria-label="Espaço reservado para o mascote do Jack-UP">
+        <div class="showcase-shell showcase-mascot-slot" data-project-mascot-slot="jack-up">
+          <span class="mascot-slot-note" data-i18n="jack.mascotSoon">Mascote em breve</span>
         </div>
       </aside>
     </section>
 
+    <div class="language-only-note" role="note">
+      <span class="language-only-badge" aria-hidden="true">EN</span>
+      <span data-i18n="jack.englishOnly">O jogo está disponível apenas em inglês.</span>
+    </div>
+
     <div class="fernando-hero top-metrics-shell">
       <div><span class="terminal-label" data-i18n="jack.format">FORMATO</span><strong data-i18n="jack.formatValue">JOGO EDUCACIONAL</strong></div>
-      <div><span class="terminal-label" data-i18n="jack.language">IDIOMA</span><strong>ENGLISH</strong></div>
+      <div><span class="terminal-label" data-i18n="jack.language">IDIOMA</span><strong data-i18n="jack.languageValue">APENAS INGLÊS</strong></div>
       <div><span class="terminal-label" data-i18n="jack.content">CONTEÚDO</span><strong data-i18n="jack.health">FRATURAS · SAÚDE</strong></div>
     </div>
 
     {hasLiveJackUp ? (
       <>
-        <div class="play-here-hint" aria-hidden="true">
-          <span data-i18n="common.playHere">Dá para jogar aqui</span>
-          <span class="play-here-arrow">↓</span>
+        <div class="play-here-callout" role="note" aria-label="Dá para jogar diretamente nesta página" data-i18n-aria="common.playHereAria">
+          <span class="play-here-signal" aria-hidden="true"></span>
+          <span class="play-here-copy">
+            <strong data-i18n="common.playHere">Dá para jogar aqui</strong>
+            <small data-i18n="common.playHereSub">Jogue sem sair do site</small>
+          </span>
+          <span class="play-here-arrow" aria-hidden="true">↓</span>
         </div>
         <div class="embed-shell jackup-shell top-embed-shell" id="jogar">
           <iframe src={jackUpUrl} title="Jack-UP" allowfullscreen loading="eager"></iframe>

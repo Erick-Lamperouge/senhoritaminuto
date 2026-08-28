@@ -24,9 +24,13 @@ import ScratchCat from '../../components/ScratchCat.astro';
       </aside>
     </section>
 
-    <div class="play-here-hint" aria-hidden="true">
-      <span data-i18n="common.playHere">Dá para jogar aqui</span>
-      <span class="play-here-arrow">↓</span>
+    <div class="play-here-callout" role="note" aria-label="Dá para jogar diretamente nesta página" data-i18n-aria="common.playHereAria">
+      <span class="play-here-signal" aria-hidden="true"></span>
+      <span class="play-here-copy">
+        <strong data-i18n="common.playHere">Dá para jogar aqui</strong>
+        <small data-i18n="common.playHereSub">Jogue sem sair do site</small>
+      </span>
+      <span class="play-here-arrow" aria-hidden="true">↓</span>
     </div>
 
     <div class="embed-shell top-embed-shell" id="jogar">
@@ -42,7 +46,13 @@ import ScratchCat from '../../components/ScratchCat.astro';
       <section>
         <h2 data-i18n="scratch.origin">Origem</h2>
         <p data-i18n="scratch.originText">O projeto nasceu no Scratch e continua disponível em sua página original, com a mesma experiência que aparece incorporada aqui.</p>
-        <p><a class="text-link" href="https://scratch.mit.edu/projects/1280541113/" target="_blank" rel="noreferrer" data-i18n="scratch.original">Abrir projeto original no Scratch →</a></p>
+        <a class="external-project-cta" href="https://scratch.mit.edu/projects/1280541113/" target="_blank" rel="noreferrer">
+          <span class="external-project-icon" aria-hidden="true">↗</span>
+          <span>
+            <strong data-i18n="scratch.original">Abrir projeto original no Scratch</strong>
+            <small data-i18n="scratch.originalHint">Ver o projeto na plataforma original</small>
+          </span>
+        </a>
       </section>
     </div>
   </main>

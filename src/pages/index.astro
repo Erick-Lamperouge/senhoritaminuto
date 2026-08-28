@@ -26,12 +26,11 @@ import Mascot from '../components/Mascot.astro';
     </section>
 
     <section class="projects-section" id="projetos">
-      <div class="section-heading">
+      <div class="projects-heading-block">
+        <div class="projects-index">01</div>
         <div>
-          <span class="eyebrow" data-i18n="home.selection">SELEÇÃO / 001</span>
           <h2 data-i18n="home.featured">Projetos em destaque</h2>
         </div>
-        <p data-i18n="home.projectsIntro">Jogos, ferramentas e experiências desenvolvidas em contextos diferentes, mas reunidas pelo mesmo princípio: aprender construindo.</p>
       </div>
 
       <div class="project-grid">
@@ -54,7 +53,7 @@ import Mascot from '../components/Mascot.astro';
           description="Simulador educacional para treinamento de parada cardiorrespiratória e raciocínio em ACLS."
           href="/projetos/fernando"
           cta="Conhecer o projeto"
-          status="EM DESENVOLVIMENTO"
+          status="PRONTO"
           eyebrowKey="card.fernando.eyebrow"
           titleKey="card.fernando.title"
           descriptionKey="card.fernando.desc"
@@ -67,7 +66,7 @@ import Mascot from '../components/Mascot.astro';
           description="Um jogo educacional em inglês voltado à área da saúde, com desafios e perguntas clínicas sobre fraturas."
           href="/projetos/jack-up"
           cta="Jogar Jack-UP"
-          status="JOGÁVEL"
+          status="PRONTO"
           eyebrowKey="card.jack.eyebrow"
           titleKey="card.jack.title"
           descriptionKey="card.jack.desc"
@@ -92,7 +91,12 @@ import Mascot from '../components/Mascot.astro';
           Este espaço também funciona como um arquivo em constante expansão. Novos projetos,
           experiências e ideias vão sendo adicionados à medida que ganham forma.
         </p>
-        <a class="about-github" href="https://github.com/Erick-Lamperouge" target="_blank" rel="noreferrer" data-i18n="about.github">Ver meus projetos no GitHub ↗</a>
+        <a class="about-github github-cta" href="https://github.com/Erick-Lamperouge" target="_blank" rel="noreferrer">
+          <span class="github-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 .7a11.3 11.3 0 0 0-3.6 22c.6.1.8-.2.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.8 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.6.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0C14 3.6 15 3.9 15 3.9c.6 1.5.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.5-2.8 5.5-5.5 5.8.4.4.8 1.1.8 2.2v4c0 .4.2.7.8.6A11.3 11.3 0 0 0 12 .7Z"/></svg>
+          </span>
+          <span data-i18n="about.github">Ver meus projetos no GitHub ↗</span>
+        </a>
       </div>
     </section>
   </main>

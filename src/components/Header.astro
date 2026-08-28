@@ -3,22 +3,57 @@ import '../styles/site-refinement.css';
 ---
 <header class="site-header refined-header">
   <a class="brand refined-brand" href="/" aria-label="Senhorita Minuto — início">Senhorita Minuto</a>
+
   <div class="header-actions">
     <nav aria-label="Navegação principal">
       <a href="/#projetos" data-i18n="nav.projects">Projetos</a>
       <a href="/#sobre" data-i18n="nav.about">Sobre</a>
     </nav>
-    <div class="language-switcher" aria-label="Idioma / Language">
-      <button class="language-button" type="button" data-language="pt" aria-pressed="true" title="Português">
-        <span class="language-flag" aria-hidden="true">🇧🇷</span><span class="language-code">PT</span>
+
+    <div class="language-menu" id="languageMenu">
+      <button
+        class="language-trigger"
+        id="languageTrigger"
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded="false"
+        aria-controls="languageOptions"
+        aria-label="Trocar idioma / Change language">
+        <span class="language-current-flag" data-language-current-flag aria-hidden="true">🇧🇷</span>
+        <span class="language-current-code" data-language-current-code>PT</span>
+        <span class="language-chevron" aria-hidden="true">⌄</span>
       </button>
-      <button class="language-button" type="button" data-language="en" aria-pressed="false" title="English">
-        <span class="language-flag" aria-hidden="true">🇺🇸</span><span class="language-code">EN</span>
-      </button>
+
+      <div class="language-options" id="languageOptions" role="menu" aria-label="Idioma / Language" hidden>
+        <button class="language-option" type="button" role="menuitemradio" aria-checked="true" data-language="pt">
+          <span class="language-option-flag" aria-hidden="true">🇧🇷</span>
+          <span class="language-option-name" data-i18n="nav.pt">Português</span>
+          <span class="language-option-code">PT</span>
+        </button>
+        <button class="language-option" type="button" role="menuitemradio" aria-checked="false" data-language="en">
+          <span class="language-option-flag" aria-hidden="true">🇺🇸</span>
+          <span class="language-option-name" data-i18n="nav.en">English</span>
+          <span class="language-option-code">EN</span>
+        </button>
+      </div>
     </div>
   </div>
 </header>
 
 <script>
   import '../scripts/i18n.js';
+
+  const menu=document.querySelector('#languageMenu');
+  const trigger=document.querySelector('#languageTrigger');
+  const options=document.querySelector('#languageOptions');
+
+  if(menu instanceof HTMLElement && trigger instanceof HTMLButtonElement && options instanceof HTMLElement){
+    const closeMenu=()=>{options.hidden=true;trigger.setAttribute('aria-expanded','false');menu.classList.remove('is-open');};
+    const openMenu=()=>{options.hidden=false;trigger.setAttribute('aria-expanded','true');menu.classList.add('is-open');const active=options.querySelector('[aria-checked="true"]');if(active instanceof HTMLButtonElement)active.focus();};
+
+    trigger.addEventListener('click',(event)=>{event.stopPropagation();options.hidden?openMenu():closeMenu();});
+    options.addEventListener('click',(event)=>{const option=event.target instanceof Element?event.target.closest('[data-language]'):null;if(option)closeMenu();});
+    document.addEventListener('click',(event)=>{if(event.target instanceof Node&&!menu.contains(event.target))closeMenu();});
+    document.addEventListener('keydown',(event)=>{if(event.key==='Escape'&&!options.hidden){closeMenu();trigger.focus();}});
+  }
 </script>

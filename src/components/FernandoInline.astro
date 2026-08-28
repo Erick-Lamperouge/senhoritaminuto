@@ -21,18 +21,72 @@
   const inlineButton=document.querySelector('#fernandoInlineButton');
   const inlineImg=document.querySelector('#fernandoInlineImg');
   const inlineBubble=document.querySelector('#fernandoInlineBubble');
+
   if(inlineRoot instanceof HTMLElement && inlineButton instanceof HTMLButtonElement && inlineImg instanceof HTMLImageElement && inlineBubble instanceof HTMLElement){
     const POSES={ base:'/assets/characters/fernando-pixel.png', thumbs:'/assets/characters/fernando-thumbsup.png', thinking:'/assets/characters/fernando-thinking.png' };
     const tx=(key,fallback)=>window.SM_I18N?.t?.(key,fallback) ?? fallback;
+
     const LINES=()=>[
       {text:tx('fernando.line1','Arigó!'), pose:'thumbs', duration:2200},
       {text:tx('fernando.line3','Bora jogar dominó?'), pose:'base', duration:2600},
       {text:tx('fernando.line4','Sou muito bom na dama, viu?'), pose:'thumbs', duration:2800},
-      {text:tx('fernando.line2','Minha família é do sertão. Povo arretado de bom!'), pose:'thinking', duration:3400}
+      {text:tx('fernando.line2','Minha família é do sertão. Povo arretado de bom!'), pose:'thinking', duration:3400},
+      {
+        text:tx('fernando.interact1','Oxente, Senhorita Minuto, se eu perder na dama tu volta só um minutinho e deixa eu mexer de novo, visse?'),
+        pose:'thinking',duration:4200,
+        reply:tx('fernando.interact1r','Oxente nada. Isso é fraude temporal. Perdeu, perdeu.'),mood:'evil'
+      },
+      {
+        text:tx('fernando.interact2','No sertão, o sol não espera ninguém. Ainda bem que tu toma conta dos minutos.'),
+        pose:'thumbs',duration:4000,
+        reply:tx('fernando.interact2r','Dos minutos eu cuido. No dominó, meu amigo, cada um por si.'),mood:'happy'
+      }
     ];
-    let timer=0; let idx=0;
-    const speak=(entry)=>{inlineImg.src=POSES[entry.pose] || POSES.base; inlineBubble.textContent=entry.text; inlineBubble.hidden=false; window.clearTimeout(timer); timer=window.setTimeout(()=>{inlineBubble.hidden=true; inlineImg.src=POSES.base;},entry.duration);};
-    inlineButton.addEventListener('click',()=>{const lines=LINES();speak(lines[idx % lines.length]); idx+=1;});
-    window.addEventListener('pagehide',()=>window.clearTimeout(timer),{once:true});
+
+    let timer=0; let replyTimer=0; let idx=0;
+
+    const speak=(entry)=>{
+      inlineImg.src=POSES[entry.pose] || POSES.base;
+      inlineBubble.textContent=entry.text;
+      inlineBubble.hidden=false;
+      window.clearTimeout(timer);
+      window.clearTimeout(replyTimer);
+
+      if(entry.reply){
+        replyTimer=window.setTimeout(()=>{
+          window.dispatchEvent(new CustomEvent('sm:interact',{detail:{
+            target:'#fernandoInline',
+            message:entry.reply,
+            duration:3200,
+            mood:entry.mood || 'happy',
+            power:false,
+            hold:5000
+          }}));
+        },1450);
+      }
+
+      timer=window.setTimeout(()=>{
+        inlineBubble.hidden=true;
+        inlineImg.src=POSES.base;
+      },entry.duration);
+    };
+
+    inlineButton.addEventListener('click',()=>{
+      const lines=LINES();
+      speak(lines[idx % lines.length]);
+      idx+=1;
+    });
+
+    window.addEventListener('sm:language-changed',()=>{
+      inlineBubble.hidden=true;
+      inlineImg.src=POSES.base;
+      window.clearTimeout(timer);
+      window.clearTimeout(replyTimer);
+    });
+
+    window.addEventListener('pagehide',()=>{
+      window.clearTimeout(timer);
+      window.clearTimeout(replyTimer);
+    },{once:true});
   }
 </script>
