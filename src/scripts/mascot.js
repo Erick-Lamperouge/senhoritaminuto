@@ -77,6 +77,7 @@ if(
   let repaired=false;
   let sleeping=false;
   let idleTimer=0;
+  let wakeTimer=0;
   const clickSessionKey='senhorita-minuto-clickcount-session-v1';
   const repairSessionKey='senhorita-minuto-repaired-session-v1';
 
@@ -114,6 +115,7 @@ if(
   }
 
   function setPortalPosition(portal,x,y){
+    portal.classList.add('anchored');
     portal.style.right='auto';
     portal.style.left=`${clamp(x,6,Math.max(6,window.innerWidth-96))}px`;
     portal.style.top=`${clamp(y,52,Math.max(52,window.innerHeight-52))}px`;
@@ -123,7 +125,7 @@ if(
     portal.style.left='';
     portal.style.right='';
     portal.style.top='';
-    portal.classList.remove('future-color');
+    portal.classList.remove('future-color','anchored');
   }
 
 
@@ -141,12 +143,14 @@ if(
     window.clearTimeout(clickCounterTimer);
     window.clearTimeout(interactionTimer);
     window.clearTimeout(idleTimer);
+    window.clearTimeout(wakeTimer);
     clickCounterTimer=window.setTimeout(()=>{clickCounter.hidden=true;},duration);
   }
 
 
   function scheduleIdleSleep(){
     window.clearTimeout(idleTimer);
+    window.clearTimeout(wakeTimer);
     if(reducedMotion())return;
     idleTimer=window.setTimeout(()=>{
       if(busy||sleeping||futureSequence||projectMascotVisible()){
@@ -158,6 +162,7 @@ if(
   }
 
   function wakeFromSleep({resumeSpeech=false}={}){
+    window.clearTimeout(wakeTimer);
     if(!sleeping)return;
     sleeping=false;
     busy=false;
@@ -178,6 +183,7 @@ if(
   }
 
   function enterSleep(reason='idle'){
+    window.clearTimeout(wakeTimer);
     if(sleeping||futureSequence||projectMascotVisible())return;
     if(busy && !['walk','side-walk','sleep'].includes(traveler.dataset.mode||''))return;
     sleeping=true;
@@ -813,7 +819,7 @@ if(
       showClickCounter(3000);
       const key=eggs.get(clickCount);
       const message=tx(key,String(key));
-      say(message,readingDuration(message,{min:4200,max:9000}));
+      say(message,readingDuration(message,{min:5200,max:9800}));
     }
   });
 
@@ -832,8 +838,12 @@ if(
 
 
   window.addEventListener('sm:project-bubble-open',()=>{
-    if(sleeping)wakeFromSleep();
-    scheduleIdleSleep();
+    if(sleeping){
+      window.clearTimeout(wakeTimer);
+      wakeTimer=window.setTimeout(()=>wakeFromSleep(),3000);
+    }else{
+      scheduleIdleSleep();
+    }
     closeAllPortals();
     if(!traveler.classList.contains('interacting')) hideMinuteSpeech(true);
   });
@@ -887,8 +897,12 @@ if(
 
   ['pointerdown','pointermove','keydown','scroll','touchstart'].forEach((eventName)=>{
     window.addEventListener(eventName,()=>{
-      if(sleeping)wakeFromSleep();
-      else scheduleIdleSleep();
+      if(sleeping){
+        window.clearTimeout(wakeTimer);
+        wakeTimer=window.setTimeout(()=>wakeFromSleep(),3000);
+      }else{
+        scheduleIdleSleep();
+      }
     },{passive:true});
   });
 
@@ -897,8 +911,12 @@ if(
       enterSleep('hidden');
       return;
     }
-    if(sleeping)wakeFromSleep();
-    else scheduleIdleSleep();
+    if(sleeping){
+      window.clearTimeout(wakeTimer);
+      wakeTimer=window.setTimeout(()=>wakeFromSleep(),3000);
+    }else{
+      scheduleIdleSleep();
+    }
   });
 
   setSide(side);
@@ -925,5 +943,6 @@ if(
     window.clearTimeout(clickCounterTimer);
     window.clearTimeout(interactionTimer);
     window.clearTimeout(idleTimer);
+    window.clearTimeout(wakeTimer);
   },{once:true});
 }
