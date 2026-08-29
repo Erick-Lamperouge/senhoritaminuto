@@ -23,6 +23,7 @@
 </style>
 
 <script>
+  import { readingDuration } from '../scripts/mascot/timing.js';
   const inlineRoot=document.querySelector('#fernandoInline');
   const inlineButton=document.querySelector('#fernandoInlineButton');
   const inlineImg=document.querySelector('#fernandoInlineImg');
@@ -32,15 +33,6 @@
     const POSES={ base:'/assets/characters/fernando-pixel.png', thumbs:'/assets/characters/fernando-thumbsup.png', thinking:'/assets/characters/fernando-thinking.png' };
     const tx=(key,fallback)=>window.SM_I18N?.t?.(key,fallback) ?? fallback;
     const isEN=()=>window.SM_I18N?.getLanguage?.()==='en';
-    const readingDuration=(text,{min=3000,max=12000,wpm=150,extra=650}={})=>{
-      const clean=String(text||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
-      const words=clean?clean.split(' ').length:1;
-      const commas=(clean.match(/[,;]/g)||[]).length;
-      const stops=(clean.match(/[.!?]/g)||[]).length;
-      const pauses=(clean.match(/[—:…]/g)||[]).length;
-      const punctuationBonus=commas*110+stops*190+pauses*150;
-      return Math.max(min,Math.min(max,Math.round((words/wpm)*60000+extra+punctuationBonus)));
-    };
     const rich=(text)=>String(text).replace(/Senhorita Minuto/g,'<strong>Senhorita Minuto</strong>');
 
     const initialLines=()=>[

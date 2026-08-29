@@ -70,6 +70,7 @@
 </style>
 
 <script>
+  import { readingDuration } from '../scripts/mascot/timing.js';
   const scene=document.querySelector('#scratchCatScene');
   const cat=document.querySelector('#scratchCat');
   const catImg=document.querySelector('#scratchCatImg');
@@ -84,16 +85,6 @@
     const POSES={
       base:'/assets/characters/scratch-cat-pixel.png',
       seated:'/assets/characters/scratch-cat-seated.png'
-    };
-
-    const readingDuration=(text,{min=3000,max=12000,wpm=150,extra=650}={})=>{
-      const clean=String(text||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
-      const words=clean?clean.split(' ').length:1;
-      const commas=(clean.match(/[,;]/g)||[]).length;
-      const stops=(clean.match(/[.!?]/g)||[]).length;
-      const pauses=(clean.match(/[—:…]/g)||[]).length;
-      const punctuationBonus=commas*110+stops*190+pauses*150;
-      return Math.max(min,Math.min(max,Math.round((words/wpm)*60000+extra+punctuationBonus)));
     };
     const highlightMinute=(text)=>String(text).replace(/Senhorita Minuto/g,'<strong>Senhorita Minuto</strong>');
     const hideCat=(immediate=false)=>{
