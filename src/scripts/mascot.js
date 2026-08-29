@@ -90,6 +90,16 @@ if(
     return r.bottom>0&&r.top<window.innerHeight&&r.right>0&&r.left<window.innerWidth;
   });
 
+  const readingDuration=(text,{min=3000,max=12000,wpm=220,extra=650}={})=>{
+    const clean=String(text||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+    const words=clean?clean.split(' ').length:1;
+    const commas=(clean.match(/[,;]/g)||[]).length;
+    const stops=(clean.match(/[.!?]/g)||[]).length;
+    const pauses=(clean.match(/[—:…]/g)||[]).length;
+    const punctuationBonus=commas*110+stops*190+pauses*150;
+    return Math.max(min,Math.min(max,Math.round((words/wpm)*60000+extra+punctuationBonus)));
+  };
+
   function setMood(mood='neutral'){traveler.dataset.mood=mood;}
 
   function updateCracks(){
@@ -127,11 +137,25 @@ if(
   function setFacingForDirection(nextX,currentX){setFacing(nextX>=currentX?1:-1);}
   function setSide(which){side=which;traveler.dataset.side=which;}
 
-  function say(message,duration=4800){
+  function hideMinuteSpeech(immediate=false){
+    window.clearTimeout(speechTimer);
+    if(speech.hidden)return;
+    if(immediate){speech.hidden=true;speech.classList.remove('bubble-enter','bubble-leave');return;}
+    speech.classList.remove('bubble-enter');
+    speech.classList.add('bubble-leave');
+    window.setTimeout(()=>{speech.hidden=true;speech.classList.remove('bubble-leave');},140);
+  }
+
+  function say(message,duration){
+    const nextDuration=typeof duration==='number'?duration:readingDuration(message,{min:3000,max:12000});
+    window.dispatchEvent(new CustomEvent('sm:minute-bubble-open'));
     speech.textContent=message;
     speech.hidden=false;
+    speech.classList.remove('bubble-leave','bubble-enter');
+    void speech.offsetWidth;
+    speech.classList.add('bubble-enter');
     window.clearTimeout(speechTimer);
-    speechTimer=window.setTimeout(()=>{speech.hidden=true;},duration);
+    speechTimer=window.setTimeout(()=>hideMinuteSpeech(false),nextDuration);
   }
 
   function playRetroChime(){
@@ -235,28 +259,29 @@ if(
     traveler.dataset.mode='portal';
     setPortalPosition(portal,current.left+8,current.top+54);
     portal.classList.add('is-open');
-    window.setTimeout(()=>traveler.classList.add('portal-enter'),160);
+    window.setTimeout(()=>traveler.classList.add('portal-enter'),150);
     window.setTimeout(()=>{
       const [targetX]=rangeForSide(homeSide);
       const targetY=baseY()-18;
       setSide(homeSide);
       traveler.classList.remove('interacting');
       traveler.style.removeProperty('--sm-interaction-top');
-      setPortalPosition(portal,targetX+8,targetY+54);
       setPosition(targetX,targetY,true);
       traveler.classList.remove('portal-enter');
-      traveler.classList.add('portal-exit');
+      traveler.classList.add('blink-in');
       setFacing(homeSide==='left'?1:-1);
-    },560);
+    },520);
     window.setTimeout(()=>{
-      traveler.classList.remove('portal-exit','interacting','interaction-power','power-active');
       portal.classList.remove('is-open');
       restorePortalPosition(portal);
+    },640);
+    window.setTimeout(()=>{
+      traveler.classList.remove('blink-in','interacting','interaction-power','power-active');
       traveler.dataset.mode='walk';
       setMood('neutral');
       busy=false;
       startPatrol();
-    },1180);
+    },1140);
   }
 
   function teleportNearTarget(detail){
@@ -264,7 +289,7 @@ if(
     const selector=typeof detail?.target==='string'?detail.target:'';
     const target=selector?document.querySelector(selector):null;
     if(!(target instanceof HTMLElement)){
-      if(typeof detail?.message==='string')say(detail.message,Number(detail.duration)||3000);
+      if(typeof detail?.message==='string')say(detail.message,Number(detail.duration)||readingDuration(detail.message,{min:3000}));
       return;
     }
     if(busy)return;
@@ -283,8 +308,8 @@ if(
     const portal=portalRight;
     const power=Boolean(detail?.power);
     const mood=typeof detail?.mood==='string'?detail.mood:'happy';
-    const duration=Math.max(1200,Number(detail?.duration)||3200);
-    const hold=Math.max(duration+1200,Number(detail?.hold)||duration+1800);
+    const duration=Math.max(1200,Number(detail?.duration)||readingDuration(detail?.message||'',{min:3000,max:10000}));
+    const hold=Math.max(duration+900,Number(detail?.hold)||duration+1500);
 
     traveler.classList.add('interacting');
     if(power){traveler.classList.add('power-active','interaction-power');}
@@ -295,23 +320,22 @@ if(
 
     window.setTimeout(()=>traveler.classList.add('portal-enter'),170);
     window.setTimeout(()=>{
-      setPortalPosition(portal,targetX+8,targetY+54);
       setPosition(targetX,targetY,true);
       setSide(targetX>window.innerWidth/2?'right':'left');
       setFacing(1);
       traveler.classList.remove('portal-enter');
-      traveler.classList.add('portal-exit');
-    },620);
+      traveler.classList.add('blink-in');
+    },610);
     window.setTimeout(()=>{
-      traveler.classList.remove('portal-exit');
       portal.classList.remove('is-open');
       restorePortalPosition(portal);
       traveler.dataset.mode='interaction';
       setMood(mood);
       if(typeof detail?.message==='string')say(detail.message,duration);
-    },1260);
+    },860);
+    window.setTimeout(()=>traveler.classList.remove('blink-in'),1180);
 
-    interactionTimer=window.setTimeout(()=>returnFromInteraction(homeSide),1260+hold);
+    interactionTimer=window.setTimeout(()=>returnFromInteraction(homeSide),860+hold);
   }
 
   function runFutureRepair(){
@@ -721,15 +745,21 @@ if(
 
   const firstVisitKey='senhorita-minuto-welcome-v6';
   try{
-    if(!window.localStorage.getItem(firstVisitKey)){
+    if(!window.localStorage.getItem(firstVisitKey) && !projectMascotVisible()){
       window.setTimeout(()=>{
-        say(tx('mascot.welcome','Oi! Eu sou a Senhorita Minuto. Eu patrulho as laterais o tempo todo — e às vezes faço umas entradas mais dramáticas.'),7600);
+        const welcome=tx('mascot.welcome','Oi! Eu sou a Senhorita Minuto. Eu patrulho as laterais o tempo todo — e às vezes faço umas entradas mais dramáticas.');
+        say(welcome,readingDuration(welcome,{min:5000,max:11000}));
         window.localStorage.setItem(firstVisitKey,'1');
       },700);
     }
   }catch{
-    window.setTimeout(()=>say(tx('mascot.welcome','Oi! Eu sou a Senhorita Minuto.'),6500),700);
+    if(!projectMascotVisible()) window.setTimeout(()=>{ const welcome=tx('mascot.welcome','Oi! Eu sou a Senhorita Minuto.'); say(welcome,readingDuration(welcome,{min:5000,max:11000})); },700);
   }
+
+
+  window.addEventListener('sm:project-bubble-open',()=>{
+    if(!traveler.classList.contains('interacting')) hideMinuteSpeech(true);
+  });
 
   window.addEventListener('sm:say',(event)=>{
     const detail=event instanceof CustomEvent?event.detail:null;

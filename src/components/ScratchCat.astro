@@ -1,6 +1,6 @@
 <div class="scratch-cat-scene" id="scratchCatScene" aria-label="Interação entre um gato pixelado e a Senhorita Minuto">
   <button class="scratch-cat" id="scratchCat" type="button" aria-label="Interagir com o gato do Projeto Scratch">
-    <img class="cat-base" src="/assets/characters/scratch-cat-pixel.png" alt="Gato laranja em pixel art" draggable="false" />
+    <img class="cat-base" id="scratchCatImg" src="/assets/characters/scratch-cat-pixel.png" alt="Gato laranja em pixel art" draggable="false" />
   </button>
   <div class="cat-bubble" id="catBubble" hidden></div>
   <div class="time-wand" id="timeWand" aria-hidden="true">
@@ -10,24 +10,34 @@
     <span class="wand-spark s2">✧</span>
     <span class="wand-spark s3">✦</span>
   </div>
-  <div class="cat-portal" id="catPortal" aria-hidden="true"><img src="/assets/props/scratch-portal.png" alt="" draggable="false" /></div>
+  <div class="cat-portal" id="catPortal" aria-hidden="true"><span></span></div>
   <div class="cat-rewind" id="catRewind" aria-hidden="true">REWIND&nbsp;&nbsp;00:03 ← 00:02 ← 00:01</div>
 </div>
 
 <style>
-  .scratch-cat-scene{position:relative;width:190px;height:180px;flex:0 0 190px;align-self:center;margin:0 auto}
-  .scratch-cat{position:absolute;left:50%;bottom:12px;width:136px;height:136px;transform:translateX(-50%);border:0;background:transparent;padding:0;cursor:pointer;z-index:4;transition:transform .28s ease,filter .28s ease}
+  .scratch-cat-scene{position:relative;width:208px;height:188px;flex:0 0 208px;align-self:center;margin:0 auto}
+  .scratch-cat{position:absolute;left:50%;bottom:10px;width:144px;height:144px;transform:translateX(-50%);border:0;background:transparent;padding:0;cursor:pointer;z-index:4;transition:transform .28s ease,filter .28s ease,opacity .22s ease}
   .scratch-cat:hover{transform:translateX(-50%) translateY(-4px)}
   .scratch-cat .cat-base{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(4px 5px 0 rgba(0,0,0,.22));pointer-events:none;user-select:none}
   .scratch-cat.idle{animation:cat-idle 3.2s ease-in-out infinite}
   .scratch-cat.alert{animation:cat-alert .7s steps(2,end) 2}
+  .scratch-cat.portal-travel{animation:cat-portal-travel 1.55s cubic-bezier(.2,.8,.2,1) both}
+  .scratch-cat.reappear{animation:cat-reappear .82s steps(4,end) both}
   @keyframes cat-idle{0%,100%{transform:translateX(-50%) translateY(0) rotate(0deg)}50%{transform:translateX(-50%) translateY(-3px) rotate(.5deg)}}
   @keyframes cat-alert{0%,100%{transform:translateX(-50%) translateY(0) scale(1)}50%{transform:translateX(-50%) translateY(-5px) scale(1.035)}}
+  @keyframes cat-portal-travel{0%{transform:translateX(-50%) scale(1);opacity:1}34%{transform:translateX(calc(-50% - 6px)) scale(.9);opacity:.74}60%{transform:translateX(calc(-50% + 4px)) scale(.38);opacity:.16}100%{transform:translateX(-50%) scale(.14);opacity:0}}
+  @keyframes cat-reappear{0%{opacity:0}25%{opacity:1}45%{opacity:.25}65%{opacity:1}82%{opacity:.4}100%{opacity:1}}
 
-  .cat-bubble{position:absolute;left:-18px;bottom:132px;max-width:210px;width:max-content;padding:10px 12px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.72rem;line-height:1.4;z-index:12}
-  .cat-bubble::after{content:'';position:absolute;right:40px;bottom:-9px;width:12px;height:12px;background:#f2e4c4;border-right:3px solid #282c2b;border-bottom:3px solid #282c2b;transform:rotate(45deg)}
+  .cat-bubble{position:absolute;left:-10px;bottom:138px;max-width:min(238px,calc(100vw - 34px));min-width:68px;width:max-content;padding:10px 12px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.72rem;line-height:1.44;z-index:12;text-wrap:pretty;overflow-wrap:anywhere;transform-origin:82% 100%}
+  .cat-bubble::after{content:'';position:absolute;right:44px;bottom:-9px;width:12px;height:12px;background:#f2e4c4;border-right:3px solid #282c2b;border-bottom:3px solid #282c2b;transform:rotate(45deg)}
+  .cat-bubble strong{display:inline-block;padding:0 5px;margin:0 2px;border-radius:999px;background:rgba(109,184,173,.18);color:#1f4f4b;font-weight:700}
+  .cat-bubble[hidden]{display:none!important}
+  .cat-bubble.bubble-enter{animation:cat-bubble-in .18s cubic-bezier(.2,.8,.2,1) both}
+  .cat-bubble.bubble-leave{animation:cat-bubble-out .14s ease-in both}
+  @keyframes cat-bubble-in{from{opacity:0;transform:translateY(5px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes cat-bubble-out{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(3px) scale(.985)}}
 
-  .time-wand{position:absolute;left:8px;bottom:44px;width:84px;height:84px;opacity:0;z-index:10;transform:translateX(-20px) rotate(-24deg);transition:opacity .22s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
+  .time-wand{position:absolute;left:4px;bottom:42px;width:84px;height:84px;opacity:0;z-index:10;transform:translateX(-20px) rotate(-24deg);transition:opacity .22s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
   .time-wand.active{opacity:1;transform:translateX(38px) rotate(6deg)}
   .wand-stick{position:absolute;left:12px;top:48px;width:50px;height:6px;background:linear-gradient(90deg,#b88943,#e6c27e);border:2px solid #3c3120;border-radius:99px;transform:rotate(-32deg);transform-origin:left center;box-shadow:0 0 0 1px rgba(255,255,255,.05) inset}
   .wand-star{position:absolute;left:49px;top:16px;font-size:1.8rem;line-height:1;color:#f0cf8d;text-shadow:0 0 10px rgba(240,207,141,.45)}
@@ -36,98 +46,182 @@
   .wand-spark.s1{left:56px;top:42px}.wand-spark.s2{left:66px;top:10px;animation-delay:.15s}.wand-spark.s3{left:34px;top:22px;animation-delay:.28s}
   @keyframes wand-spark{0%{opacity:0;transform:scale(.3)}30%{opacity:1}100%{opacity:0;transform:translateY(-14px) scale(1.25)}}
 
-  .cat-portal{position:absolute;left:50%;bottom:14px;width:118px;height:118px;opacity:0;transform:translateX(-50%) scale(.18);transition:opacity .28s ease,transform .68s cubic-bezier(.1,.8,.2,1);overflow:visible;z-index:5}
+  .cat-portal{position:absolute;left:50%;bottom:18px;width:92px;height:92px;opacity:0;transform:translateX(-50%) scale(.22);transition:opacity .26s ease,transform .66s cubic-bezier(.1,.8,.2,1);z-index:3;border:3px solid rgba(109,184,173,.92);border-radius:50%;box-shadow:0 0 0 4px rgba(109,184,173,.12),0 0 18px rgba(109,184,173,.52),inset 0 0 18px rgba(229,173,85,.18);background:radial-gradient(circle at center,rgba(109,184,173,.12) 0 28%,rgba(10,18,20,.78) 64%,rgba(0,0,0,0) 76%)}
+  .cat-portal::before,.cat-portal::after,.cat-portal span{content:'';position:absolute;inset:7px;border:2px dashed rgba(240,207,141,.78);border-radius:50%;animation:cat-portal-spin 1.8s linear infinite}
+  .cat-portal::after{inset:16px;border-style:solid;border-color:rgba(109,184,173,.68);animation-direction:reverse;animation-duration:2.4s}
+  .cat-portal span{inset:24px;border-style:dotted;border-color:rgba(255,255,255,.48);animation-duration:1.2s}
   .cat-portal.active{opacity:1;transform:translateX(-50%) scale(1)}
-  .cat-portal img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;user-select:none;pointer-events:none;mix-blend-mode:screen}
+  @keyframes cat-portal-spin{to{transform:rotate(360deg)}}
 
-  .cat-rewind{position:absolute;left:-6px;bottom:8px;padding:6px 9px;background:rgba(12,17,18,.94);border:1px solid rgba(109,184,173,.5);color:#f0cf8d;font-size:.58rem;letter-spacing:.04em;opacity:0;z-index:11;white-space:nowrap}
-  .cat-rewind.active{animation:rewind-label 2.3s steps(4,end) both}
+  .cat-rewind{position:absolute;left:-4px;bottom:8px;padding:6px 9px;background:rgba(12,17,18,.94);border:1px solid rgba(109,184,173,.5);color:#f0cf8d;font-size:.58rem;letter-spacing:.04em;opacity:0;z-index:11;white-space:nowrap}
+  .cat-rewind.active{animation:rewind-label 2.5s steps(4,end) both}
   @keyframes rewind-label{0%{opacity:0}14%,84%{opacity:1}100%{opacity:0}}
 
-  .scratch-cat.rewinding{animation:cat-rewind 2s steps(6,end) both}
-  .scratch-cat.portal-travel{animation:cat-portal-travel 2.4s cubic-bezier(.2,.8,.2,1) both}
-  @keyframes cat-rewind{0%{filter:none}25%{filter:hue-rotate(60deg)}50%{filter:hue-rotate(-70deg) contrast(1.18)}75%{filter:hue-rotate(25deg)}100%{filter:none}}
-  @keyframes cat-portal-travel{0%{transform:translateX(-50%) scale(1);opacity:1}30%{transform:translateX(calc(-50% - 12px)) scale(.93);opacity:.78}50%{transform:translateX(calc(-50% - 4px)) scale(.42);opacity:.2}68%{transform:translateX(calc(-50% + 5px)) scale(.24);opacity:.08}100%{transform:translateX(-50%) scale(1);opacity:1}}
-
   @media(max-width:720px){
-    .scratch-cat-scene{width:148px;height:130px;flex-basis:148px}
-    .scratch-cat{width:108px;height:108px}
-    .cat-bubble{left:-76px;bottom:104px;max-width:190px;font-size:.68rem}
-    .cat-portal{width:78px;height:78px;bottom:8px}
+    .scratch-cat-scene{width:154px;height:136px;flex-basis:154px}
+    .scratch-cat{width:110px;height:110px}
+    .cat-bubble{left:-70px;bottom:108px;max-width:194px;font-size:.68rem}
+    .cat-portal{width:72px;height:72px;bottom:10px}
     .time-wand{width:62px;height:62px;left:-2px;bottom:28px}
     .wand-stick{width:38px;height:5px;left:8px;top:36px}
     .wand-star{left:38px;top:9px;font-size:1.3rem}
-    .cat-rewind{left:-26px;bottom:0;font-size:.5rem}
+    .cat-rewind{left:-22px;bottom:0;font-size:.5rem}
   }
 </style>
 
 <script>
   const scene=document.querySelector('#scratchCatScene');
   const cat=document.querySelector('#scratchCat');
+  const catImg=document.querySelector('#scratchCatImg');
   const bubble=document.querySelector('#catBubble');
   const wand=document.querySelector('#timeWand');
   const portal=document.querySelector('#catPortal');
   const rewind=document.querySelector('#catRewind');
 
-  if(scene instanceof HTMLElement&&cat instanceof HTMLButtonElement&&bubble instanceof HTMLElement&&wand instanceof HTMLElement&&portal instanceof HTMLElement&&rewind instanceof HTMLElement){
+  if(scene instanceof HTMLElement&&cat instanceof HTMLButtonElement&&catImg instanceof HTMLImageElement&&bubble instanceof HTMLElement&&wand instanceof HTMLElement&&portal instanceof HTMLElement&&rewind instanceof HTMLElement){
     const tx=(key,fallback)=>window.SM_I18N?.t?.(key,fallback) ?? fallback;
-    const dialogues=()=>[
-      {cat:tx('cat.1','Os gatos vão dominar o mundo.'),minute:tx('cat.1r','Não nesta linha do tempo.'),mood:'evil',power:true},
-      {cat:tx('cat.2','O futuro pertence aos gatos.'),minute:tx('cat.2r','Só se eu deixar. E eu trouxe a varinha.'),mood:'evil',power:true},
-      {cat:tx('cat.3','Quando o tempo acabar, os gatos ainda vão ganhar.'),minute:tx('cat.3r','Eu ainda posso reiniciar esta fase.'),mood:'evil',power:true},
-      {cat:tx('cat.4','Só preciso de mais alguns minutos para dominar tudo.'),minute:tx('cat.4r','Minutos são justamente a minha especialidade.'),mood:'happy',power:false}
-    ];
-    const clickLines=()=>[
-      tx('cat.click1','Miau.'),tx('cat.click2','Você não viu nada.'),tx('cat.click3','A revolução felina continua.'),tx('cat.click4','O plano está adiantado alguns minutos.')
-    ];
-    let catClicks=0, sequenceTimer=0, bubbleTimer=0, busy=false;
-    cat.classList.add('idle');
+    const isEN=()=>window.SM_I18N?.getLanguage?.()==='en';
+    const POSES={
+      base:'/assets/characters/scratch-cat-pixel.png',
+      seated:'/assets/characters/scratch-cat-seated.png'
+    };
 
+    const readingDuration=(text,{min=3000,max=12000,wpm=220,extra=650}={})=>{
+      const clean=String(text||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+      const words=clean?clean.split(' ').length:1;
+      const commas=(clean.match(/[,;]/g)||[]).length;
+      const stops=(clean.match(/[.!?]/g)||[]).length;
+      const pauses=(clean.match(/[—:…]/g)||[]).length;
+      const punctuationBonus=commas*110+stops*190+pauses*150;
+      return Math.max(min,Math.min(max,Math.round((words/wpm)*60000+extra+punctuationBonus)));
+    };
+    const highlightMinute=(text)=>String(text).replace(/Senhorita Minuto/g,'<strong>Senhorita Minuto</strong>');
+    const hideCat=(immediate=false)=>{
+      window.clearTimeout(bubbleTimer);
+      if(bubble.hidden)return;
+      if(immediate){bubble.hidden=true;bubble.classList.remove('bubble-enter','bubble-leave');return;}
+      bubble.classList.remove('bubble-enter');
+      bubble.classList.add('bubble-leave');
+      window.setTimeout(()=>{bubble.hidden=true;bubble.classList.remove('bubble-leave');},140);
+    };
+    const showCat=(message,duration=3000)=>{
+      window.dispatchEvent(new CustomEvent('sm:project-bubble-open',{detail:{source:'scratch'}}));
+      bubble.innerHTML=highlightMinute(message);
+      bubble.hidden=false;
+      bubble.classList.remove('bubble-leave','bubble-enter');
+      void bubble.offsetWidth;
+      bubble.classList.add('bubble-enter');
+      window.clearTimeout(bubbleTimer);
+      bubbleTimer=window.setTimeout(()=>hideCat(false),duration);
+    };
     const inView=()=>{const r=scene.getBoundingClientRect();return r.bottom>0&&r.top<window.innerHeight&&r.right>0&&r.left<window.innerWidth;};
-    const showCat=(message,duration=3000)=>{bubble.textContent=message;bubble.hidden=false;window.clearTimeout(bubbleTimer);bubbleTimer=window.setTimeout(()=>{bubble.hidden=true;},duration);};
+    const setPose=(pose='base')=>{catImg.src=POSES[pose]||POSES.base;};
     const interactMinute=(message,{mood='happy',power=false,hold=7600,duration=3800}={})=>{
       window.dispatchEvent(new CustomEvent('sm:interact',{detail:{target:'#scratchCatScene',message,duration,mood,power,hold}}));
     };
-    const scheduleNext=()=>{window.clearTimeout(sequenceTimer);sequenceTimer=window.setTimeout(runScene,17000+Math.random()*13000);};
+    const scheduleNext=()=>{window.clearTimeout(sequenceTimer);sequenceTimer=window.setTimeout(runScene,17500+Math.random()*12000);};
+    const getDialogues=()=>[
+      {cat:tx('cat.1','Os gatos vão dominar o mundo.'),minute:tx('cat.1r','Não nesta linha do tempo.'),mood:'evil',power:true,pose:'base'},
+      {cat:tx('cat.2','O futuro pertence aos gatos.'),minute:tx('cat.2r','Só se eu deixar. E eu trouxe a varinha.'),mood:'evil',power:true,pose:'seated'},
+      {cat:tx('cat.3','Quando o tempo acabar, os gatos ainda vão ganhar.'),minute:tx('cat.3r','Eu ainda posso reiniciar esta fase.'),mood:'evil',power:true,pose:'base'},
+      {cat:tx('cat.4','Só preciso de mais alguns minutos para dominar tudo.'),minute:tx('cat.4r','Minutos são justamente a minha especialidade.'),mood:'happy',power:false,pose:'seated'}
+    ];
+    const clickLines=()=>[
+      tx('cat.click1', isEN() ? 'Meow.' : 'Miau.'),
+      tx('cat.click2', isEN() ? 'You saw nothing.' : 'Você não viu nada.'),
+      tx('cat.click3', isEN() ? 'The feline revolution continues.' : 'A revolução felina continua.'),
+      tx('cat.click4', isEN() ? 'The plan is a few minutes ahead.' : 'O plano está alguns minutos adiantado.')
+    ];
+    const welcomeLines=()=>[
+      isEN()
+        ? {text:'Meow. This is my Scratch corner. There is a game running here — and yes, there is a timeline involved.',pose:'base'}
+        : {text:'Miau. Esse é o meu canto do Scratch. Tem jogo rodando aqui — e sim, envolve linha do tempo.',pose:'base'},
+      isEN()
+        ? {text:'Before you click around too much, know this: cats may be planning world domination in this project.',pose:'seated'}
+        : {text:'Antes de clicar demais, saiba: neste projeto os gatos talvez estejam planejando dominar o mundo.',pose:'seated'}
+    ];
+
+    let catClicks=0, sequenceTimer=0, bubbleTimer=0, busy=false, greeted=false;
+    cat.classList.add('idle');
+
+    const portalReset=()=>{portal.classList.remove('active');wand.classList.remove('active');rewind.classList.remove('active');cat.classList.remove('portal-travel','reappear','alert');cat.style.opacity='1';};
 
     const magicReset=()=>{
-      wand.classList.add('active');
-      portal.classList.add('active');
-      rewind.classList.add('active');
-      cat.classList.remove('idle');
-      cat.classList.add('rewinding','portal-travel');
-      window.dispatchEvent(new CustomEvent('sm:rewind',{detail:{duration:2500,power:true}}));
-      window.setTimeout(()=>showCat(tx('cat.back','Ah não... eu voltei pro passado.'),3200),1900);
+      const noText=isEN() ? 'Naaah... no!' : 'Nããão...';
+      const backText=tx('cat.back', isEN() ? 'Oh no... I went back to the past.' : 'Ah não... eu voltei pro passado.');
+      hideCat();
+      showCat(noText,1400);
       window.setTimeout(()=>{
-        wand.classList.remove('active');portal.classList.remove('active');rewind.classList.remove('active');cat.classList.remove('rewinding','portal-travel');cat.classList.add('idle');busy=false;
-      },2850);
+        hideCat();
+        wand.classList.add('active');
+        portal.classList.add('active');
+        rewind.classList.add('active');
+        cat.classList.remove('idle');
+        cat.classList.add('portal-travel');
+        window.dispatchEvent(new CustomEvent('sm:rewind',{detail:{duration:2300,power:true}}));
+      },1120);
+      window.setTimeout(()=>{
+        cat.classList.remove('portal-travel');
+        cat.style.opacity='0';
+      },1760);
+      window.setTimeout(()=>{
+        cat.style.opacity='1';
+        cat.classList.add('reappear');
+        showCat(backText, Math.max(3000, readingDuration(backText,{min:3000}))); 
+      },2320);
+      window.setTimeout(()=>{
+        portalReset();
+        cat.classList.add('idle');
+        busy=false;
+      },3320);
     };
 
     function runScene(){
       if(busy||!inView()){scheduleNext();return;}
       busy=true;
-      const list=dialogues();
+      const list=getDialogues();
       const d=list[Math.floor(Math.random()*list.length)];
+      setPose(d.pose||'base');
+      const catDuration=readingDuration(d.cat,{min:3000});
+      const minuteDuration=readingDuration(d.minute,{min:3000});
       cat.classList.add('alert');
-      showCat(d.cat,3600);
-      window.setTimeout(()=>cat.classList.remove('alert'),1500);
-      window.setTimeout(()=>interactMinute(d.minute,{mood:d.mood,power:d.power,hold:9000,duration:4000}),2400);
-      window.setTimeout(magicReset,5700);
+      showCat(d.cat,catDuration);
+      window.setTimeout(()=>cat.classList.remove('alert'),1100);
+      const speakerGap=320;
+      const minuteHold=Math.max(4200,minuteDuration+1050);
+      window.setTimeout(()=>{hideCat(true);interactMinute(d.minute,{mood:d.mood,power:d.power,hold:minuteHold,duration:minuteDuration});},catDuration+speakerGap);
+      window.setTimeout(magicReset,catDuration+speakerGap+860+minuteDuration+420);
       scheduleNext();
     }
 
-    window.setTimeout(runScene,8200);
+    const initialGreeting=()=>{
+      if(greeted||!inView())return;
+      greeted=true;
+      const options=welcomeLines();
+      const line=options[Math.floor(Math.random()*options.length)];
+      setPose(line.pose||'base');
+      showCat(line.text, readingDuration(line.text,{min:5000,max:9500}));
+    };
+
+    window.setTimeout(initialGreeting,720);
+    window.setTimeout(runScene,9800);
 
     cat.addEventListener('click',()=>{
       if(busy)return;
       catClicks+=1;
       const lines=clickLines();
-      showCat(lines[(catClicks-1)%lines.length],2400);
+      const message=lines[(catClicks-1)%lines.length];
+      showCat(message,readingDuration(message,{min:3000,max:6500}));
       if(catClicks%3===0){
-        window.setTimeout(()=>interactMinute(tx('cat.heard','Eu ouvi isso.'),{mood:'happy',power:false,hold:4200,duration:2400}),700);
+        const heard=tx('cat.heard', isEN() ? 'I heard that.' : 'Eu ouvi isso.');
+        window.setTimeout(()=>{hideCat(true);interactMinute(heard,{mood:'happy',power:false,hold:3400,duration:readingDuration(heard,{min:3000,max:5600})});},1700);
       }
     });
 
+    window.addEventListener('sm:minute-bubble-open',()=>hideCat(true));
+    window.addEventListener('sm:project-bubble-open',(event)=>{const detail=event instanceof CustomEvent?event.detail:null;if(detail?.source!=='scratch')hideCat(true);});
+
+    window.addEventListener('sm:language-changed',()=>{hideCat();setPose('base');greeted=false;window.setTimeout(initialGreeting,300);});
     window.addEventListener('pagehide',()=>{window.clearTimeout(sequenceTimer);window.clearTimeout(bubbleTimer);},{once:true});
   }
 </script>

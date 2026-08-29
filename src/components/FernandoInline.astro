@@ -10,8 +10,14 @@
   .fernando-inline-button{width:138px;height:174px;border:0;background:transparent;padding:0;cursor:pointer;animation:fernando-inline-idle 4s ease-in-out infinite;transform-origin:center bottom}
   .fernando-inline-button img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.18));pointer-events:none;user-select:none}
   .fernando-inline-button:hover{animation-play-state:paused;transform:translateY(-2px)}
-  .fernando-inline-bubble{position:absolute;right:122px;bottom:98px;max-width:180px;width:fit-content;padding:8px 10px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.28);font-size:.67rem;line-height:1.32;z-index:10}
+  .fernando-inline-bubble{position:absolute;right:122px;bottom:98px;max-width:min(214px,calc(100vw - 34px));min-width:64px;width:fit-content;padding:9px 11px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.28);font-size:.67rem;line-height:1.38;z-index:10;text-wrap:pretty;overflow-wrap:anywhere;transform-origin:100% 62%}
   .fernando-inline-bubble::after{content:'';position:absolute;right:-9px;top:50%;margin-top:-6px;width:12px;height:12px;background:#f2e4c4;border-right:3px solid #282c2b;border-top:3px solid #282c2b;transform:rotate(45deg)}
+  .fernando-inline-bubble strong{display:inline-block;padding:0 5px;margin:0 2px;border-radius:999px;background:rgba(109,184,173,.18);color:#1f4f4b;font-weight:700}
+  .fernando-inline-bubble[hidden]{display:none!important}
+  .fernando-inline-bubble.bubble-enter{animation:fernando-bubble-in .18s cubic-bezier(.2,.8,.2,1) both}
+  .fernando-inline-bubble.bubble-leave{animation:fernando-bubble-out .14s ease-in both}
+  @keyframes fernando-bubble-in{from{opacity:0;transform:translate(-4px,4px) scale(.97)}to{opacity:1;transform:translate(0,0) scale(1)}}
+  @keyframes fernando-bubble-out{from{opacity:1;transform:translate(0,0) scale(1)}to{opacity:0;transform:translate(-2px,2px) scale(.985)}}
   @keyframes fernando-inline-idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
   @media(max-width:720px){.fernando-inline{width:116px;height:112px;flex-basis:116px}.fernando-inline-button{width:86px;height:108px}.fernando-inline-bubble{right:66px;bottom:54px;max-width:156px;font-size:.62rem}}
 </style>
@@ -25,50 +31,92 @@
   if(inlineRoot instanceof HTMLElement && inlineButton instanceof HTMLButtonElement && inlineImg instanceof HTMLImageElement && inlineBubble instanceof HTMLElement){
     const POSES={ base:'/assets/characters/fernando-pixel.png', thumbs:'/assets/characters/fernando-thumbsup.png', thinking:'/assets/characters/fernando-thinking.png' };
     const tx=(key,fallback)=>window.SM_I18N?.t?.(key,fallback) ?? fallback;
+    const isEN=()=>window.SM_I18N?.getLanguage?.()==='en';
+    const readingDuration=(text,{min=3000,max=12000,wpm=220,extra=650}={})=>{
+      const clean=String(text||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
+      const words=clean?clean.split(' ').length:1;
+      const commas=(clean.match(/[,;]/g)||[]).length;
+      const stops=(clean.match(/[.!?]/g)||[]).length;
+      const pauses=(clean.match(/[—:…]/g)||[]).length;
+      const punctuationBonus=commas*110+stops*190+pauses*150;
+      return Math.max(min,Math.min(max,Math.round((words/wpm)*60000+extra+punctuationBonus)));
+    };
+    const rich=(text)=>String(text).replace(/Senhorita Minuto/g,'<strong>Senhorita Minuto</strong>');
+
+    const initialLines=()=>[
+      isEN()
+        ? {text:'Arigó! I am Fernando — this simulator mixes tribute, memory and practical learning.', pose:'thumbs'}
+        : {text:'Arigó! Eu sou Fernando — esse simulador junta homenagem, memória e aprendizado prático.', pose:'thumbs'},
+      isEN()
+        ? {text:'Around here, every minute matters. If you open the simulator, you will understand why.', pose:'thinking'}
+        : {text:'Por aqui, cada minuto importa. Se abrir o simulador, tu vai entender logo por quê.', pose:'thinking'}
+    ];
 
     const LINES=()=>[
-      {text:tx('fernando.line1','Arigó!'), pose:'thumbs', duration:2200},
-      {text:tx('fernando.line3','Bora jogar dominó?'), pose:'base', duration:2600},
-      {text:tx('fernando.line4','Sou muito bom na dama, viu?'), pose:'thumbs', duration:2800},
-      {text:tx('fernando.line2','Minha família é do sertão. Povo arretado de bom!'), pose:'thinking', duration:3400},
+      {text:tx('fernando.line1','Arigó!'), pose:'thumbs'},
+      {text:tx('fernando.line3','Bora jogar dominó?'), pose:'base'},
+      {text:tx('fernando.line4','Sou muito bom na dama, viu?'), pose:'thumbs'},
+      {text:tx('fernando.line2','Minha família é do sertão. Povo arretado de bom!'), pose:'thinking'},
       {
         text:tx('fernando.interact1','Oxente, Senhorita Minuto, se eu perder na dama tu volta só um minutinho e deixa eu mexer de novo, visse?'),
-        pose:'thinking',duration:4200,
+        pose:'thinking',
         reply:tx('fernando.interact1r','Oxente nada. Isso é fraude temporal. Perdeu, perdeu.'),mood:'evil'
       },
       {
         text:tx('fernando.interact2','No sertão, o sol não espera ninguém. Ainda bem que tu toma conta dos minutos.'),
-        pose:'thumbs',duration:4000,
+        pose:'thumbs',
         reply:tx('fernando.interact2r','Dos minutos eu cuido. No dominó, meu amigo, cada um por si.'),mood:'happy'
       }
     ];
 
-    let timer=0; let replyTimer=0; let idx=0;
+    let timer=0; let replyTimer=0; let idx=0; let greeted=false;
 
-    const speak=(entry)=>{
+    const hide=(immediate=false)=>{
+      window.clearTimeout(timer);
+      if(inlineBubble.hidden){inlineImg.src=POSES.base;return;}
+      if(immediate){inlineBubble.hidden=true;inlineBubble.classList.remove('bubble-enter','bubble-leave');inlineImg.src=POSES.base;return;}
+      inlineBubble.classList.remove('bubble-enter');
+      inlineBubble.classList.add('bubble-leave');
+      window.setTimeout(()=>{inlineBubble.hidden=true;inlineBubble.classList.remove('bubble-leave');inlineImg.src=POSES.base;},140);
+    };
+    const speak=(entry,{initial=false}={})=>{
+      const duration=readingDuration(entry.text,{min:initial?5000:3000,max:11000});
+      window.dispatchEvent(new CustomEvent('sm:project-bubble-open',{detail:{source:'fernando-inline'}}));
       inlineImg.src=POSES[entry.pose] || POSES.base;
-      inlineBubble.textContent=entry.text;
+      inlineBubble.innerHTML=rich(entry.text);
       inlineBubble.hidden=false;
+      inlineBubble.classList.remove('bubble-leave','bubble-enter');
+      void inlineBubble.offsetWidth;
+      inlineBubble.classList.add('bubble-enter');
       window.clearTimeout(timer);
       window.clearTimeout(replyTimer);
 
       if(entry.reply){
+        const replyDuration=readingDuration(entry.reply,{min:3000,max:8000});
+        const startReply=Math.max(1800,duration-450);
         replyTimer=window.setTimeout(()=>{
+          hide(true);
           window.dispatchEvent(new CustomEvent('sm:interact',{detail:{
             target:'#fernandoInline',
             message:entry.reply,
-            duration:3200,
+            duration:replyDuration,
             mood:entry.mood || 'happy',
             power:false,
-            hold:5000
+            hold:Math.max(3200, replyDuration+900)
           }}));
-        },1450);
+        },startReply);
       }
 
-      timer=window.setTimeout(()=>{
-        inlineBubble.hidden=true;
-        inlineImg.src=POSES.base;
-      },entry.duration);
+      timer=window.setTimeout(()=>hide(false),duration);
+    };
+
+    const initialGreeting=()=>{
+      if(greeted) return;
+      const r=inlineRoot.getBoundingClientRect();
+      if(!(r.bottom>0&&r.top<window.innerHeight)) return;
+      greeted=true;
+      const list=initialLines();
+      speak(list[Math.floor(Math.random()*list.length)],{initial:true});
     };
 
     inlineButton.addEventListener('click',()=>{
@@ -77,10 +125,13 @@
       idx+=1;
     });
 
+    window.setTimeout(initialGreeting,920);
+
+    window.addEventListener('sm:minute-bubble-open',()=>hide(true));
+    window.addEventListener('sm:project-bubble-open',(event)=>{const detail=event instanceof CustomEvent?event.detail:null;if(detail?.source!=='fernando-inline')hide(true);});
+
     window.addEventListener('sm:language-changed',()=>{
-      inlineBubble.hidden=true;
-      inlineImg.src=POSES.base;
-      window.clearTimeout(timer);
+      hide(); greeted=false; window.setTimeout(initialGreeting,350);
       window.clearTimeout(replyTimer);
     });
 
