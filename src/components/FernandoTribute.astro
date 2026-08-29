@@ -36,14 +36,14 @@
   .fernando-character.pose-pop{animation:fernando-pose-pop .72s ease-in-out 2}
   @keyframes fernando-pose-pop{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-4px) scale(1.015)}}
 
-  .tribute-bubble{position:absolute;right:228px;top:22px;display:block;max-width:min(280px,calc(100vw - 40px));min-width:136px;width:auto;padding:10px 12px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.74rem;line-height:1.44;letter-spacing:.005em;z-index:8;white-space:normal;text-wrap:pretty;overflow-wrap:normal;word-break:normal;hyphens:none}
+  .tribute-bubble{position:absolute;right:262px;top:18px;display:block;max-width:min(264px,calc(100vw - 42px));min-width:136px;width:auto;padding:10px 12px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.74rem;line-height:1.44;letter-spacing:.005em;z-index:8;white-space:normal;text-wrap:pretty;overflow-wrap:normal;word-break:normal;hyphens:none}
   .tribute-bubble strong{display:inline-block;padding:0 5px;margin:0 2px;border-radius:999px;background:rgba(109,184,173,.18);color:#1f4f4b;font-weight:700}
   .tribute-bubble[hidden]{display:none!important}
   .tribute-bubble.bubble-enter{animation:tribute-bubble-in .18s cubic-bezier(.2,.8,.2,1) both}
   .tribute-bubble.bubble-leave{animation:tribute-bubble-out .14s ease-in both}
   @keyframes tribute-bubble-in{from{opacity:0;transform:translate(-4px,4px) scale(.97)}to{opacity:1;transform:translate(0,0) scale(1)}}
   @keyframes tribute-bubble-out{from{opacity:1;transform:translate(0,0) scale(1)}to{opacity:0;transform:translate(-2px,2px) scale(.985)}}
-  .tribute-bubble::after{content:'';position:absolute;right:-10px;bottom:28px;width:14px;height:14px;background:#f2e4c4;border-right:3px solid #282c2b;border-top:3px solid #282c2b;transform:rotate(45deg)}
+  .tribute-bubble::after{content:'';position:absolute;right:-10px;bottom:18px;width:14px;height:14px;background:#f2e4c4;border-right:3px solid #282c2b;border-top:3px solid #282c2b;transform:rotate(45deg)}
 
   .tribute-prop{position:absolute;right:0;bottom:118px;width:100px;height:76px;opacity:0;transform:translateY(8px) scale(.86);transition:opacity .22s ease,transform .3s ease;z-index:2;background:linear-gradient(180deg,rgba(15,20,22,.72),rgba(8,12,14,.52));border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(4px);border-radius:16px;padding:8px 10px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);pointer-events:none}
   .tribute-prop.active{opacity:1;transform:translateY(0) scale(1)}
@@ -84,7 +84,7 @@
     };
 
     const tx=(key,fallback)=>window.SM_I18N?.t?.(key,fallback) ?? fallback;
-    const readingDuration=(text,{min=3000,max=11000,wpm=220,extra=650}={})=>{
+    const readingDuration=(text,{min=3000,max=11000,wpm=150,extra=650}={})=>{
       const clean=String(text||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
       const words=clean?clean.split(' ').length:1;
       const commas=(clean.match(/[,;]/g)||[]).length;

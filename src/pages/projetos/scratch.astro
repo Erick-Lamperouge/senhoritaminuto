@@ -11,7 +11,7 @@ import ScratchCat from '../../components/ScratchCat.astro';
 
     <section class="project-hero-grid">
       <div class="project-hero-main">
-        <h1 data-i18n="card.scratch.title">Projeto Scratch</h1>
+        <h1 id="scratchProjectTitle" class="scratch-title-accent" aria-label="Projeto Scratch">Projeto Scratch</h1>
         <p class="project-lead" data-i18n="scratch.lead">Narrativa, interação e uma ameaça felina improvável — tudo reunido em uma experiência jogável criada no Scratch.</p>
         <div class="project-actions emphasis-actions">
           <a class="button primary action-main" href="#jogar" data-i18n="common.goGame">Ir para o jogo</a>
@@ -55,6 +55,20 @@ import ScratchCat from '../../components/ScratchCat.astro';
         </a>
       </section>
     </div>
+
+    <script>
+      const renderScratchTitle=()=>{
+        const node=document.getElementById('scratchProjectTitle');
+        if(!(node instanceof HTMLElement)) return;
+        const isEN=window.SM_I18N?.getLanguage?.()==='en';
+        const label=isEN?'Scratch Project':'Projeto Scratch';
+        const main=isEN?'S<span class="cat-title-accent">cat</span>ch Project':'Projeto S<span class="cat-title-accent">cat</span>ch';
+        node.setAttribute('aria-label',label);
+        node.innerHTML=main;
+      };
+      if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',renderScratchTitle,{once:true}); else renderScratchTitle();
+      window.addEventListener('sm:language-changed',renderScratchTitle);
+    </script>
   </main>
   <Mascot />
 </BaseLayout>

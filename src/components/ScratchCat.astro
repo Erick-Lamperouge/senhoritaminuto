@@ -86,7 +86,7 @@
       seated:'/assets/characters/scratch-cat-seated.png'
     };
 
-    const readingDuration=(text,{min=3000,max=12000,wpm=220,extra=650}={})=>{
+    const readingDuration=(text,{min=3000,max=12000,wpm=150,extra=650}={})=>{
       const clean=String(text||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
       const words=clean?clean.split(' ').length:1;
       const commas=(clean.match(/[,;]/g)||[]).length;
@@ -140,8 +140,13 @@
         ? {text:'Before you click around too much, know this: cats may be planning world domination in this project.',pose:'seated'}
         : {text:'Antes de clicar demais, saiba: neste projeto os gatos talvez estejam planejando dominar o mundo.',pose:'seated'}
     ];
+    const introFollowUp=()=>({
+      cat: isEN() ? 'You noticed it, right? I hid a little cat inside the title too.' : 'Tu percebeu, né? Eu escondi um catzinho até no título.',
+      minute: isEN() ? 'I noticed. And I am still watching this timeline.' : 'Eu percebi. E continuo de olho nessa linha do tempo.',
+      pose:'seated'
+    });
 
-    let catClicks=0, sequenceTimer=0, bubbleTimer=0, busy=false, greeted=false;
+    let catClicks=0, sequenceTimer=0, bubbleTimer=0, busy=false, greeted=false, introDone=false;
     cat.classList.add('idle');
 
     const portalReset=()=>{portal.classList.remove('active');wand.classList.remove('active');rewind.classList.remove('active');cat.classList.remove('portal-travel','reappear','alert');cat.style.opacity='1';};
@@ -199,12 +204,29 @@
       greeted=true;
       const options=welcomeLines();
       const line=options[Math.floor(Math.random()*options.length)];
+      const introDuration=readingDuration(line.text,{min:5000,max:9500});
       setPose(line.pose||'base');
-      showCat(line.text, readingDuration(line.text,{min:5000,max:9500}));
+      showCat(line.text, introDuration);
+
+      if(!introDone){
+        const intro=introFollowUp();
+        const catDuration=readingDuration(intro.cat,{min:3000,max:7500});
+        const minuteDuration=readingDuration(intro.minute,{min:3000,max:6500});
+        window.setTimeout(()=>{
+          if(busy||!inView()) return;
+          introDone=true;
+          setPose(intro.pose||'seated');
+          showCat(intro.cat, catDuration);
+          window.setTimeout(()=>{
+            hideCat(true);
+            interactMinute(intro.minute,{mood:'happy',power:false,hold:Math.max(3600,minuteDuration+850),duration:minuteDuration});
+          },catDuration+320);
+        },introDuration+520);
+      }
     };
 
     window.setTimeout(initialGreeting,720);
-    window.setTimeout(runScene,9800);
+    window.setTimeout(runScene,12600);
 
     cat.addEventListener('click',()=>{
       if(busy)return;
@@ -221,7 +243,7 @@
     window.addEventListener('sm:minute-bubble-open',()=>hideCat(true));
     window.addEventListener('sm:project-bubble-open',(event)=>{const detail=event instanceof CustomEvent?event.detail:null;if(detail?.source!=='scratch')hideCat(true);});
 
-    window.addEventListener('sm:language-changed',()=>{hideCat();setPose('base');greeted=false;window.setTimeout(initialGreeting,300);});
+    window.addEventListener('sm:language-changed',()=>{hideCat();setPose('base');greeted=false;introDone=false;window.setTimeout(initialGreeting,300);});
     window.addEventListener('pagehide',()=>{window.clearTimeout(sequenceTimer);window.clearTimeout(bubbleTimer);},{once:true});
   }
 </script>

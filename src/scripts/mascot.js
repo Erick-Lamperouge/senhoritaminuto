@@ -92,7 +92,7 @@ if(
     return r.bottom>0&&r.top<window.innerHeight&&r.right>0&&r.left<window.innerWidth;
   });
 
-  const readingDuration=(text,{min=3000,max=12000,wpm=220,extra=650}={})=>{
+  const readingDuration=(text,{min=3000,max=12000,wpm=150,extra=650}={})=>{
     const clean=String(text||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();
     const words=clean?clean.split(' ').length:1;
     const commas=(clean.match(/[,;]/g)||[]).length;
@@ -146,7 +146,7 @@ if(
         return;
       }
       enterSleep('idle');
-    },42000);
+    },90000);
   }
 
   function wakeFromSleep({resumeSpeech=false}={}){

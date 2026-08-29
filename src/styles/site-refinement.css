@@ -236,3 +236,7 @@
   .language-trigger{min-width:60px;height:34px;padding:0 8px}.language-current-code{display:none}.language-options{width:176px}
   .play-here-callout{align-items:flex-start}.play-here-copy{display:grid;gap:1px}.play-here-callout .play-here-arrow{align-self:center}
 }
+
+
+/* Scratch title accent */
+.scratch-title-accent .cat-title-accent{color:#e58d2f;text-shadow:0 0 14px rgba(229,141,47,.18);font-weight:700}
