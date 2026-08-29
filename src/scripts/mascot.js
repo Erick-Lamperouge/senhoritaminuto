@@ -75,6 +75,8 @@ if(
   let interactionTimer=0;
   let futureSequence=false;
   let repaired=false;
+  let sleeping=false;
+  let idleTimer=0;
   const clickSessionKey='senhorita-minuto-clickcount-session-v1';
   const repairSessionKey='senhorita-minuto-repaired-session-v1';
 
@@ -130,7 +132,64 @@ if(
     clickCounter.hidden=false;
     window.clearTimeout(clickCounterTimer);
     window.clearTimeout(interactionTimer);
+    window.clearTimeout(idleTimer);
     clickCounterTimer=window.setTimeout(()=>{clickCounter.hidden=true;},duration);
+  }
+
+
+  function scheduleIdleSleep(){
+    window.clearTimeout(idleTimer);
+    if(reducedMotion())return;
+    idleTimer=window.setTimeout(()=>{
+      if(busy||sleeping||futureSequence||projectMascotVisible()){
+        scheduleIdleSleep();
+        return;
+      }
+      enterSleep('idle');
+    },42000);
+  }
+
+  function wakeFromSleep({resumeSpeech=false}={}){
+    if(!sleeping)return;
+    sleeping=false;
+    busy=false;
+    hideMinuteSpeech(true);
+    traveler.dataset.mode='walk';
+    setMood('neutral');
+    clearEphemera();
+    alignToPatrolBase(true);
+    if(!reducedMotion()){
+      startPatrol();
+      scheduleAction();
+      scheduleIdleSleep();
+    }
+    if(resumeSpeech){
+      const msg=tx('mascot.wake','Voltei. Só precisava de um minutinho.');
+      say(msg,readingDuration(msg,{min:3000,max:5200}));
+    }
+  }
+
+  function enterSleep(reason='idle'){
+    if(sleeping||futureSequence||projectMascotVisible())return;
+    if(busy && !['walk','side-walk','sleep'].includes(traveler.dataset.mode||''))return;
+    sleeping=true;
+    busy=true;
+    stopPatrol();
+    window.clearTimeout(actionTimer);
+    clearEphemera();
+    const points=patrolPoints();
+    const current=currentRect();
+    const nearest=Math.abs(current.left-points[0].x)<=Math.abs(current.left-points[1].x)?0:1;
+    patrolTargetIndex=nearest;
+    traveler.style.transition='left .7s ease, top .7s ease, opacity .28s ease, transform .35s ease, filter .35s ease';
+    setFacing(1);
+    setPosition(points[nearest].x,points[nearest].y,true);
+    traveler.dataset.mode='sleep';
+    const lines=reason==='hidden'
+      ? [tx('mascot.sleep.hidden1','Dê tempo ao tempo... eu já volto.'), tx('mascot.sleep.hidden2','Preciso descansar um pouquinho.')]
+      : [tx('mascot.sleep.idle1','Dê tempo ao tempo.'), tx('mascot.sleep.idle2','Que sono... preciso descansar.'), tx('mascot.sleep.idle3','Só vou tirar um cochilo rapidinho.')];
+    const message=lines[Math.floor(Math.random()*lines.length)];
+    say(message,readingDuration(message,{min:2800,max:5200}));
   }
 
   function setFacing(value){traveler.style.setProperty('--facing',String(value));}
@@ -253,7 +312,7 @@ if(
 
   function returnFromInteraction(homeSide){
     window.clearTimeout(interactionTimer);
-    const portal=portalRight;
+    const portal=portalLeft;
     const current=currentRect();
     setMood('neutral');
     traveler.dataset.mode='portal';
@@ -305,7 +364,7 @@ if(
     const targetX=clamp(targetRect.left-92,10,Math.max(10,window.innerWidth-112));
     const targetY=clamp(targetRect.bottom-110,12,Math.max(12,window.innerHeight-124));
     traveler.style.setProperty('--sm-interaction-top',`${targetY}px`);
-    const portal=portalRight;
+    const portal=portalLeft;
     const power=Boolean(detail?.power);
     const mood=typeof detail?.mood==='string'?detail.mood:'happy';
     const duration=Math.max(1200,Number(detail?.duration)||readingDuration(detail?.message||'',{min:3000,max:10000}));
@@ -724,6 +783,8 @@ if(
 
   button.addEventListener('click',()=>{
     if(futureSequence)return;
+    if(sleeping)wakeFromSleep();
+    scheduleIdleSleep();
     clickCount+=1;
     updateCounter();
     try{window.sessionStorage.setItem(clickSessionKey,String(clickCount));}catch{}
@@ -758,18 +819,24 @@ if(
 
 
   window.addEventListener('sm:project-bubble-open',()=>{
+    if(sleeping)wakeFromSleep();
+    scheduleIdleSleep();
     if(!traveler.classList.contains('interacting')) hideMinuteSpeech(true);
   });
 
   window.addEventListener('sm:say',(event)=>{
     const detail=event instanceof CustomEvent?event.detail:null;
     if(!detail||typeof detail.message!=='string')return;
+    if(sleeping)wakeFromSleep();
+    scheduleIdleSleep();
     say(detail.message,Number(detail.duration)||2600);
   });
 
   window.addEventListener('sm:interact',(event)=>{
     const detail=event instanceof CustomEvent?event.detail:null;
     if(!detail)return;
+    if(sleeping)wakeFromSleep();
+    scheduleIdleSleep();
     const attempt=()=>{
       if(futureSequence)return;
       if(busy){window.setTimeout(attempt,320);return;}
@@ -802,14 +869,33 @@ if(
     if(!speech.hidden&&speech.textContent){/* mantém a fala atual até concluir */}
   });
 
+
+  ['pointerdown','pointermove','keydown','scroll','touchstart'].forEach((eventName)=>{
+    window.addEventListener(eventName,()=>{
+      if(sleeping)wakeFromSleep();
+      else scheduleIdleSleep();
+    },{passive:true});
+  });
+
+  window.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='hidden'){
+      enterSleep('hidden');
+      return;
+    }
+    if(sleeping)wakeFromSleep();
+    else scheduleIdleSleep();
+  });
+
   setSide(side);
   alignToPatrolBase(true);
   if(!reducedMotion()){
     startPatrol();
     scheduleAction();
+    scheduleIdleSleep();
   }
 
   window.addEventListener('resize',()=>{
+    if(sleeping)return;
     if(busy)return;
     clearEphemera();
     alignToPatrolBase(true);
@@ -823,5 +909,6 @@ if(
     window.clearTimeout(patrolTimer);
     window.clearTimeout(clickCounterTimer);
     window.clearTimeout(interactionTimer);
+    window.clearTimeout(idleTimer);
   },{once:true});
 }
