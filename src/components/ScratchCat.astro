@@ -29,7 +29,7 @@
   @keyframes cat-reappear{0%{opacity:0}25%{opacity:1}45%{opacity:.25}65%{opacity:1}82%{opacity:.4}100%{opacity:1}}
 
   .cat-bubble{position:absolute;left:-10px;bottom:138px;max-width:min(238px,calc(100vw - 34px));min-width:68px;width:max-content;padding:10px 12px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.72rem;line-height:1.44;z-index:12;text-wrap:pretty;overflow-wrap:anywhere;transform-origin:82% 100%}
-  .cat-bubble::after{content:'';position:absolute;right:44px;bottom:-9px;width:12px;height:12px;background:#f2e4c4;border-right:3px solid #282c2b;border-bottom:3px solid #282c2b;transform:rotate(45deg)}
+  .cat-bubble::after{content:'';position:absolute;right:40px;bottom:-9px;width:12px;height:12px;background:#f2e4c4;border-right:3px solid #282c2b;border-bottom:3px solid #282c2b;transform:rotate(45deg)}
   .cat-bubble strong{display:inline-block;padding:0 5px;margin:0 2px;border-radius:999px;background:rgba(109,184,173,.18);color:#1f4f4b;font-weight:700}
   .cat-bubble[hidden]{display:none!important}
   .cat-bubble.bubble-enter{animation:cat-bubble-in .18s cubic-bezier(.2,.8,.2,1) both}
@@ -60,7 +60,7 @@
   @media(max-width:720px){
     .scratch-cat-scene{width:154px;height:136px;flex-basis:154px}
     .scratch-cat{width:110px;height:110px}
-    .cat-bubble{left:-70px;bottom:108px;max-width:194px;font-size:.68rem}
+    .cat-bubble{left:-70px;bottom:108px;max-width:min(194px,calc(100vw - 28px));min-width:96px;font-size:.68rem;line-height:1.38}
     .cat-portal{width:72px;height:72px;bottom:10px}
     .time-wand{width:62px;height:62px;left:-2px;bottom:28px}
     .wand-stick{width:38px;height:5px;left:8px;top:36px}
