@@ -62,7 +62,7 @@ import ScratchCat from '../../components/ScratchCat.astro';
         if(!(node instanceof HTMLElement)) return;
         const isEN=window.SM_I18N?.getLanguage?.()==='en';
         const label=isEN?'Scratch Project':'Projeto Scratch';
-        const main=isEN?'S<span class="cat-title-accent">cat</span>ch Project':'Projeto S<span class="cat-title-accent">cat</span>ch';
+        const main=isEN?'S<span class="cat-title-accent" style="color:#e58d2f;font-weight:700;text-shadow:0 0 14px rgba(229,141,47,.18)">cat</span>ch Project':'Projeto S<span class="cat-title-accent" style="color:#e58d2f;font-weight:700;text-shadow:0 0 14px rgba(229,141,47,.18)">cat</span>ch';
         node.setAttribute('aria-label',label);
         node.innerHTML=main;
       };

@@ -126,6 +126,14 @@ if(
     portal.classList.remove('future-color');
   }
 
+
+  function closeAllPortals(){
+    [portalLeft,portalRight].forEach((portal)=>{
+      portal.classList.remove('is-open','future-color');
+      restorePortalPosition(portal);
+    });
+  }
+
   function updateCounter(){clickCounterValue.textContent=String(clickCount);}
 
   function showClickCounter(duration=3000){
@@ -252,6 +260,7 @@ if(
     mineBlast.classList.remove('active');
     musicNotes.classList.remove('active');
     leafShower.classList.remove('active');
+    closeAllPortals();
     window.clearTimeout(projectTimer);
   }
 
@@ -312,6 +321,7 @@ if(
 
   function returnFromInteraction(homeSide){
     window.clearTimeout(interactionTimer);
+    closeAllPortals();
     const portal=portalLeft;
     const current=currentRect();
     setMood('neutral');
@@ -364,6 +374,7 @@ if(
     const targetX=clamp(targetRect.left-92,10,Math.max(10,window.innerWidth-112));
     const targetY=clamp(targetRect.bottom-110,12,Math.max(12,window.innerHeight-124));
     traveler.style.setProperty('--sm-interaction-top',`${targetY}px`);
+    closeAllPortals();
     const portal=portalLeft;
     const power=Boolean(detail?.power);
     const mood=typeof detail?.mood==='string'?detail.mood:'happy';
@@ -409,6 +420,7 @@ if(
     traveler.classList.add('is-dismantled');
 
     const brokenRect=currentRect();
+    closeAllPortals();
     const portal=portalRight;
     const futureX=clamp(brokenRect.left+(brokenRect.left<window.innerWidth/2?112:-112),14,Math.max(14,window.innerWidth-124));
     const futureY=clamp(brokenRect.top-12,20,Math.max(20,window.innerHeight-142));
@@ -800,7 +812,8 @@ if(
     if(eggs.has(clickCount)){
       showClickCounter(3000);
       const key=eggs.get(clickCount);
-      say(tx(key,String(key)),3000);
+      const message=tx(key,String(key));
+      say(message,readingDuration(message,{min:4200,max:9000}));
     }
   });
 
@@ -821,6 +834,7 @@ if(
   window.addEventListener('sm:project-bubble-open',()=>{
     if(sleeping)wakeFromSleep();
     scheduleIdleSleep();
+    closeAllPortals();
     if(!traveler.classList.contains('interacting')) hideMinuteSpeech(true);
   });
 
@@ -829,7 +843,8 @@ if(
     if(!detail||typeof detail.message!=='string')return;
     if(sleeping)wakeFromSleep();
     scheduleIdleSleep();
-    say(detail.message,Number(detail.duration)||2600);
+    closeAllPortals();
+    say(detail.message,Number(detail.duration)||readingDuration(detail.message,{min:4200,max:9000}));
   });
 
   window.addEventListener('sm:interact',(event)=>{

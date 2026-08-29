@@ -36,14 +36,14 @@
   .fernando-character.pose-pop{animation:fernando-pose-pop .72s ease-in-out 2}
   @keyframes fernando-pose-pop{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-4px) scale(1.015)}}
 
-  .tribute-bubble{position:absolute;right:262px;top:18px;display:block;max-width:min(264px,calc(100vw - 42px));min-width:136px;width:auto;padding:10px 12px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.74rem;line-height:1.44;letter-spacing:.005em;z-index:8;white-space:normal;text-wrap:pretty;overflow-wrap:normal;word-break:normal;hyphens:none}
+  .tribute-bubble{position:absolute;right:300px;top:14px;display:block;max-width:min(240px,calc(100vw - 42px));min-width:148px;width:auto;padding:10px 12px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.3);font-size:.74rem;line-height:1.44;letter-spacing:.005em;z-index:8;white-space:normal;text-wrap:pretty;overflow-wrap:normal;word-break:normal;hyphens:none}
   .tribute-bubble strong{display:inline-block;padding:0 5px;margin:0 2px;border-radius:999px;background:rgba(109,184,173,.18);color:#1f4f4b;font-weight:700}
   .tribute-bubble[hidden]{display:none!important}
   .tribute-bubble.bubble-enter{animation:tribute-bubble-in .18s cubic-bezier(.2,.8,.2,1) both}
   .tribute-bubble.bubble-leave{animation:tribute-bubble-out .14s ease-in both}
   @keyframes tribute-bubble-in{from{opacity:0;transform:translate(-4px,4px) scale(.97)}to{opacity:1;transform:translate(0,0) scale(1)}}
   @keyframes tribute-bubble-out{from{opacity:1;transform:translate(0,0) scale(1)}to{opacity:0;transform:translate(-2px,2px) scale(.985)}}
-  .tribute-bubble::after{content:'';position:absolute;right:-10px;bottom:18px;width:14px;height:14px;background:#f2e4c4;border-right:3px solid #282c2b;border-top:3px solid #282c2b;transform:rotate(45deg)}
+  .tribute-bubble::after{content:'';position:absolute;right:-10px;bottom:14px;width:14px;height:14px;background:#f2e4c4;border-right:3px solid #282c2b;border-top:3px solid #282c2b;transform:rotate(45deg)}
 
   .tribute-prop{position:absolute;right:0;bottom:118px;width:100px;height:76px;opacity:0;transform:translateY(8px) scale(.86);transition:opacity .22s ease,transform .3s ease;z-index:2;background:linear-gradient(180deg,rgba(15,20,22,.72),rgba(8,12,14,.52));border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(4px);border-radius:16px;padding:8px 10px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);pointer-events:none}
   .tribute-prop.active{opacity:1;transform:translateY(0) scale(1)}
@@ -55,7 +55,7 @@
   @media(max-width:980px){
     .fernando-tribute{grid-template-columns:1fr}
     .tribute-character-wrap{min-height:282px;justify-content:flex-start;padding-right:0;padding-left:10px}
-    .tribute-bubble{left:214px;right:auto;top:18px;max-width:min(260px,calc(100vw - 34px));min-width:120px}
+    .tribute-bubble{left:198px;right:auto;top:18px;max-width:min(244px,calc(100vw - 34px));min-width:120px}
     .tribute-bubble::after{left:-10px;right:auto;bottom:24px;border-right:0;border-top:0;border-left:3px solid #282c2b;border-bottom:3px solid #282c2b}
     .tribute-prop{right:auto;left:176px;bottom:18px}
   }
@@ -64,7 +64,7 @@
     .fernando-tribute{padding:24px}
     .fernando-character{width:176px;height:238px}
     .tribute-character-wrap{min-height:240px;padding-left:0}
-    .tribute-bubble{left:118px;top:8px;max-width:min(194px,calc(100vw - 28px));min-width:98px;width:auto;font-size:.69rem;line-height:1.38}
+    .tribute-bubble{left:106px;top:6px;max-width:min(186px,calc(100vw - 28px));min-width:98px;width:auto;font-size:.69rem;line-height:1.38}
     .tribute-prop{left:138px;bottom:8px;width:92px;height:70px}
     .tribute-prop[data-prop='checkers'] img{width:54px}
   }
