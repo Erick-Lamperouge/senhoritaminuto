@@ -113,10 +113,11 @@ if (ready) {
     { nameKey: 'card.scratch.title', name: 'Projeto Scratch', href: '/projetos/scratch' },
     { nameKey: 'card.fernando.title', name: 'FERNANDO', href: '/projetos/fernando' },
     { nameKey: 'card.jack.title', name: 'Jack-UP', href: '/projetos/jack-up' },
+    { nameKey: 'card.blogs.title', name: 'Rede de Blogs', href: '/projetos/blogs/' },
   ];
 
   function projectMascotVisible() {
-    return Array.from(document.querySelectorAll('#scratchCatScene,#fernandoInline')).some((node) => {
+    return Array.from(document.querySelectorAll('#scratchCatScene,#fernandoInline,#archive-mascot')).some((node) => {
       if (!(node instanceof HTMLElement)) return false;
       const rect = node.getBoundingClientRect();
       return rect.bottom > 0 && rect.top < window.innerHeight && rect.right > 0 && rect.left < window.innerWidth;
@@ -492,6 +493,7 @@ if (ready) {
     }
 
     state.owner = 'interaction';
+    window.dispatchEvent(new CustomEvent('sm:interaction-state',{detail:{active:true,target:selector}}));
     debug('interaction:start', { target: selector });
     timers.scheduler.clearAll();
     timers.interaction.clearAll();
@@ -571,6 +573,7 @@ if (ready) {
       traveler.dataset.mode = 'walk';
       setMood('neutral');
       state.owner = 'patrol';
+      window.dispatchEvent(new CustomEvent('sm:interaction-state',{detail:{active:false}}));
       startPatrol();
       scheduleAutonomousAction();
       scheduleIdleSleep();

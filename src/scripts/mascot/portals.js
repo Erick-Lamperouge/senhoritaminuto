@@ -13,7 +13,7 @@ export function createPortalController({ left, right, interaction, clamp }) {
   }
 
   function closeInteraction() {
-    interaction.classList.remove('active');
+    interaction.classList.remove('active', 'power-portal');
   }
 
   function closeAll() {

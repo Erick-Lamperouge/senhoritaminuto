@@ -1,0 +1,41 @@
+---
+import CatalogIcon from './CatalogIcon.astro';
+import {blogCatalog} from '../config/blog-catalog.mjs';
+---
+<section class="blog-selector" id="blog-selector" aria-labelledby="selector-heading">
+  <div class="selector-heading"><span class="eyebrow" data-i18n="blogs.selector.kicker">SELEÇÃO / PUBLICAÇÕES</span><h2 id="selector-heading" data-i18n="blogs.selector.title">Escolha um universo</h2><p data-i18n="blogs.selector.hint">Use as setas ou escolha um ícone. Os temas futuros são apenas espaços em planejamento.</p></div>
+  <div class="selector-stage" id="selector-stage" role="group" aria-label="Seleção de blogs" data-i18n-aria="blogs.selector.title" tabindex="0">
+    <div class="selector-orbit" aria-hidden="true"></div>
+    {blogCatalog.map((entry,i)=><button type="button" class="selector-item" data-selector-index={i} data-slot={i===0?'front':i===1?'right':'left'} aria-pressed={i===0?'true':'false'} style={'--entry-color:'+entry.color}>
+      <span class="selector-emblem"><CatalogIcon icon={entry.icon}/></span>
+      <span class="selector-name" data-i18n={entry.nameKey}>{entry.name}</span>
+      <span class="selector-state" data-i18n={entry.status==='planned'?'blogs.selector.planned':'blogs.status'}>{entry.status==='planned'?'PLANEJADO':'PRÉVIA EDITORIAL'}</span>
+    </button>)}
+  </div>
+  <div class="selector-controls" hidden id="selector-controls">
+    <button type="button" id="selector-prev" aria-label="Anterior" data-i18n-aria="blogs.selector.previous"><span aria-hidden="true">←</span></button>
+    <div class="selector-dots" aria-hidden="true">{blogCatalog.map((entry,i)=><span data-selector-dot={i} data-active={i===0?'true':'false'}></span>)}</div>
+    <button type="button" id="selector-next" aria-label="Próximo" data-i18n-aria="blogs.selector.next"><span aria-hidden="true">→</span></button>
+  </div>
+  <div class="selector-details" aria-live="polite">
+    {blogCatalog.map((entry,i)=><div data-selector-detail={i} hidden={i!==0}><p class="selector-detail-title" data-i18n={entry.nameKey}>{entry.name}</p><p data-i18n={entry.descriptionKey}>{entry.description}</p>{entry.href?<a class="button primary selector-open" href={entry.href} data-i18n="blogs.open">Conhecer o Futebolando</a>:<span class="selector-planned" data-i18n="blogs.selector.notAvailable">Ainda não disponível para leitura.</span>}</div>)}
+  </div>
+</section>
+<script>
+  import {slotFor,wrapIndex,nextSelection} from '../scripts/blog-selector.mjs';
+  const stage=document.querySelector<HTMLElement>('#selector-stage');
+  const controls=document.querySelector<HTMLElement>('#selector-controls');
+  const buttons=[...document.querySelectorAll<HTMLButtonElement>('[data-selector-index]')];
+  const details=[...document.querySelectorAll<HTMLElement>('[data-selector-detail]')];
+  const dots=[...document.querySelectorAll<HTMLElement>('[data-selector-dot]')];
+  if(stage&&controls&&buttons.length){
+    let active=0;
+    const choose=(index:number)=>{active=wrapIndex(index,buttons.length);for(const [i,button] of buttons.entries()){const slot=slotFor(i,active,buttons.length);button.dataset.slot=slot;button.setAttribute('aria-pressed',String(i===active));button.tabIndex=slot.startsWith('back')?-1:0;}for(const [i,detail] of details.entries())detail.hidden=i!==active;for(const [i,dot] of dots.entries())dot.dataset.active=String(i===active);};
+    controls.hidden=buttons.length<2;
+    for(const [i,button] of buttons.entries())button.addEventListener('click',()=>choose(i));
+    document.querySelector('#selector-prev')?.addEventListener('click',()=>choose(active-1));
+    document.querySelector('#selector-next')?.addEventListener('click',()=>choose(active+1));
+    stage.addEventListener('keydown',event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();choose(nextSelection(active,event.key,buttons.length));buttons[active].focus();}});
+    choose(0);
+  }
+</script>

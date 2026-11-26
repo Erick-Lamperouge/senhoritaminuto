@@ -1,7 +1,7 @@
 name: Blog integration V2 - validation only
 on:
   push:
-    branches: ['dev/blog-integration-v2']
+    branches: ['dev/blog-integration-v2','dev/portfolio-audit-carousel']
   pull_request:
     branches: [main]
 permissions:
@@ -41,6 +41,7 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Build and verify integrated portfolio
         run: |
+          npm run test:portal
           npm run build:integrated
           node scripts/check-blog-integration.mjs
       - name: Install browser tools

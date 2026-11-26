@@ -2,6 +2,9 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import ArchiveMascot from '../../components/ArchiveMascot.astro';
+import Mascot from '../../components/Mascot.astro';
+import BlogSelector from '../../components/BlogSelector.astro';
+import {availableBlogs} from '../../config/blog-catalog.mjs';
 import '../../styles/blog-catalog.css';
 ---
 <BaseLayout title="Rede de Blogs — Senhorita Minuto" description="Conheça as publicações independentes do portfólio Senhorita Minuto.">
@@ -15,6 +18,7 @@ import '../../styles/blog-catalog.css';
       </div>
       <ArchiveMascot/>
     </section>
+    <BlogSelector/>
     <section id="catalog" class="catalog-section">
       <h2 data-i18n="blogs.catalog">Escolha sua próxima leitura</h2>
       <div class="portfolio-search" id="blog-search-controls" hidden>
@@ -23,21 +27,22 @@ import '../../styles/blog-catalog.css';
         <p id="blog-search-empty" role="status" data-i18n="blogs.empty" hidden>Nenhum blog corresponde à pesquisa.</p>
       </div>
       <div class="catalog-grid">
-        <article class="catalog-card" data-blog-entry data-search="futebolando futebol esporte futebol football sport soccer rules statistics estatística tática">
+        {availableBlogs.map(entry=><article class="catalog-card" data-blog-entry data-search={entry.search}>
           <div class="catalog-art" aria-hidden="true"><svg viewBox="0 0 600 220" fill="none"><rect x="30" y="20" width="540" height="180" rx="4" stroke="#70a98b" stroke-width="2"/><path d="M300 20v180M30 67h76v86H30m540-86h-76v86h76" stroke="#70a98b" stroke-width="2"/><circle cx="300" cy="110" r="40" stroke="#70a98b" stroke-width="2"/><path d="M90 159 205 88 350 143 481 54" stroke="#22c55e" stroke-width="4" stroke-dasharray="9 8"/>{[[90,159],[205,88],[350,143],[481,54]].map(([x,y])=><circle cx={x} cy={y} r="9" fill="#eaf5ea"/>)}</svg></div>
           <div class="catalog-card-copy">
-            <span class="eyebrow" data-i18n="blogs.football.topic">FUTEBOL / ESPORTE</span><span class="catalog-status" data-i18n="blogs.status">PRÉVIA EDITORIAL</span>
-            <h3>Futebolando<span>.</span></h3>
-            <p data-i18n="blogs.football.description">Futebol além do placar: regras, clubes, campeonatos, tática e estatísticas.</p>
-            <div class="catalog-actions"><a class="button primary" href="/futebolando/" data-i18n="blogs.open">Conhecer o Futebolando</a><a class="button secondary" href="/futebolando/en/" data-i18n="blogs.english">Edição em inglês</a></div>
+            <span class="eyebrow" data-i18n={entry.topicKey}>{entry.topic}</span><span class="catalog-status" data-i18n="blogs.status">PRÉVIA EDITORIAL</span>
+            <h3>{entry.name}<span>.</span></h3>
+            <p data-i18n={entry.descriptionKey}>{entry.description}</p>
+            <div class="catalog-actions"><a class="button primary" href={entry.href} data-i18n="blogs.open">Conhecer o Futebolando</a><a class="button secondary" href={entry.englishHref} data-i18n="blogs.english">Edição em inglês</a></div>
           </div>
-        </article>
+        </article>)}
       </div>
       <p class="catalog-notice" data-i18n="blogs.review">O Futebolando está em prévia técnica. Os artigos estão em revisão; não são publicações definitivas.</p>
       <p class="catalog-note" data-i18n="blogs.note">Novos blogs serão acrescentados quando estiverem disponíveis. Cada publicação tem identidade e navegação próprias.</p>
     </section>
   </main>
   <footer><span>© {new Date().getFullYear()} Senhorita Minuto</span><span class="footer-status" data-i18n="footer.expanding">● arquivo em expansão</span></footer>
+  <Mascot/>
 </BaseLayout>
 <script>
   const controls=document.querySelector<HTMLElement>('#blog-search-controls');

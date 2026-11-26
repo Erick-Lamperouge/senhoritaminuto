@@ -31,3 +31,8 @@ Antes de publicar, vale testar estes fluxos no navegador local.
 1. Alterne PT/EN pelo menu do cabeçalho.
 2. Confira Home, Scratch, FERNANDO e Jack-UP.
 3. Confira também falas dos mascotes e as frases de sono.
+
+## 5. Vitrine de blogs
+- Senhorita Minuto e arquivista presentes; saudação com leitura e resposta local, sem portal global.
+- Carrossel: setas, clique nas laterais, teclado, escolha de tema planejado sem link, lista somente dos blogs disponíveis. Sem animação quando movimento reduzido.
+- Entrar em Futebolando: nenhum mascote do portal; retornar à vitrine; testar PT/EN.

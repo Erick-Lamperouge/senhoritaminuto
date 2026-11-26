@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {wrapIndex,slotFor,nextSelection} from '../src/scripts/blog-selector.mjs';
+import {blogCatalog,availableBlogs} from '../src/config/blog-catalog.mjs';
+import {MASCOT_TIMING,readingDuration} from '../src/scripts/mascot/timing.js';
+test('circular selection wraps in both directions',()=>{assert.equal(wrapIndex(-1,3),2);assert.equal(wrapIndex(3,3),0);assert.equal(wrapIndex(0,1),0);});
+test('exactly one front slot at every selection',()=>{for(let active=0;active<6;active++){const slots=Array.from({length:6},(_,i)=>slotFor(i,active,6));assert.equal(slots.filter(x=>x==='front').length,1);assert.equal(slots.filter(x=>x==='left').length,1);assert.equal(slots.filter(x=>x==='right').length,1);}});
+test('direction changes rotate old front to the side',()=>{assert.equal(slotFor(0,1,3),'left');assert.equal(slotFor(1,1,3),'front');assert.equal(slotFor(2,1,3),'right');});
+test('keyboard arrows and Home End',()=>{assert.equal(nextSelection(0,'ArrowLeft',3),2);assert.equal(nextSelection(2,'ArrowRight',3),0);assert.equal(nextSelection(2,'Home',3),0);assert.equal(nextSelection(0,'End',3),2);});
+test('only existing blog has links',()=>{assert.equal(availableBlogs.length,1);assert.equal(availableBlogs[0].href,'/futebolando/');assert.ok(blogCatalog.filter(e=>e.status==='planned').every(e=>e.href===null&&e.englishHref===null));});
+test('preserve original reading and sleep policy',()=>{assert.equal(MASCOT_TIMING.readingWpm,150);assert.equal(MASCOT_TIMING.idleSleepMs,90000);assert.equal(MASCOT_TIMING.wakeDelayMs,3000);assert.equal(MASCOT_TIMING.initialMinMs,5000);assert.equal(readingDuration('Oi!',{min:MASCOT_TIMING.clickMinMs}),5200);});

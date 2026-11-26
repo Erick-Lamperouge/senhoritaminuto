@@ -48,3 +48,6 @@ O GitHub Actions publica automaticamente a branch `main` no GitHub Pages.
 Para acompanhar apenas as transições importantes da Senhorita Minuto no console do navegador, acrescente `?smdebug=1` ao endereço local. Exemplo: `http://localhost:4321/projetos/fernando?smdebug=1`.
 
 Os logs usam o prefixo `[Senhorita Minuto]` e registram sono, interações e saltos de portal sem poluir a execução normal.
+
+## Vitrine de blogs
+A Senhorita Minuto permanece presente na vitrine /projetos/blogs/ junto com o arquivista. Ambos interagem pelo protocolo existente; nenhum mascote do portal entra em /futebolando/. Registro de opções em src/config/blog-catalog.mjs; os temas planejados não recebem links. Ver docs/PORTFOLIO-AUDIT.md.
