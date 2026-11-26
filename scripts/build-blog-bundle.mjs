@@ -15,6 +15,10 @@ assert.equal(git(editorial,['rev-parse','HEAD']),lock.editorial.commit);
 const sourceLock=JSON.parse(readFileSync(path.join(core,'v2/content/futebolando.lock.json'),'utf8'));
 assert.equal(sourceLock.repository,lock.editorial.repository);assert.equal(sourceLock.commit,lock.editorial.commit);
 assert.equal(sourceLock.files.length,11);
+const publication=JSON.parse(readFileSync(path.join(core,'v2/content/publication.json'),'utf8'));
+assert.equal(publication.mode,'preview');
+assert.equal(publication.launchAuthorization,null);assert.equal(publication.indexingAuthorization,null);
+assert.ok(publication.records.every(r=>r.state==='approved'),'No publication records in this preview integration');
 const seen=new Set();
 for(const f of sourceLock.files){
   assert.ok(f.source.startsWith('editorial/')&&f.target.startsWith('v2/')&&!f.source.includes('..')&&!f.target.includes('..')&&!seen.has(f.target));seen.add(f.target);
@@ -26,6 +30,7 @@ const v2=path.join(core,'v2');
 npm(v2,['install','--no-audit','--no-fund']);
 npm(v2,['test']);
 npm(v2,['run','build']);
+execFileSync(process.execPath,['scripts/verify-seo-preview.mjs'],{cwd:v2,stdio:'inherit'});
 const source=path.join(v2,'dist'), target=path.join(root,'dist');
 function copyTree(from,to){
   assert.ok(!lstatSync(from).isSymbolicLink(),from);

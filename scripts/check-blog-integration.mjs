@@ -19,4 +19,22 @@ check('30 football routes',()=>{const pages=walk('dist/futebolando').filter(f=>f
 check('both languages and all articles present',()=>{const a=JSON.parse(text('.blog-core-source/v2/content/articles.json'));assert.equal(a.length,8);for(const article of a)for(const [locale,ed] of Object.entries(article.editions)){const route=locale==='en'?'en/articles':'artigos';const h=text('dist/futebolando/'+route+'/'+ed.slug+'/index.html');assert.ok(h.includes('lang="'+locale+'"'));}assert.ok(text('dist/futebolando/index.html').includes('href="/futebolando/en/"'));assert.ok(text('dist/futebolando/en/index.html').includes('href="/futebolando/"'));});
 check('no unrelated blog or active monetization',()=>{assert.ok(!existsSync('dist/culinaria-demo'));assert.ok(!existsSync('dist/ads.txt'));for(const n of ['barlow-condensed','source-serif-4','inter'])assert.ok(read('dist/blog-font-licenses/'+n+'.txt').length>100);});
 check('local Astro assets and football links resolve',()=>{for(const f of walk('dist').filter(f=>f.endsWith('.html'))){const h=text(f);for(const m of h.matchAll(/(?:src|href)="(\/(?:_astro|futebolando|projetos\/blogs)\/[^"?#]*)(?:[?#][^"]*)?"/g)){const p=path.join('dist',m[1].slice(1));assert.ok(existsSync(p)||existsSync(path.join(p,'index.html')),f+': '+m[1]);}}});
-console.log('9 integration groups passed');
+check('SEO preserved and publication gate closed',()=>{
+ const pages=walk('dist/futebolando').filter(f=>f.endsWith('.html'));
+ const byUrl=new Map();
+ const tags=(h,t)=>[...h.matchAll(new RegExp('<'+t+'\\b[^>]*>','gi'))].map(m=>Object.fromEntries([...m[0].matchAll(/([\w:-]+)="([^"]*)"/g)].map(a=>[a[1],a[2]])));
+ for(const file of pages){
+  const h=text(file),head=h.match(/<head\b[^>]*>([\s\S]*?)<\/head>/i)?.[1];assert.ok(head,file);
+  const canonical='https://senhoritaminuto.com.br/'+file.replace(/^dist\//,'').replace(/index\.html$/,'');
+  const links=tags(head,'link'),meta=tags(head,'meta'),alternates=links.filter(x=>x.rel==='alternate'&&x.hreflang);
+  assert.deepEqual(links.filter(x=>x.rel==='canonical').map(x=>x.href),[canonical],file);
+  assert.deepEqual(alternates.map(a=>a.hreflang).sort(),['en','pt-BR']);
+  assert.deepEqual(meta.filter(x=>x.name==='robots').map(x=>x.content),['noindex,nofollow']);
+  assert.equal(meta.find(x=>x.property==='og:url')?.content,canonical);
+  assert.ok(!head.includes('application/ld+json')&&!head.includes('article:published_time'));
+  assert.ok(!byUrl.has(canonical));byUrl.set(canonical,alternates);
+ }
+ for(const [url,links] of byUrl)for(const alt of links){assert.ok(byUrl.get(alt.href)?.some(a=>a.href===url),'Unreciprocal language alternate '+url);}
+ assert.ok(!walk('dist/futebolando').some(p=>/sitemap[^/]*\.xml$/i.test(p)));
+});
+console.log('10 integration groups passed');

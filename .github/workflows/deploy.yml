@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Erick-Lamperouge/estrutura-dos-blogs
-          ref: 6b4824c9926e9b959d566390b967ffa7713ef102
+          ref: 4dd96b2e9cc4486c16a2855004ac24a700b6a7e8
           path: .blog-core-source
           sparse-checkout: v2
           persist-credentials: false
@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Erick-Lamperouge/futebolando
-          ref: cf82f0b486343c982d566ca81b7a6b081614caf9
+          ref: 9dbbe590b7ca38df9b5a23dec343ddbb6df99c3d
           path: .blog-editorial-source
           sparse-checkout: editorial
           persist-credentials: false
@@ -100,4 +100,14 @@ jobs:
           grep -q 'lang="en"' /tmp/football-en.html
           grep -q 'noindex,nofollow' /tmp/football.html
           ! grep -Eq 'id="archive-character"|id="mascotButton"|adsbygoogle' /tmp/football.html
-          echo "PASS custom domain portal, catalog, PT/EN football preview"
+          grep -q 'rel="canonical" href="https://senhoritaminuto.com.br/futebolando/"' /tmp/football.html
+          grep -q 'rel="canonical" href="https://senhoritaminuto.com.br/futebolando/en/"' /tmp/football-en.html
+          curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/futebolando/artigos/impedimento/ -o /tmp/article-pt.html
+          curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/futebolando/en/articles/offside/ -o /tmp/article-en.html
+          grep -q 'rel="canonical" href="https://senhoritaminuto.com.br/futebolando/artigos/impedimento/"' /tmp/article-pt.html
+          grep -q 'hreflang="en" href="https://senhoritaminuto.com.br/futebolando/en/articles/offside/"' /tmp/article-pt.html
+          grep -q 'hreflang="pt-BR" href="https://senhoritaminuto.com.br/futebolando/artigos/impedimento/"' /tmp/article-en.html
+          grep -q 'noindex,nofollow' /tmp/article-pt.html
+          grep -q 'noindex,nofollow' /tmp/article-en.html
+          ! grep -Eq 'application/ld\+json|article:published_time' /tmp/article-pt.html /tmp/article-en.html
+          echo "PASS custom domain portal, mascots, 30-page preview and bilingual SEO"
