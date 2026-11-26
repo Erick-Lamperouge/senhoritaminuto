@@ -1,7 +1,7 @@
 name: Blog integration V2 - validation only
 on:
   push:
-    branches: ['dev/blog-integration-v2','dev/portfolio-audit-carousel']
+    branches: ['dev/blog-integration-v2','dev/portfolio-audit-carousel','dev/mascot-scenes-v3']
   pull_request:
     branches: [main]
 permissions:

@@ -1,4 +1,83 @@
-.jack-mascot{display:flex;flex-direction:column;align-items:center;gap:.5rem;width:100%;min-width:0;padding:.45rem .3rem}.jack-mascot-kicker{color:var(--teal);font-size:.62rem;font-weight:800;letter-spacing:.1em;text-align:center}.jack-character{display:block;width:154px;height:148px;max-width:100%;background:none;border:0;padding:0;cursor:pointer;color:var(--text);transition:transform .2s ease}.jack-character svg{display:block;width:100%;height:100%;image-rendering:pixelated}.jack-character:hover{transform:translateY(-3px)}.jack-character:active{transform:scale(.97)}.jack-character[aria-disabled=true]{cursor:wait}.jack-body{transform-origin:center bottom;animation:jack-idle 6.4s ease-in-out infinite}.jack-eye{animation:jack-blink 7.2s step-end infinite}.jack-speech{width:100%;max-width:240px;margin:0;padding:.65rem .75rem;border-left:2px solid var(--teal);background:var(--surface-2);color:var(--text);font-size:.76rem;line-height:1.5;overflow-wrap:anywhere}.jack-speech[hidden]{display:none!important}@keyframes jack-idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}@keyframes jack-blink{0%,92%,100%{opacity:1}96%{opacity:0}}@media(prefers-reduced-motion:reduce){.jack-body,.jack-eye{animation:none!important}.jack-character{transition:none;transform:none!important}}
-.project-page-standardized .showcase-jack{height:auto;min-height:200px;align-items:center;justify-content:center;overflow:visible;padding:10px 12px}.project-page-standardized .showcase-jack::after{display:none}
-
-.jack-tail{transform-origin:52px 108px;animation:jack-tail-idle 8s ease-in-out infinite}@keyframes jack-tail-idle{0%,100%{transform:rotate(0)}50%{transform:rotate(-3deg)}}@media(prefers-reduced-motion:reduce){.jack-tail{animation:none!important}}
+/* Same parchment speech bubbles as Scratch and Fernando, without a card shell. */
+.project-character-scene{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;width:240px;max-width:100%;min-width:0;height:226px;background:transparent;border:0;overflow:visible;isolation:isolate}
+.project-character{display:block;width:100%;height:180px;min-width:44px;min-height:44px;padding:0;border:0;background:transparent;cursor:pointer;color:var(--text);transition:transform .18s ease}
+.project-character svg{display:block;width:100%;height:100%;image-rendering:pixelated;overflow:visible}
+.project-character:hover{transform:translateY(-2px)}.project-character:active{transform:scale(.98)}
+.project-character:focus-visible,.project-motion:focus-visible{outline:2px solid var(--amber-soft);outline-offset:4px}
+.project-character[aria-disabled=true]{cursor:wait}
+.project-scene-controls{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:0 .6rem;width:100%;text-align:center}
+.jack-mascot-kicker,.archive-kicker{color:var(--teal);font-size:.59rem;letter-spacing:.08em;font-weight:700}
+.project-motion{min-height:44px;min-width:44px;padding:0 .35rem;border:0;background:none;color:var(--muted);font:inherit;font-size:.68rem;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.project-motion[hidden]{display:none!important}
+.project-character-scene .project-speech{position:absolute;right:calc(100% - 32px);top:25px;width:210px;max-width:calc(100vw - 36px);margin:0;padding:10px 12px;background:#f2e4c4;color:#25231d;border:3px solid #282c2b;box-shadow:4px 4px 0 rgba(0,0,0,.28);font-size:.73rem;line-height:1.44;z-index:12;overflow-wrap:anywhere;pointer-events:none}
+.project-speech::after{content:'';position:absolute;right:-9px;top:26px;width:12px;height:12px;background:#f2e4c4;border-right:3px solid #282c2b;border-top:3px solid #282c2b;transform:rotate(45deg)}
+.project-speech strong{font-weight:750;color:#1f4f4b}.project-speech[hidden]{display:none!important}
+.project-speech.bubble-enter{animation:project-bubble-in .18s ease-out both}.project-speech.bubble-leave{animation:project-bubble-out .14s ease-in both}
+@keyframes project-bubble-in{from{opacity:0}to{opacity:1}}@keyframes project-bubble-out{from{opacity:1}to{opacity:0}}
+.project-page-standardized .showcase-jack{width:260px;min-height:226px;height:auto;align-items:center;justify-content:center;overflow:visible;padding:0;background:none;border:0;box-shadow:none}.project-page-standardized .showcase-jack::before,.project-page-standardized .showcase-jack::after{display:none!important}
+/* Jack: separate articulated SVG layers for every action. */
+.jack-character svg{max-width:206px;margin:auto}
+.jack-body{transform-origin:80px 137px}.jack-tail{transform-origin:50px 109px;animation:jack-tail-idle 6.4s ease-in-out infinite}
+.jack-head{transform-origin:78px 75px}.jack-eye{animation:project-blink 7.2s step-end infinite}
+.jack-cap{transform-origin:77px 30px}.jack-free-arm{transform-origin:103px 82px}.jack-ball-arm{transform-origin:40px 82px}
+.jack-leg-left{transform-origin:56px 116px}.jack-leg-right{transform-origin:86px 116px}
+.jack-crutch,.jack-bandage{display:none}
+.jack-mascot[data-pose=idle] .jack-body{animation:jack-breathe 6s ease-in-out infinite}
+.jack-mascot[data-pose=dribble] .jack-ball{animation:jack-dribble .76s ease-in-out 2}
+.jack-mascot[data-pose=dribble] .jack-ball-arm{animation:jack-dribble-arm .76s ease-in-out 2}
+.jack-mascot[data-pose=cap] .jack-cap{animation:jack-tip-cap 2.2s ease-in-out both}
+.jack-mascot[data-pose=cap] .jack-free-arm{animation:jack-salute-arm 2.2s ease-in-out both}
+.jack-mascot[data-pose=limp] .jack-ball{display:none}.jack-mascot[data-pose=limp] :is(.jack-crutch,.jack-bandage){display:inline}
+.jack-mascot[data-pose=limp] .jack-body{animation:jack-limp-walk 3.4s ease-in-out both}
+.jack-mascot[data-pose=limp] .jack-leg-left{animation:jack-step-left .85s ease-in-out 3}
+.jack-mascot[data-pose=limp] .jack-leg-right{animation:jack-step-right .85s ease-in-out 3}
+.jack-mascot[data-pose=limp] .jack-crutch{transform-origin:124px 138px;animation:jack-crutch-step .85s ease-in-out 3}
+.jack-mascot[data-pose=react] .jack-head{animation:jack-nod 1.3s ease-in-out both}
+@keyframes project-blink{0%,92%,100%{opacity:1}96%{opacity:0}}
+@keyframes jack-breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes jack-tail-idle{0%,100%{transform:rotate(0)}50%{transform:rotate(-5deg)}}
+@keyframes jack-dribble{0%,100%{transform:translateY(0)}48%{transform:translateY(24px)}}
+@keyframes jack-dribble-arm{0%,100%{transform:rotate(0)}48%{transform:rotate(-17deg)}}
+@keyframes jack-tip-cap{0%,100%{transform:translate(0,0) rotate(0)}30%,70%{transform:translate(-8px,-18px) rotate(-9deg)}}
+@keyframes jack-salute-arm{0%,100%{transform:rotate(0)}30%,70%{transform:rotate(-135deg)}}
+@keyframes jack-limp-walk{0%,100%{transform:translate(0,0)}15%{transform:translate(5px,-2px) rotate(2deg)}32%{transform:translate(12px,0) rotate(-2deg)}50%{transform:translate(19px,-2px) rotate(2deg)}68%{transform:translate(12px,0) rotate(-2deg)}85%{transform:translate(5px,-1px) rotate(2deg)}}
+@keyframes jack-step-left{0%,100%{transform:rotate(0)}45%{transform:translateY(-5px) rotate(-5deg)}}
+@keyframes jack-step-right{0%,100%{transform:rotate(0)}70%{transform:translateY(-2px) rotate(8deg)}}
+@keyframes jack-crutch-step{0%,100%{transform:rotate(0)}45%{transform:rotate(9deg)}}
+@keyframes jack-nod{0%,100%{transform:rotate(0)}35%,65%{transform:translateY(-3px) rotate(-5deg)}}
+/* The archivist's resting pose is seated, in an open library vignette. */
+.archive-character{height:180px}.archive-eye{animation:project-blink 8.3s step-end infinite}
+.archive-body{transform-origin:100px 119px}.archive-legs-standing,.archive-files,.archive-point,.archive-page{display:none}
+.archive-mascot[data-pose=idle] .archive-body{animation:archive-read-idle 7s ease-in-out infinite}
+.archive-mascot[data-pose=page] .archive-page{display:inline;transform-origin:100px 125px;animation:archive-turn-page 2.3s ease-in-out both}
+.archive-mascot[data-pose=sort] .archive-book{display:none}.archive-mascot[data-pose=sort] .archive-files{display:inline}
+.archive-mascot[data-pose=sort] .archive-card-lift{animation:archive-sort-card 2.8s ease-in-out both}
+.archive-mascot[data-pose=stand] .archive-legs-seated,.archive-mascot[data-pose=stand] .archive-book{display:none}
+.archive-mascot[data-pose=stand] :is(.archive-legs-standing,.archive-point){display:inline}
+.archive-mascot[data-pose=stand] .archive-body{transform:translateY(-14px);animation:archive-rise .42s ease-out both}
+.archive-mascot[data-pose=react] .archive-body{animation:archive-look 1.4s ease-in-out both}
+@keyframes archive-read-idle{0%,100%{transform:rotate(0)}50%{transform:rotate(-1.6deg)}}
+@keyframes archive-turn-page{0%{transform:scaleX(1)}50%{transform:scaleX(-.95)}100%{transform:scaleX(-.95)}}
+@keyframes archive-sort-card{0%,100%{transform:translateY(0)}35%,65%{transform:translate(9px,-23px) rotate(5deg)}}
+@keyframes archive-rise{from{transform:translateY(0)}to{transform:translateY(-14px)}}
+@keyframes archive-look{0%,100%{transform:rotate(0)}35%,70%{transform:rotate(-5deg) translateY(-3px)}}
+/* No continuous movement when explicitly paused or requested by the system.
+ * A clicked pose remains recognizable without motion. */
+.project-character-scene[data-motion-paused=true] :is(svg,g){animation:none!important}
+.project-character-scene[data-motion-paused=true][data-pose=cap] .jack-cap{transform:translate(-8px,-18px) rotate(-9deg)}
+.project-character-scene[data-motion-paused=true][data-pose=dribble] .jack-ball{transform:translateY(18px)}
+.project-character-scene[data-motion-paused=true][data-pose=sort] .archive-card-lift{transform:translate(9px,-23px)}
+@media(max-width:900px){
+ .project-page-standardized .project-showcase-slot:has(.showcase-jack){justify-content:center}
+ .project-character-scene{margin-inline:auto;height:280px;padding-top:80px;box-sizing:border-box;justify-content:flex-start}
+ .project-character-scene .project-character{height:156px}
+ .project-character-scene .project-speech{top:0;right:auto;left:50%;transform:translateX(-50%);width:220px}
+ .project-speech::after{top:auto;right:calc(50% - 6px);bottom:-9px;border-top:0;border-right:3px solid #282c2b;border-bottom:3px solid #282c2b}
+ .project-page-standardized .showcase-jack{width:min(100%,260px);min-height:280px}
+}
+@media(prefers-reduced-motion:reduce){
+ .project-character-scene *,.project-character-scene *::before,.project-character-scene *::after{animation:none!important;transition:none!important}
+ .project-character:hover,.project-character:active{transform:none}
+ .jack-mascot[data-pose=cap] .jack-cap{transform:translate(-8px,-18px) rotate(-9deg)}
+ .jack-mascot[data-pose=dribble] .jack-ball{transform:translateY(18px)}
+ .archive-mascot[data-pose=sort] .archive-card-lift{transform:translate(9px,-23px)}
+}

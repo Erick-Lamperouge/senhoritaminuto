@@ -84,10 +84,14 @@ jobs:
           curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/futebolando/en/ -o /tmp/football-en.html
           grep -q 'href="/projetos/blogs/"' /tmp/portal.html
           grep -q 'id="archive-character"' /tmp/catalog.html
+          grep -q 'data-character-role="minute-brother"' /tmp/catalog.html
+          grep -q 'archive-files' /tmp/catalog.html
           grep -q 'id="selector-stage"' /tmp/catalog.html
           grep -q 'id="mascotButton"' /tmp/catalog.html
           curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/projetos/jack-up/ -o /tmp/jack.html
           grep -q 'data-mascot-species="alligator"' /tmp/jack.html
+          grep -q 'jack-crutch' /tmp/jack.html
+          grep -q 'project-speech' /tmp/jack.html
           curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/projetos/scratch/ -o /tmp/scratch.html
           grep -q 'id="scratchCat"' /tmp/scratch.html
           grep -q 'href="/futebolando/"' /tmp/catalog.html

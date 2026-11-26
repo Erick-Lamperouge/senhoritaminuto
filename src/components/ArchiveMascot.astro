@@ -1,35 +1,57 @@
 ---
+import '../styles/project-mascot.css';
 ---
-<div class="archive-mascot" id="archive-mascot">
-  <span class="archive-kicker" data-i18n="blogs.mascot.name">ARQUIVISTA / 01</span>
-  <button class="archive-character" id="archive-character" type="button" data-i18n-aria="blogs.mascot.button" aria-label="Conversar com o arquivista">
-    <svg viewBox="0 0 128 128" role="img" aria-hidden="true" shape-rendering="crispEdges">
-      <path fill="#202f31" d="M15 115h99v6H15z"/>
-      <path fill="#6db8ad" d="M37 21h48v8h10v55H85v12H37V84H27V29h10z"/>
-      <path fill="#f0cf8d" d="M31 18h54v8h11v10H20V26h11zM45 10h24v8H45z"/>
-      <path fill="#121a1c" d="M39 39h44v32H39z"/>
-      <path fill="#e5ad55" class="archive-eye" d="M47 48h9v10h-9zM67 48h9v10h-9z"/>
-      <path fill="#6db8ad" d="M53 63h18v4H53z"/>
-      <path fill="#f0cf8d" d="M44 96h12v12H44zM68 96h12v12H68z"/>
-      <path fill="#e5ad55" d="M37 108h23v8H37zM65 108h23v8H65z"/>
-      <path fill="#6db8ad" d="M15 70h12v18H15zM95 70h12v18H95z"/>
-      <path fill="#f4ebd7" d="M34 78h25l5 4 5-4h25v25H69l-5 4-5-4H34z"/>
-      <path fill="#a66e35" d="M34 78h4v25h-4zM90 78h4v25h-4zM62 82h4v25h-4z"/>
-      <path fill="#879d97" d="M43 86h13v3H43zM43 93h13v3H43zM73 86h13v3H73zM73 93h13v3H73z"/>
-      <path fill="#e5ad55" d="M15 82h9v11h-9zM99 82h9v11h-9z"/>
+<div class="archive-mascot project-character-scene" id="archive-mascot" data-pose="idle" data-motion-paused="false" data-character-role="minute-brother">
+  <button class="archive-character project-character" id="archive-character" type="button" data-i18n-aria="blogs.mascot.button" aria-label="Conversar com o arquivista">
+    <svg viewBox="0 0 216 164" aria-hidden="true" focusable="false" shape-rendering="crispEdges">
+      <!-- Open library vignette: no framed card or background panel. -->
+      <g class="archive-library">
+        <path fill="#805c36" d="M155 19h5v125h-5zM207 19h5v125h-5zM155 58h57v5h-57zM155 103h57v5h-57zM155 140h57v5h-57z"/>
+        <path fill="#8daaa0" d="M163 27h8v31h-8zM187 69h9v34h-9zM197 116h7v24h-7z"/>
+        <path fill="#d9ac66" d="M173 35h9v23h-9zM164 78h8v25h-8zM185 114h10v26h-10z"/>
+        <path fill="#a16a54" d="M184 24h8v34h-8zM174 74h10v29h-10zM163 122h20v18h-20z"/>
+        <path fill="#c7c7aa" d="M194 29h10v29h-10zM198 73h6v30h-6z"/>
+        <path fill="#263c3d" d="M9 147h198v5H9z"/>
+        <path fill="#805c36" d="M12 101h46v6H12zM15 107h5v40h-5zM50 107h5v40h-5z"/>
+        <path fill="#e5ad55" d="M19 69h24v5H19zM29 74h5v20h-5zM20 94h23v5H20z"/>
+        <path fill="#d2b67e" d="M16 67h30v4H16zM22 57h18v10H22z"/>
+      </g>
+      <g class="archive-chair"><path fill="#805c36" d="M67 79h8v47h49v7H67zM71 133h7v14h-7zM117 133h7v14h-7z"/><path fill="#bc9154" d="M75 91h42v31H75z"/></g>
+      <g class="archive-actor">
+        <g class="archive-legs-seated"><path fill="#6db8ad" d="M85 119h45v8H85zM118 127h12v13h-12z"/><path fill="#e5ad55" d="M113 140h22v7h-22z"/></g>
+        <g class="archive-legs-standing"><path fill="#6db8ad" d="M80 119h13v20H80zM105 119h13v20h-13z"/><path fill="#e5ad55" d="M75 139h22v8H75zM102 139h22v8h-22z"/></g>
+        <g class="archive-body">
+          <path fill="#254744" d="M72 57h53v10h10v46h-10v9H72v-9H62V67h10z"/>
+          <path fill="#6db8ad" d="M76 61h45v10h10v38h-10v9H76v-9H66V71h10z"/>
+          <path fill="#f0cf8d" d="M70 50h54v8h12v11H59V58h11zM84 40h25v10H84z"/>
+          <path fill="#121a1c" d="M77 74h44v30H77z"/>
+          <g class="archive-eye"><path fill="#e5ad55" d="M84 82h10v10H84zM105 82h10v10h-10z"/></g>
+          <path fill="none" stroke="#c5ab76" stroke-width="2" d="M81 79h16v15H81zM102 79h16v15h-16zM97 85h5"/>
+          <path fill="#6db8ad" d="M92 97h16v4H92z"/>
+          <path fill="#6db8ad" d="M58 101h13v15H58zM128 102h13v15h-13z"/>
+          <g class="archive-book"><path fill="#a66e35" d="M65 112h27l8 4 8-4h29v25h-29l-8 4-8-4H65z"/><path fill="#f4ebd7" d="M68 111h24l8 4 8-4h25v22h-25l-8 4-8-4H68z"/><path stroke="#879d97" stroke-width="2" d="M74 117h16M74 123h16M111 117h16M111 123h16"/><path fill="#cfbfa0" d="M98 115h3v22h-3z"/><g class="archive-page"><path fill="#fff1d0" d="M100 115l26-8v25l-26 5z"/><path stroke="#a9a087" stroke-width="2" d="M106 117l14-4M106 123l14-4"/></g></g>
+          <g class="archive-files"><path fill="#8eac9d" d="M75 112h48v23H75z"/><path fill="#c5d0ad" d="M80 108h37v19H80z"/><g class="archive-card-lift"><path fill="#f4ebd7" d="M84 103h30v23H84z"/><path fill="#879d97" d="M88 108h22v3H88zM88 114h15v3H88z"/></g></g>
+          <g class="archive-point"><path fill="#6db8ad" d="M126 102h11V91h13v-7h10v12h-9v11h-14v8h-11z"/><path fill="#e5ad55" d="M151 82h12v7h-12z"/></g>
+        </g>
+      </g>
     </svg>
   </button>
-  <p class="archive-speech" id="archive-speech" role="status" aria-live="polite" data-i18n="blogs.mascot.1" hidden>Bem-vindo ao arquivo! Escolha uma leitura para começar.</p>
+  <div class="archive-speech project-speech" id="archive-speech" role="status" aria-live="polite" data-i18n="blogs.mascot.greeting" hidden>Minha irmã cuida do tempo. Eu cuido das histórias.</div>
+  <div class="project-scene-controls"><span class="archive-kicker" data-i18n="blogs.mascot.name">ARQUIVISTA / IRMÃO DA MINUTO</span><button class="project-motion" data-mascot-motion type="button" aria-pressed="false" data-i18n="mascot.motion.pause" hidden>Pausar movimentos</button></div>
 </div>
 <script>
   import {createProjectDialogue} from '../scripts/mascot/project-dialogue.js';
+  import {ARCHIVE_POSES} from '../scripts/mascot/project-scenes.js';
   createProjectDialogue({
     root:document.querySelector('#archive-mascot'),character:document.querySelector('#archive-character'),speech:document.querySelector('#archive-speech'),source:'archive',
+    poses:ARCHIVE_POSES,ambient:['page','sort','stand'],
     entries:[
-      {key:'blogs.mascot.greeting',text:'Senhorita Minuto, o arquivo está organizado. Qual leitura vamos apresentar hoje?',replyKey:'blogs.mascot.greetingReply',reply:'O primeiro universo é o Futebolando! As outras estantes vão ganhar vida aos poucos.'},
-      {key:'blogs.mascot.question',text:'Minuto, cada blog tem seu próprio tempo de leitura, não é?',replyKey:'blogs.mascot.questionReply',reply:'Exatamente. Aqui eu abro a porta, mas cada publicação tem seu próprio mundo.'},
-      {key:'blogs.mascot.2',text:'Cada assunto tem seu próprio universo. Eu cuido da porta de entrada.'},
-      {key:'blogs.mascot.3',text:'O Futebolando está em prévia. Há regras, tática e números para explorar!'}
+      {key:'blogs.mascot.greeting',text:'Minha irmã cuida do tempo. Eu cuido das histórias.',replyKey:'blogs.mascot.greetingReply',reply:'E ele ainda organiza os livros por ordem de leitura!',pose:'page'},
+      {key:'blogs.mascot.family',text:'Já me chamaram de Segundos, de Horas... mas a minha irmã é a Minuto.',replyKey:'blogs.mascot.familyReply',reply:'E eu continuo sendo a mais famosa da família!',pose:'react'},
+      {key:'blogs.mascot.shelf',text:'Minuto, trouxe mais uma estante!',replyKey:'blogs.mascot.shelfReply',reply:'Desde que ela não abra um portal sozinha, estamos bem.',pose:'stand'},
+      {key:'blogs.mascot.sort',text:'Ela patrulha portais. Eu patrulho fichas e estantes.',pose:'sort'},
+      {key:'blogs.mascot.3',text:'O Futebolando está em prévia. Há regras, tática e números para explorar!',pose:'page'},
+      {key:'blogs.mascot.read',text:'Textos longos? Só quando valem a pena.',pose:'react'}
     ]
   });
 </script>

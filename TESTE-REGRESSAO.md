@@ -47,3 +47,7 @@ Antes de publicar, vale testar estes fluxos no navegador local.
 - A 1000ª interação durante um diálogo deve adiar (não perder) a visita do futuro; confirmar rachaduras zeradas e estado persistido. Navegação mantém contagem, reload zera.
 - Confirmar que o portal de futuro fecha após chegada e reabre na partida; travessia bloqueada abre portais e os fecha ao concluir.
 - Jack é jacaré azul; confirmar diálogo, iframe intacto, versão em inglês e link externo. Scratch preserva arte e jogo; catálogo permite pausar animação.
+
+## 8. Cenas 05F
+- Jack quica a bola, tira o boné, usa muleta e retorna ao idle; arquivista lê sentado, vira página, organiza fichas, levanta/aponta. Click troca pose e balão, não dispara callback anterior. Pausa e prefers-reduced-motion; validar cena automática quando visível.
+- Balão absoluto com ponta no desktop e celular; sem moldura do personagem, sem clipping ou deslocamento dos demais blocos. Diálogos PT/EN e resposta da Senhorita Minuto. Jogos e artigos intactos.

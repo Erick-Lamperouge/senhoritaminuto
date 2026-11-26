@@ -26,3 +26,8 @@ test('project and catalog search normalize accents and all words',()=>{assert.ok
 
 import {wasReload} from '../src/scripts/mascot/progress.js';
 test('real navigation reload detection and old-browser fallback',()=>{assert.equal(wasReload({getEntriesByType:()=>[{type:'reload'}]}),true);assert.equal(wasReload({getEntriesByType:()=>[{type:'navigate'}]}),false);assert.equal(wasReload({getEntriesByType:()=>[],navigation:{type:1}}),true);assert.equal(wasReload({}),false);});
+
+import {createScenePlayer,JACK_POSES,ARCHIVE_POSES,SCENE_TIMING} from '../src/scripts/mascot/project-scenes.js';
+test('Jack and archivist actions are finite and distinct',()=>{assert.deepEqual(Object.keys(JACK_POSES),['idle','dribble','cap','limp','react']);assert.deepEqual(Object.keys(ARCHIVE_POSES),['idle','page','sort','stand','react']);assert.ok(Object.values(JACK_POSES).every(n=>n>=0&&n<=4000));assert.ok(Object.values(ARCHIVE_POSES).every(n=>n>=0&&n<=4000));assert.ok(SCENE_TIMING.ambientMs>10000);});
+test('a new scene cancels the previous reset and returns to idle',()=>{const c=clock(),root={dataset:{}},p=createScenePlayer(root,{poses:JACK_POSES,clock:c});assert.equal(root.dataset.pose,'idle');p.play('dribble');const stale=[...c.tasks.values()][0];p.play('cap');stale();assert.equal(root.dataset.pose,'cap');const fn=[...c.tasks.values()][0];fn();assert.equal(root.dataset.pose,'idle');});
+test('invalid scene never interrupts the current pose',()=>{const c=clock(),root={dataset:{}},p=createScenePlayer(root,{poses:ARCHIVE_POSES,clock:c});p.play('sort');assert.equal(p.play('unknown'),false);assert.equal(root.dataset.pose,'sort');p.reset();assert.equal(root.dataset.pose,'idle');assert.equal(c.tasks.size,0);});

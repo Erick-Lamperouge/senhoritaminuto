@@ -20,6 +20,9 @@ try{
   assert.equal(await p.locator('#archive-character').count(),1);assert.equal(await p.locator('#mascotButton').count(),1);
   await p.locator('#archive-character').scrollIntoViewIfNeeded();
   await p.locator('#archive-character').click();
+  assert.equal(await p.locator('#archive-speech').evaluate(el=>getComputedStyle(el).position),'absolute');
+  assert.equal(await p.locator('#archive-mascot').evaluate(el=>getComputedStyle(el).borderTopWidth),'0px');
+  assert.ok(await p.locator('#archive-speech').evaluate(el=>{const r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1;}),'archive bubble overflow');
   await p.waitForFunction(()=>document.querySelector('#mascotTraveler')?.getAttribute('data-mode')==='interaction',{},{timeout:18000});
   assert.equal(await p.locator('#portalLeft.is-open,#portalRight.is-open').count(),0);
   assert.equal(await p.locator('#archive-speech').isVisible(),false);
@@ -58,6 +61,9 @@ try{
   await p.goto(origin+'/projetos/jack-up/',{waitUntil:'networkidle'});
   assert.equal(await p.locator('#jack-character').count(),1);assert.equal(await p.locator('#mascotButton').count(),1);assert.equal(await p.locator('#jack-mascot').getAttribute('data-mascot-species'),'alligator');assert.equal(await p.locator('#jogar iframe').getAttribute('src'),'https://jack-up-ten.vercel.app/');
   await p.locator('#jack-character').scrollIntoViewIfNeeded();await p.locator('#jack-character').click();
+  assert.equal(await p.locator('#jack-mascot').getAttribute('data-pose'),'dribble');
+  assert.equal(await p.locator('#jack-speech').evaluate(el=>getComputedStyle(el).position),'absolute');
+  assert.ok(await p.locator('#jack-speech').evaluate(el=>{const r=el.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1;}),'Jack bubble overflow');
   await p.waitForFunction(()=>document.querySelector('#mascotTraveler')?.getAttribute('data-mode')==='interaction',{},{timeout:18000});
   assert.equal(await p.locator('#portalLeft.is-open,#portalRight.is-open').count(),0);
   assert.equal(await p.locator('#jack-speech').isVisible(),false);
@@ -170,4 +176,40 @@ try{
  await crossing.clock.runFor(1500);
  assert.equal(await crossing.locator('#portalLeft.is-open,#portalRight.is-open,#interactionPortal.active').count(),0);
  await crossing.close();console.log('PASS blocked traversal uses portal and cleans both endpoints');
+
+// Explicit pose changes, CSS animations, finite scenes, pause and cleanup.
+for(const [pagePath,id,firstPose,secondPose,thirdPose,ambientPose,animationPart] of [
+ ['/projetos/jack-up/','jack','dribble','cap','limp','dribble','.jack-ball'],
+ ['/projetos/blogs/','archive','react','stand','sort','page','.archive-page']
+]){
+ const p=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'no-preference'});
+ const errors=[];p.on('pageerror',e=>errors.push(e.message));
+ await p.route('**/*',r=>r.request().url().startsWith(origin)?r.continue():r.abort());
+ await p.addInitScript(()=>{Math.random=()=>0.99;window.AudioContext=undefined;window.webkitAudioContext=undefined;});
+ await p.clock.install();await p.goto(origin+pagePath,{waitUntil:'networkidle'});
+ await p.locator('#'+id+'-character').scrollIntoViewIfNeeded();
+ const root=p.locator('#'+id+'-mascot'),bubble=p.locator('#'+id+'-speech');
+ const click=()=>p.evaluate(id=>document.querySelector('#'+id+'-character').click(),id);
+ await click();assert.equal(await root.getAttribute('data-pose'),firstPose);assert.ok(await bubble.isVisible());
+ await p.screenshot({path:'review-shots/'+id+'-pose-1.png',animations:'allow'});
+ await click();assert.equal(await root.getAttribute('data-pose'),secondPose);
+ await p.screenshot({path:'review-shots/'+id+'-pose-2.png',animations:'allow'});
+ await click();assert.equal(await root.getAttribute('data-pose'),thirdPose);
+ await p.screenshot({path:'review-shots/'+id+'-pose-3.png',animations:'allow'});
+ const prop=id==='jack'?'.jack-crutch':'.archive-files';assert.notEqual(await root.locator(prop).evaluate(el=>getComputedStyle(el).display),'none');
+ await p.clock.runFor(3500);assert.equal(await root.getAttribute('data-pose'),'idle');
+ await p.evaluate(()=>window.SM_I18N.applyLanguage('en'));await p.clock.runFor(500);
+ assert.equal(await p.locator('html').getAttribute('lang'),'en');
+ await p.clock.runFor(18000); // allow greeting and reply to complete
+ await root.locator('[data-mascot-motion]').click();
+ assert.equal(await root.getAttribute('data-motion-paused'),'true');
+ await p.clock.runFor(30000);assert.equal(await root.getAttribute('data-pose'),'idle');
+ await root.locator('[data-mascot-motion]').click();await p.clock.runFor(14500);
+ assert.equal(await root.getAttribute('data-pose'),ambientPose);
+ assert.notEqual(await root.locator(animationPart).evaluate(el=>getComputedStyle(el).animationName),'none');
+ await p.emulateMedia({reducedMotion:'reduce'});await p.clock.runFor(100);
+ assert.equal(await root.getAttribute('data-pose'),'idle');
+ assert.equal(await root.locator(animationPart).evaluate(el=>getComputedStyle(el).animationName),'none');
+ assert.deepEqual(errors,[]);await p.close();console.log('PASS '+id+' articulated poses, speech, autonomous scene and reduced motion');
+}
 }finally{await browser?.close();server.kill();}
