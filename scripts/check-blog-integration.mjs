@@ -1,77 +1,21 @@
 import assert from 'node:assert/strict';
-import {createHash} from 'node:crypto';
-import {readFileSync,readdirSync,statSync,existsSync} from 'node:fs';
-import {execFileSync} from 'node:child_process';
+import {readFileSync,readdirSync,existsSync} from 'node:fs';
 import path from 'node:path';
-const lock=JSON.parse(readFileSync('blog-engine.lock.json','utf8'));
+import {execFileSync} from 'node:child_process';
+const read=p=>readFileSync(p), text=p=>readFileSync(p,'utf8');
+const lock=JSON.parse(text('blog-engine.lock.json'));
+const walk=dir=>readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(dir,e.name)):[path.join(dir,e.name)]);
 const check=(name,fn)=>{fn();console.log('PASS '+name)};
-const read=p=>readFileSync(p);
-const text=p=>readFileSync(p,'utf8');
-const git=(args,cwd=process.cwd())=>execFileSync('git',args,{cwd,encoding:'utf8'}).trim();
-const blob=bytes=>createHash('sha1').update('blob '+bytes.length+'\0').update(bytes).digest('hex');
-const sourceCheckout=process.env.BLOG_CORE_CHECKOUT;
-const walk=dir=>readdirSync(dir,{withFileTypes:true}).flatMap(entry=>entry.isDirectory()?walk(path.join(dir,entry.name)):[path.join(dir,entry.name)]);
-const checks=[
-['Pinned upstream snapshot',()=>{
-  assert.match(lock.commit,/^[a-f0-9]{40}$/);
-  assert.equal(lock.stage,'integration-preview-only');
-  assert.equal(lock.files.length,7);
-  const targets=new Set();
-  if(sourceCheckout)assert.equal(git(['rev-parse','HEAD'],sourceCheckout),lock.commit);
-  for(const file of lock.files){
-    assert.ok(file.source.startsWith('v2/')&&file.target.startsWith('src/blog-engine/'));
-    assert.ok(!file.source.includes('..')&&!file.target.includes('..')&&!targets.has(file.target));
-    targets.add(file.target);
-    const bytes=read(file.target);
-    assert.equal(blob(bytes),file.blob,file.target);
-    if(sourceCheckout){
-      assert.equal(git(['rev-parse',lock.commit+':'+file.source],sourceCheckout),file.blob);
-      assert.deepEqual(bytes,read(path.join(sourceCheckout,file.source)));
-    }
-  }
-}],
-['Portal sources and deploy workflow unchanged',()=>{
-  const changed=git(['diff','--name-only',lock.portalBaseline,'HEAD']).split('\n').filter(Boolean);
-  const allowed=p=>p.startsWith('src/blog-engine/')||p.startsWith('src/pages/futebolando/')||p==='blog-engine.lock.json'||p==='scripts/check-blog-integration.mjs'||p==='.github/workflows/blog-integration-ci.yml'||p==='docs/BLOG-INTEGRATION.md';
-  assert.ok(changed.every(allowed),'Unexpected changed paths: '+changed.filter(p=>!allowed(p)).join(', '));
-}],
-['Original portal pages built',()=>{
-  for(const p of ['dist/index.html','dist/projetos/scratch/index.html','dist/projetos/fernando/index.html','dist/projetos/jack-up/index.html']){
-    const html=text(p);
-    assert.ok(html.length>500);
-    assert.ok(!html.includes('class="blog"')&&!html.includes('pauta-search'),p);
-  }
-}],
-['Public assets and domain unchanged',()=>{
-  for(const source of walk('public')){
-    const dest=path.join('dist',path.relative('public',source));
-    assert.deepEqual(read(source),read(dest),dest);
-  }
-  assert.equal(text('dist/CNAME').trim(),'senhoritaminuto.com.br');
-}],
-['Portuguese blog route',()=>{
-  const html=text('dist/futebolando/index.html');
-  for(const token of ['lang="pt-BR"','noindex,nofollow','Futebolando','pauta-search','href="/futebolando/en/"','class="blog"'])assert.ok(html.includes(token),token);
-}],
-['English blog route',()=>{
-  const html=text('dist/futebolando/en/index.html');
-  for(const token of ['lang="en"','noindex,nofollow','Football beyond the 90 minutes','href="/futebolando/"','pauta-search','class="blog"'])assert.ok(html.includes(token),token);
-}],
-['Blog isolation and no monetization',()=>{
-  for(const p of ['dist/futebolando/index.html','dist/futebolando/en/index.html']){
-    const html=text(p);
-    for(const token of ['data-page-title-key','hero-console','/assets/characters/','pagead2.googlesyndication.com','googletagmanager.com','adsbygoogle'])assert.ok(!html.includes(token),p+': '+token);
-  }
-  assert.ok(!existsSync('dist/culinaria-demo'));
-}],
-['Compiled asset references resolve',()=>{
-  for(const file of walk('dist').filter(f=>f.endsWith('.html'))){
-    const html=text(file);
-    for(const match of html.matchAll(/(?:src|href)="(\/_astro\/[^"?#]+)(?:[?#][^"]*)?"/g)){
-      assert.ok(existsSync(path.join('dist',match[1].slice(1))),file+': '+match[1]);
-    }
-  }
-}]
-];
-for(const [name,fn] of checks)check(name,fn);
-console.log(checks.length+' integration checks passed');
+check('portal source protection',()=>{
+ const changes=execFileSync('git',['diff','--name-only',lock.portalBaseline,'HEAD'],{encoding:'utf8'}).trim().split('\n').filter(Boolean);
+ const allow=new Set(['.gitignore','package.json','blog-engine.lock.json','scripts/check-blog-integration.mjs','scripts/build-blog-bundle.mjs','scripts/test-blog-portal-browser.mjs','.github/workflows/blog-integration-ci.yml','.github/workflows/deploy.yml','docs/BLOG-INTEGRATION.md','src/pages/index.astro','src/pages/projetos/blogs.astro','src/components/ArchiveMascot.astro','src/scripts/i18n.js','src/styles/blog-catalog.css']);
+ assert.ok(changes.every(p=>allow.has(p)),'Unexpected paths: '+changes.filter(p=>!allow.has(p)).join(', '));
+});
+check('original routes and mascot preserved',()=>{for(const p of ['dist/index.html','dist/projetos/scratch/index.html','dist/projetos/fernando/index.html','dist/projetos/jack-up/index.html']){const s=text(p);assert.ok(s.includes('id="mascotButton"'),p);assert.ok(!s.includes('class="blog"'),p);}});
+check('catalog and project search',()=>{const h=text('dist/index.html'),c=text('dist/projetos/blogs/index.html');for(const token of ['id="project-search"','href="/projetos/blogs/"'])assert.ok(h.includes(token));for(const token of ['id="archive-character"','id="blog-search"','href="/futebolando/"','href="/futebolando/en/"'])assert.ok(c.includes(token));assert.ok(!c.includes('id="mascotButton"'));});
+check('domain and original public assets',()=>{for(const f of walk('public'))assert.deepEqual(read(f),read(path.join('dist',path.relative('public',f))));assert.equal(text('dist/CNAME').trim(),'senhoritaminuto.com.br');});
+check('30 football routes',()=>{const pages=walk('dist/futebolando').filter(f=>f.endsWith('.html'));assert.equal(pages.length,30);for(const p of pages){const h=text(p);assert.ok(h.includes('noindex,nofollow')&&h.includes('class="blog"'),p);for(const token of ['id="mascotButton"','id="archive-character"','class="mascot-zone"','/assets/characters/','adsbygoogle','googletagmanager.com','pagead2.googlesyndication.com'])assert.ok(!h.includes(token),p+': '+token);}});
+check('both languages and all articles present',()=>{const a=JSON.parse(text('.blog-core-source/v2/content/articles.json'));assert.equal(a.length,8);for(const article of a)for(const [locale,ed] of Object.entries(article.editions)){const route=locale==='en'?'en/articles':'artigos';const h=text('dist/futebolando/'+route+'/'+ed.slug+'/index.html');assert.ok(h.includes('lang="'+locale+'"'));}assert.ok(text('dist/futebolando/index.html').includes('href="/futebolando/en/"'));assert.ok(text('dist/futebolando/en/index.html').includes('href="/futebolando/"'));});
+check('no unrelated blog or active monetization',()=>{assert.ok(!existsSync('dist/culinaria-demo'));assert.ok(!existsSync('dist/ads.txt'));for(const n of ['barlow-condensed','source-serif-4','inter'])assert.ok(read('dist/blog-font-licenses/'+n+'.txt').length>100);});
+check('local Astro assets and football links resolve',()=>{for(const f of walk('dist').filter(f=>f.endsWith('.html'))){const h=text(f);for(const m of h.matchAll(/(?:src|href)="(\/(?:_astro|futebolando|projetos\/blogs)\/[^"?#]*)(?:[?#][^"]*)?"/g)){const p=path.join('dist',m[1].slice(1));assert.ok(existsSync(p)||existsSync(path.join(p,'index.html')),f+': '+m[1]);}}});
+console.log('8 integration groups passed');

@@ -1,46 +1,19 @@
 {
-  "version": 1,
-  "repository": "Erick-Lamperouge/estrutura-dos-blogs",
-  "commit": "73436134feb26eb49472c5cc9427f94de90fdcd9",
-  "validatedCodeCommit": "4eb6babbf6e128894768aba8fc6de3c1c4b94e69",
-  "upstreamCI": 45863768811,
+  "version": 2,
+  "stage": "public-technical-preview",
+  "core": {
+    "repository": "Erick-Lamperouge/estrutura-dos-blogs",
+    "commit": "6b4824c9926e9b959d566390b967ffa7713ef102",
+    "ci": 45898746343
+  },
+  "editorial": {
+    "repository": "Erick-Lamperouge/futebolando",
+    "commit": "cf82f0b486343c982d566ca81b7a6b081614caf9"
+  },
   "portalBaseline": "8276ed61ccac18fa62a703e47ad64de6b8f9d622",
-  "stage": "integration-preview-only",
-  "files": [
-    {
-      "source": "v2/src/components/BlogHome.astro",
-      "target": "src/blog-engine/components/BlogHome.astro",
-      "blob": "49b8d17f4b09aed7cda8e230ddb4fedd81087811"
-    },
-    {
-      "source": "v2/src/styles/blog.css",
-      "target": "src/blog-engine/styles/blog.css",
-      "blob": "c57e9a4dd543a1f2cae6ae559b26a4f7ff7b7e38"
-    },
-    {
-      "source": "v2/src/lib/config.mjs",
-      "target": "src/blog-engine/lib/config.mjs",
-      "blob": "43f58239701b4066b116f0c3dc4b233530fd9e34"
-    },
-    {
-      "source": "v2/src/lib/international.mjs",
-      "target": "src/blog-engine/lib/international.mjs",
-      "blob": "fef1f1a171d1b2dd6aaac90f7830ac9e2c99c080"
-    },
-    {
-      "source": "v2/src/lib/priorities.mjs",
-      "target": "src/blog-engine/lib/priorities.mjs",
-      "blob": "8b5ffa35c7359bc38db7a2cedc04751c147aebfe"
-    },
-    {
-      "source": "v2/src/lib/evidence.mjs",
-      "target": "src/blog-engine/lib/evidence.mjs",
-      "blob": "4225bcea5e8e5c7866de18276508e95b1f37e1fb"
-    },
-    {
-      "source": "v2/config/futebolando.json",
-      "target": "src/blog-engine/config/futebolando.json",
-      "blob": "2c530fac3872f322b366198cd16a3b329d577ff6"
-    }
-  ]
+  "policy": {
+    "editorialPublished": false,
+    "indexing": false,
+    "monetization": false
+  }
 }

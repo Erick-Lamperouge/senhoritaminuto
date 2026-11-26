@@ -1,30 +1,62 @@
 name: Deploy to GitHub Pages
-
 on:
   push:
     branches: [main]
   workflow_dispatch:
-
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
+concurrency:
+  group: pages
+  cancel-in-progress: false
 jobs:
   build:
-    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Install, build, and upload site
-        uses: withastro/action@v6
+      - uses: actions/checkout@v4
         with:
-          package-manager: npm@latest
-
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Checkout pinned shared core
+        uses: actions/checkout@v4
+        with:
+          repository: Erick-Lamperouge/estrutura-dos-blogs
+          ref: 6b4824c9926e9b959d566390b967ffa7713ef102
+          path: .blog-core-source
+          sparse-checkout: v2
+          persist-credentials: false
+      - name: Checkout pinned editorial files only
+        uses: actions/checkout@v4
+        with:
+          repository: Erick-Lamperouge/futebolando
+          ref: cf82f0b486343c982d566ca81b7a6b081614caf9
+          path: .blog-editorial-source
+          sparse-checkout: editorial
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install portal dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Build and verify integrated portfolio
+        run: |
+          npm run build:integrated
+          node scripts/check-blog-integration.mjs
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist/
   deploy:
+    if: github.ref == 'refs/heads/main'
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

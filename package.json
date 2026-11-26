@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "build:integrated": "node scripts/build-blog-bundle.mjs"
   },
   "dependencies": {
     "astro": "7.2.6"

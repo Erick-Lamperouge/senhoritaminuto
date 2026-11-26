@@ -1,0 +1,29 @@
+---
+---
+<div class="archive-mascot" id="archive-mascot">
+  <span class="archive-kicker" data-i18n="blogs.mascot.name">ARQUIVISTA / 01</span>
+  <button class="archive-character" id="archive-character" type="button" data-i18n-aria="blogs.mascot.button" aria-label="Conversar com o arquivista">
+    <svg viewBox="0 0 128 128" role="img" aria-hidden="true" shape-rendering="crispEdges">
+      <path fill="#202f31" d="M15 115h99v6H15z"/>
+      <path fill="#6db8ad" d="M37 21h48v8h10v55H85v12H37V84H27V29h10z"/>
+      <path fill="#f0cf8d" d="M31 18h54v8h11v10H20V26h11zM45 10h24v8H45z"/>
+      <path fill="#121a1c" d="M39 39h44v32H39z"/>
+      <path fill="#e5ad55" class="archive-eye" d="M47 48h9v10h-9zM67 48h9v10h-9z"/>
+      <path fill="#6db8ad" d="M53 63h18v4H53z"/>
+      <path fill="#f0cf8d" d="M44 96h12v12H44zM68 96h12v12H68z"/>
+      <path fill="#e5ad55" d="M37 108h23v8H37zM65 108h23v8H65z"/>
+      <path fill="#6db8ad" d="M15 70h12v18H15zM95 70h12v18H95z"/>
+      <path fill="#f4ebd7" d="M34 78h25l5 4 5-4h25v25H69l-5 4-5-4H34z"/>
+      <path fill="#a66e35" d="M34 78h4v25h-4zM90 78h4v25h-4zM62 82h4v25h-4z"/>
+      <path fill="#879d97" d="M43 86h13v3H43zM43 93h13v3H43zM73 86h13v3H73zM73 93h13v3H73z"/>
+      <path fill="#e5ad55" d="M15 82h9v11h-9zM99 82h9v11h-9z"/>
+    </svg>
+  </button>
+  <p class="archive-speech" id="archive-speech" role="status" aria-live="polite" data-i18n="blogs.mascot.1">Bem-vindo ao arquivo! Escolha uma leitura para começar.</p>
+</div>
+<script>
+  const character=document.querySelector<HTMLButtonElement>('#archive-character');
+  const speech=document.querySelector<HTMLElement>('#archive-speech');
+  let phrase=1;
+  character?.addEventListener('click',()=>{phrase=phrase%3+1;if(speech){speech.dataset.i18n='blogs.mascot.'+phrase;const i18n=(window as any).SM_I18N;speech.textContent=i18n?.t(speech.dataset.i18n)??['','Bem-vindo ao arquivo! Escolha uma leitura para começar.','Cada assunto tem seu próprio universo. Eu cuido da porta de entrada.','O Futebolando está em prévia. Há regras, tática e números para explorar!'][phrase];}});
+</script>

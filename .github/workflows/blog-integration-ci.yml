@@ -2,37 +2,61 @@ name: Blog integration V2 - validation only
 on:
   push:
     branches: ['dev/blog-integration-v2']
+  pull_request:
+    branches: [main]
 permissions:
   contents: read
 concurrency:
-  group: blog-integration-v2-ci
+  group: blog-integration-v2-ci-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   integration:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Checkout pinned shared core
         uses: actions/checkout@v4
         with:
           repository: Erick-Lamperouge/estrutura-dos-blogs
-          ref: 73436134feb26eb49472c5cc9427f94de90fdcd9
+          ref: 6b4824c9926e9b959d566390b967ffa7713ef102
           path: .blog-core-source
+          sparse-checkout: v2
+          persist-credentials: false
+      - name: Checkout pinned editorial files only
+        uses: actions/checkout@v4
+        with:
+          repository: Erick-Lamperouge/futebolando
+          ref: cf82f0b486343c982d566ca81b7a6b081614caf9
+          path: .blog-editorial-source
+          sparse-checkout: editorial
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Install locked portal dependencies
+      - name: Install portal dependencies
         run: npm ci --no-audit --no-fund
-      - name: Build integrated static site
-        run: npm run build
-      - name: Verify portal regression and blog routes
-        env:
-          BLOG_CORE_CHECKOUT: .blog-core-source
-        run: node scripts/check-blog-integration.mjs
+      - name: Build and verify integrated portfolio
+        run: |
+          npm run build:integrated
+          node scripts/check-blog-integration.mjs
+      - name: Install browser tools
+        run: |
+          npm install --no-save --package-lock=false playwright@1.58.2 --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Test portfolio, mascot, catalog and blog
+        run: node scripts/test-blog-portal-browser.mjs
+      - name: Upload review screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portal-blog-catalog-review
+          path: review-shots/
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Upload review-only build
         uses: actions/upload-artifact@v4
         with:

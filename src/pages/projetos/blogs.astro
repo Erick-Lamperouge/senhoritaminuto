@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import ArchiveMascot from '../../components/ArchiveMascot.astro';
+import '../../styles/blog-catalog.css';
+---
+<BaseLayout title="Rede de Blogs — Senhorita Minuto" description="Conheça as publicações independentes do portfólio Senhorita Minuto.">
+  <Header/>
+  <main class="project-page blog-catalog" data-page-title-key="blogs.pageTitle">
+    <a class="back-link time-back-link" href="/#projetos" data-i18n="common.backTime">← Voltar no Tempo (Início)</a>
+    <section class="catalog-hero">
+      <div><span class="eyebrow" data-i18n="blogs.kicker">ARQUIVO / PUBLICAÇÕES</span>
+        <h1 data-i18n="card.blogs.title">Rede de Blogs</h1>
+        <p class="project-lead" data-i18n="blogs.lead">Uma coleção de revistas digitais independentes. Escolha um assunto e explore as histórias, análises e guias que fazem parte deste projeto.</p>
+      </div>
+      <ArchiveMascot/>
+    </section>
+    <section id="catalog" class="catalog-section">
+      <h2 data-i18n="blogs.catalog">Escolha sua próxima leitura</h2>
+      <div class="portfolio-search" id="blog-search-controls" hidden>
+        <label for="blog-search" data-i18n="blogs.search">Pesquisar blogs por nome ou assunto</label>
+        <input type="search" id="blog-search" autocomplete="off"/>
+        <p id="blog-search-empty" role="status" data-i18n="blogs.empty" hidden>Nenhum blog corresponde à pesquisa.</p>
+      </div>
+      <div class="catalog-grid">
+        <article class="catalog-card" data-blog-entry data-search="futebolando futebol esporte futebol football sport soccer rules statistics estatística tática">
+          <div class="catalog-art" aria-hidden="true"><svg viewBox="0 0 600 220" fill="none"><rect x="30" y="20" width="540" height="180" rx="4" stroke="#70a98b" stroke-width="2"/><path d="M300 20v180M30 67h76v86H30m540-86h-76v86h76" stroke="#70a98b" stroke-width="2"/><circle cx="300" cy="110" r="40" stroke="#70a98b" stroke-width="2"/><path d="M90 159 205 88 350 143 481 54" stroke="#22c55e" stroke-width="4" stroke-dasharray="9 8"/>{[[90,159],[205,88],[350,143],[481,54]].map(([x,y])=><circle cx={x} cy={y} r="9" fill="#eaf5ea"/>)}</svg></div>
+          <div class="catalog-card-copy">
+            <span class="eyebrow" data-i18n="blogs.football.topic">FUTEBOL / ESPORTE</span><span class="catalog-status" data-i18n="blogs.status">PRÉVIA EDITORIAL</span>
+            <h3>Futebolando<span>.</span></h3>
+            <p data-i18n="blogs.football.description">Futebol além do placar: regras, clubes, campeonatos, tática e estatísticas.</p>
+            <div class="catalog-actions"><a class="button primary" href="/futebolando/" data-i18n="blogs.open">Conhecer o Futebolando</a><a class="button secondary" href="/futebolando/en/" data-i18n="blogs.english">Edição em inglês</a></div>
+          </div>
+        </article>
+      </div>
+      <p class="catalog-notice" data-i18n="blogs.review">O Futebolando está em prévia técnica. Os artigos estão em revisão; não são publicações definitivas.</p>
+      <p class="catalog-note" data-i18n="blogs.note">Novos blogs serão acrescentados quando estiverem disponíveis. Cada publicação tem identidade e navegação próprias.</p>
+    </section>
+  </main>
+  <footer><span>© {new Date().getFullYear()} Senhorita Minuto</span><span class="footer-status" data-i18n="footer.expanding">● arquivo em expansão</span></footer>
+</BaseLayout>
+<script>
+  const controls=document.querySelector<HTMLElement>('#blog-search-controls');
+  const input=document.querySelector<HTMLInputElement>('#blog-search');
+  const empty=document.querySelector<HTMLElement>('#blog-search-empty');
+  const cards=[...document.querySelectorAll<HTMLElement>('[data-blog-entry]')];
+  const norm=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  function filter(){const q=norm(input?.value??'').trim();let count=0;for(const card of cards){card.hidden=!norm((card.textContent??'')+' '+(card.dataset.search??'')).includes(q);if(!card.hidden)count++;}if(empty)empty.hidden=count!==0;}
+  if(controls&&input){controls.hidden=false;input.addEventListener('input',filter);window.addEventListener('sm:language-changed',filter);filter();}
+</script>

@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Mascot from '../components/Mascot.astro';
+import '../styles/blog-catalog.css';
 ---
 <BaseLayout>
   <Header />
@@ -33,7 +34,12 @@ import Mascot from '../components/Mascot.astro';
         </div>
       </div>
 
-      <div class="project-grid">
+      <div class="portfolio-search" id="project-search-controls" hidden>
+        <label for="project-search" data-i18n="projects.search">Pesquisar projetos</label>
+        <input id="project-search" type="search" autocomplete="off"/>
+        <p id="project-search-empty" role="status" data-i18n="projects.empty" hidden>Nenhum projeto corresponde à pesquisa.</p>
+      </div>
+      <div class="project-grid" id="portfolio-projects">
         <ProjectCard
           eyebrow="JOGO / SCRATCH"
           title="Projeto Scratch"
@@ -73,6 +79,7 @@ import Mascot from '../components/Mascot.astro';
           ctaKey="card.jack.cta"
           statusKey="card.jack.status"
         />
+        <ProjectCard eyebrow="PUBLICAÇÕES / CONHECIMENTO" title="Rede de Blogs" description="Uma coleção de publicações independentes sobre diferentes temas, com pesquisa, análise e aprendizado." href="/projetos/blogs/" cta="Explorar os blogs" status="PRÉVIA" eyebrowKey="card.blogs.eyebrow" titleKey="card.blogs.title" descriptionKey="card.blogs.desc" ctaKey="card.blogs.cta" statusKey="card.blogs.status" />
       </div>
     </section>
 
@@ -108,3 +115,13 @@ import Mascot from '../components/Mascot.astro';
 
   <Mascot />
 </BaseLayout>
+
+<script>
+  const controls=document.querySelector<HTMLElement>('#project-search-controls');
+  const input=document.querySelector<HTMLInputElement>('#project-search');
+  const cards=[...document.querySelectorAll<HTMLElement>('#portfolio-projects .project-card-link')];
+  const empty=document.querySelector<HTMLElement>('#project-search-empty');
+  const norm=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  function filter(){const q=norm(input?.value??'').trim();let visible=0;for(const card of cards){card.hidden=!norm((card.textContent??'')+' '+(card.getAttribute('href')??'')).includes(q);if(!card.hidden)visible++;}if(empty)empty.hidden=visible!==0;}
+  if(controls&&input){controls.hidden=false;input.addEventListener('input',filter);window.addEventListener('sm:language-changed',filter);filter();}
+</script>
