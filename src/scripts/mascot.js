@@ -1,6 +1,7 @@
 import { MASCOT_TIMING, readingDuration } from './mascot/timing.js';
 import { TimerGroup } from './mascot/timers.js';
 import { createPortalController } from './mascot/portals.js';
+import { createSpeechBubble } from './mascot/speech.js';
 
 const traveler = document.querySelector('#mascotTraveler');
 const button = document.querySelector('#mascotButton');
@@ -71,6 +72,7 @@ if (ready) {
     idle: new TimerGroup(),
     wake: new TimerGroup(),
     ui: new TimerGroup(),
+    rewind: new TimerGroup(),
   };
 
   const portals = createPortalController({
@@ -185,36 +187,12 @@ if (ready) {
     setPosition(chosen.x, chosen.y, instant);
   }
 
-  function hideMinuteSpeech(immediate = false) {
-    timers.speech.clearAll();
-    if (speech.hidden) return;
-    if (immediate) {
-      speech.hidden = true;
-      speech.classList.remove('bubble-enter', 'bubble-leave');
-      return;
-    }
-    speech.classList.remove('bubble-enter');
-    speech.classList.add('bubble-leave');
-    timers.speech.set(() => {
-      speech.hidden = true;
-      speech.classList.remove('bubble-leave');
-    }, 140);
-  }
-
-  function say(message, duration) {
-    const nextDuration =
-      typeof duration === 'number'
-        ? duration
-        : readingDuration(message, { min: MASCOT_TIMING.normalMinMs, max: 12_000 });
-
-    window.dispatchEvent(new CustomEvent('sm:minute-bubble-open'));
-    speech.textContent = message;
-    speech.hidden = false;
-    speech.classList.remove('bubble-leave', 'bubble-enter');
-    void speech.offsetWidth;
-    speech.classList.add('bubble-enter');
-    timers.speech.clearAll();
-    timers.speech.set(() => hideMinuteSpeech(false), nextDuration);
+  const minuteBubble=createSpeechBubble(speech,{timers:timers.speech,highlight:null});
+  function hideMinuteSpeech(immediate=false){minuteBubble.hide(immediate);}
+  function say(message,duration){
+    const nextDuration=typeof duration==='number'?duration:readingDuration(message,{min:MASCOT_TIMING.normalMinMs,max:12_000});
+    window.dispatchEvent(new CustomEvent('sm:minute-bubble-open',{detail:{owner:state.owner}}));
+    minuteBubble.show(message,nextDuration);
   }
 
   function updateCounter() {
@@ -253,6 +231,7 @@ if (ready) {
   }
 
   function normalizeTravelerClasses() {
+    timers.rewind.clearAll();
     traveler.classList.remove(
       'portal-enter',
       'portal-exit',
@@ -483,14 +462,13 @@ if (ready) {
   function beginInteraction(detail) {
     debug('interaction:request', detail?.target);
     if (state.owner === 'sleep' || state.owner === 'future' || state.owner === 'interaction') return false;
-    if (state.owner === 'autonomous') cancelAutonomousAction({ keepPosition: true });
-
     const selector = typeof detail?.target === 'string' ? detail.target : '';
     if (!/^#[A-Za-z][A-Za-z0-9_-]*$/.test(selector) || document.hidden) return false;
     const target = document.getElementById(selector.slice(1));
     if (!(target instanceof HTMLElement)) return false;
     const rect = target.getBoundingClientRect();
     if (rect.bottom<=0 || rect.top>=window.innerHeight || rect.right<=0 || rect.left>=window.innerWidth) return false;
+    if (state.owner === 'autonomous') cancelAutonomousAction({ keepPosition: true });
 
     state.owner = 'interaction';
     window.dispatchEvent(new CustomEvent('sm:interaction-state',{detail:{active:true,target:selector}}));
@@ -1063,17 +1041,20 @@ if (ready) {
     if (state.owner === 'sleep' || state.owner === 'future') return;
     const detail = event instanceof CustomEvent ? event.detail : null;
     const duration = Math.max(700, Number(detail?.duration) || 1250);
+    timers.rewind.clearAll();
+    const rewindOwner=state.owner;
     traveler.classList.add('power-active');
     if (state.owner === 'interaction') {
       setMood('evil');
-      timers.ui.set(() => {
-        if (!traveler.classList.contains('interaction-power')) traveler.classList.remove('power-active');
+      timers.rewind.set(() => {
+        if (state.owner===rewindOwner&&!traveler.classList.contains('interaction-power')) traveler.classList.remove('power-active');
       }, duration);
       return;
     }
     const previousMode = traveler.dataset.mode || 'walk';
     traveler.dataset.mode = 'rewind';
-    timers.ui.set(() => {
+    timers.rewind.set(() => {
+      if(state.owner!==rewindOwner||traveler.dataset.mode!=='rewind')return;
       traveler.classList.remove('power-active');
       traveler.dataset.mode = state.owner === 'patrol' ? 'side-walk' : previousMode;
     }, duration);
@@ -1104,12 +1085,21 @@ if (ready) {
     window.addEventListener(eventName, registerUserActivity, { passive: true });
   });
 
+  function abortInteraction(){
+    if(state.owner!=='interaction')return false;
+    timers.interaction.clearAll();state.pendingInteraction=null;portals.closeAll();normalizeTravelerClasses();hideMinuteSpeech(true);state.owner='patrol';
+    window.dispatchEvent(new CustomEvent('sm:interaction-state',{detail:{active:false}}));return true;
+  }
+  window.addEventListener('sm:language-changed',()=>{
+    state.pendingInteraction=null;
+    if(abortInteraction()){returnToPatrol({instant:true});scheduleIdleSleep();}
+    else if(state.owner!=='future')hideMinuteSpeech(true);
+  });
+
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
       if (state.owner === 'autonomous') cancelAutonomousAction({ keepPosition: true });
-      if(state.owner==='interaction'){
-        timers.interaction.clearAll();state.pendingInteraction=null;portals.closeAll();normalizeTravelerClasses();hideMinuteSpeech(true);state.owner='patrol';window.dispatchEvent(new CustomEvent('sm:interaction-state',{detail:{active:false}}));
-      }
+      abortInteraction();
       if (state.owner !== 'future') enterSleep('hidden');
       return;
     }

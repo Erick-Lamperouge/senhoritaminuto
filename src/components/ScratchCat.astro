@@ -2,7 +2,7 @@
   <button class="scratch-cat" id="scratchCat" type="button" aria-label="Interagir com o gato do Projeto Scratch">
     <img class="cat-base" id="scratchCatImg" src="/assets/characters/scratch-cat-pixel.png" alt="Gato laranja em pixel art" draggable="false" />
   </button>
-  <div class="cat-bubble" id="catBubble" hidden></div>
+  <div class="cat-bubble" id="catBubble" role="status" aria-live="polite" hidden></div>
   <div class="time-wand" id="timeWand" aria-hidden="true">
     <span class="wand-stick"></span>
     <span class="wand-star">✦</span>
@@ -67,10 +67,13 @@
     .wand-star{left:38px;top:9px;font-size:1.3rem}
     .cat-rewind{left:-22px;bottom:0;font-size:.5rem}
   }
+  @media(prefers-reduced-motion:reduce){.scratch-cat-scene *,.scratch-cat-scene *::before,.scratch-cat-scene *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 </style>
 
 <script>
-  import { readingDuration } from '../scripts/mascot/timing.js';
+  import { MASCOT_TIMING, readingDuration } from '../scripts/mascot/timing.js';
+  import {TimerGroup} from '../scripts/mascot/timers.js';
+  import {createSpeechBubble} from '../scripts/mascot/speech.js';
   const scene=document.querySelector('#scratchCatScene');
   const cat=document.querySelector('#scratchCat');
   const catImg=document.querySelector('#scratchCatImg');
@@ -86,31 +89,19 @@
       base:'/assets/characters/scratch-cat-pixel.png',
       seated:'/assets/characters/scratch-cat-seated.png'
     };
-    const highlightMinute=(text)=>String(text).replace(/Senhorita Minuto/g,'<strong>Senhorita Minuto</strong>');
-    const hideCat=(immediate=false)=>{
-      window.clearTimeout(bubbleTimer);
-      if(bubble.hidden)return;
-      if(immediate){bubble.hidden=true;bubble.classList.remove('bubble-enter','bubble-leave');return;}
-      bubble.classList.remove('bubble-enter');
-      bubble.classList.add('bubble-leave');
-      window.setTimeout(()=>{bubble.hidden=true;bubble.classList.remove('bubble-leave');},140);
-    };
+    const sceneTimers=new TimerGroup(),nextTimers=new TimerGroup();
+    const bubbleView=createSpeechBubble(bubble);
+    const hideCat=(immediate=false)=>bubbleView.hide(immediate);
     const showCat=(message,duration=3000)=>{
       window.dispatchEvent(new CustomEvent('sm:project-bubble-open',{detail:{source:'scratch'}}));
-      bubble.innerHTML=highlightMinute(message);
-      bubble.hidden=false;
-      bubble.classList.remove('bubble-leave','bubble-enter');
-      void bubble.offsetWidth;
-      bubble.classList.add('bubble-enter');
-      window.clearTimeout(bubbleTimer);
-      bubbleTimer=window.setTimeout(()=>hideCat(false),duration);
+      bubbleView.show(message,duration);
     };
-    const inView=()=>{const r=scene.getBoundingClientRect();return r.bottom>0&&r.top<window.innerHeight&&r.right>0&&r.left<window.innerWidth;};
+    const inView=()=>{const r=scene.getBoundingClientRect();return !document.hidden&&r.bottom>0&&r.top<window.innerHeight&&r.right>0&&r.left<window.innerWidth;};
     const setPose=(pose='base')=>{catImg.src=POSES[pose]||POSES.base;};
     const interactMinute=(message,{mood='happy',power=false,hold=7600,duration=3800}={})=>{
       window.dispatchEvent(new CustomEvent('sm:interact',{detail:{target:'#scratchCatScene',message,duration,mood,power,hold}}));
     };
-    const scheduleNext=()=>{window.clearTimeout(sequenceTimer);sequenceTimer=window.setTimeout(runScene,17500+Math.random()*12000);};
+    const scheduleNext=(delay=17500+Math.random()*12000)=>{nextTimers.clearAll();if(!document.hidden)nextTimers.set(runScene,delay);};
     const getDialogues=()=>[
       {cat:tx('cat.1','Os gatos vão dominar o mundo.'),minute:tx('cat.1r','Não nesta linha do tempo.'),mood:'evil',power:true,pose:'base'},
       {cat:tx('cat.2','O futuro pertence aos gatos.'),minute:tx('cat.2r','Só se eu deixar. E eu trouxe a varinha.'),mood:'evil',power:true,pose:'seated'},
@@ -137,7 +128,7 @@
       pose:'seated'
     });
 
-    let catClicks=0, sequenceTimer=0, bubbleTimer=0, busy=false, greeted=false, introDone=false;
+    let catClicks=0,busy=false,greeted=false,introDone=false,introPending=false,minuteBusy=false;
     cat.classList.add('idle');
 
     const portalReset=()=>{portal.classList.remove('active');wand.classList.remove('active');rewind.classList.remove('active');cat.classList.remove('portal-travel','reappear','alert');cat.style.opacity='1';};
@@ -147,7 +138,7 @@
       const backText=tx('cat.back', isEN() ? 'Oh no... I went back to the past.' : 'Ah não... eu voltei pro passado.');
       hideCat();
       showCat(noText,1400);
-      window.setTimeout(()=>{
+      sceneTimers.set(()=>{
         hideCat();
         wand.classList.add('active');
         portal.classList.add('active');
@@ -156,16 +147,16 @@
         cat.classList.add('portal-travel');
         window.dispatchEvent(new CustomEvent('sm:rewind',{detail:{duration:2300,power:true}}));
       },1120);
-      window.setTimeout(()=>{
+      sceneTimers.set(()=>{
         cat.classList.remove('portal-travel');
         cat.style.opacity='0';
       },1760);
-      window.setTimeout(()=>{
+      sceneTimers.set(()=>{
         cat.style.opacity='1';
         cat.classList.add('reappear');
         showCat(backText, Math.max(3000, readingDuration(backText,{min:3000}))); 
       },2320);
-      window.setTimeout(()=>{
+      sceneTimers.set(()=>{
         portalReset();
         cat.classList.add('idle');
         busy=false;
@@ -173,7 +164,7 @@
     };
 
     function runScene(){
-      if(busy||!inView()){scheduleNext();return;}
+      if(busy||introPending||minuteBusy||!inView()){scheduleNext();return;}
       busy=true;
       const list=getDialogues();
       const d=list[Math.floor(Math.random()*list.length)];
@@ -182,16 +173,16 @@
       const minuteDuration=readingDuration(d.minute,{min:3000});
       cat.classList.add('alert');
       showCat(d.cat,catDuration);
-      window.setTimeout(()=>cat.classList.remove('alert'),1100);
+      sceneTimers.set(()=>cat.classList.remove('alert'),1100);
       const speakerGap=320;
       const minuteHold=Math.max(4200,minuteDuration+1050);
-      window.setTimeout(()=>{hideCat(true);interactMinute(d.minute,{mood:d.mood,power:d.power,hold:minuteHold,duration:minuteDuration});},catDuration+speakerGap);
-      window.setTimeout(magicReset,catDuration+speakerGap+860+minuteDuration+420);
+      sceneTimers.set(()=>{hideCat(true);interactMinute(d.minute,{mood:d.mood,power:d.power,hold:minuteHold,duration:minuteDuration});},catDuration+speakerGap);
+      sceneTimers.set(magicReset,catDuration+speakerGap+860+minuteDuration+420);
       scheduleNext();
     }
 
     const initialGreeting=()=>{
-      if(greeted||!inView())return;
+      if(greeted||busy||minuteBusy||!inView())return;
       greeted=true;
       const options=welcomeLines();
       const line=options[Math.floor(Math.random()*options.length)];
@@ -200,15 +191,18 @@
       showCat(line.text, introDuration);
 
       if(!introDone){
+        introPending=true;
         const intro=introFollowUp();
         const catDuration=readingDuration(intro.cat,{min:3000,max:7500});
         const minuteDuration=readingDuration(intro.minute,{min:3000,max:6500});
-        window.setTimeout(()=>{
-          if(busy||!inView()) return;
+        sceneTimers.set(()=>{
+          if(busy||minuteBusy||!inView()){introPending=false;return;}
           introDone=true;
           setPose(intro.pose||'seated');
           showCat(intro.cat, catDuration);
-          window.setTimeout(()=>{
+          sceneTimers.set(()=>{
+            introPending=false;
+            if(!inView())return;
             hideCat(true);
             interactMinute(intro.minute,{mood:'happy',power:false,hold:Math.max(3600,minuteDuration+850),duration:minuteDuration});
           },catDuration+320);
@@ -216,25 +210,30 @@
       }
     };
 
-    window.setTimeout(initialGreeting,720);
-    window.setTimeout(runScene,12600);
+    sceneTimers.set(initialGreeting,720);
+    scheduleNext(12600);
 
     cat.addEventListener('click',()=>{
-      if(busy)return;
+      if(busy||minuteBusy)return;
+      sceneTimers.clearAll();introPending=false;greeted=true;
       catClicks+=1;
       const lines=clickLines();
       const message=lines[(catClicks-1)%lines.length];
-      showCat(message,readingDuration(message,{min:3000,max:6500}));
+      const duration=readingDuration(message,{min:3000,max:6500});
+      showCat(message,duration);
       if(catClicks%3===0){
         const heard=tx('cat.heard', isEN() ? 'I heard that.' : 'Eu ouvi isso.');
-        window.setTimeout(()=>{hideCat(true);interactMinute(heard,{mood:'happy',power:false,hold:3400,duration:readingDuration(heard,{min:3000,max:5600})});},1700);
+        sceneTimers.set(()=>{if(!inView()||minuteBusy)return;hideCat(true);interactMinute(heard,{mood:'happy',power:false,hold:3400,duration:readingDuration(heard,{min:3000,max:5600})});},duration+MASCOT_TIMING.speakerGapMs);
       }
     });
 
+    const stopScene=()=>{sceneTimers.clearAll();nextTimers.clearAll();hideCat(true);portalReset();setPose('base');cat.classList.add('idle');busy=false;introPending=false;};
     window.addEventListener('sm:minute-bubble-open',()=>hideCat(true));
-    window.addEventListener('sm:project-bubble-open',(event)=>{const detail=event instanceof CustomEvent?event.detail:null;if(detail?.source!=='scratch')hideCat(true);});
-
-    window.addEventListener('sm:language-changed',()=>{hideCat();setPose('base');greeted=false;introDone=false;window.setTimeout(initialGreeting,300);});
-    window.addEventListener('pagehide',()=>{window.clearTimeout(sequenceTimer);window.clearTimeout(bubbleTimer);},{once:true});
+    window.addEventListener('sm:project-bubble-open',(event)=>{if(event.detail?.source!=='scratch'){stopScene();scheduleNext();}});
+    window.addEventListener('sm:interaction-state',event=>{minuteBusy=event.detail?.active===true;});
+    window.addEventListener('sm:language-changed',()=>{stopScene();greeted=false;introDone=false;sceneTimers.set(initialGreeting,300);scheduleNext(12600);});
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)stopScene();else{if(!greeted)sceneTimers.set(initialGreeting,300);scheduleNext(12600);}});
+    window.addEventListener('pagehide',stopScene);
+    window.addEventListener('pageshow',event=>{if(event.persisted){minuteBusy=false;stopScene();scheduleNext(12600);}});
   }
 </script>

@@ -10,7 +10,7 @@
   </div>
 
   <div class="tribute-character-wrap">
-    <div class="tribute-bubble" id="fernandoBubble" hidden></div>
+    <div class="tribute-bubble" id="fernandoBubble" role="status" aria-live="polite" hidden></div>
     <button class="fernando-character" id="fernandoCharacter" type="button" aria-label="Conversar com Fernando" data-pose="base">
       <img id="fernandoCharacterImg" src="/assets/characters/fernando-pixel.png" alt="Fernando em caricatura pixelada" draggable="false" />
     </button>
@@ -68,10 +68,13 @@
     .tribute-prop{left:138px;bottom:8px;width:92px;height:70px}
     .tribute-prop[data-prop='checkers'] img{width:54px}
   }
+  @media(prefers-reduced-motion:reduce){.fernando-tribute *,.fernando-tribute *::before,.fernando-tribute *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 </style>
 
 <script>
   import { readingDuration } from '../scripts/mascot/timing.js';
+  import {TimerGroup} from '../scripts/mascot/timers.js';
+  import {createSpeechBubble} from '../scripts/mascot/speech.js';
   const fernando = document.querySelector('#fernandoCharacter');
   const bubble = document.querySelector('#fernandoBubble');
   const prop = document.querySelector('#fernandoProp');
@@ -93,73 +96,27 @@
       { text: tx('fernando.line5','A primeira fala de Valentina foi “Vovô”. Essa eu guardo comigo.'), pose: 'thinking', prop: 'heart' }
     ];
 
-    let bubbleTimer = 0;
-    let autoTimer = 0;
-    let lastIndex = -1;
-
-    const resetPose = () => {
-      fernando.dataset.pose = 'base';
-      fernandoImg.src = POSES.base;
-    };
-
-    const clearProp = () => {
-      prop.className = 'tribute-prop';
-      prop.removeAttribute('data-prop');
-      prop.innerHTML = '';
-    };
-
-    const renderProp = (kind) => {
-      clearProp();
-      if (!kind) return;
-      prop.dataset.prop = kind;
-
-      if (kind === 'domino') {
-        prop.innerHTML = `
-          <img src="/assets/props/domino_piece_1.png" alt="" draggable="false" />
-          <img src="/assets/props/domino_piece_2.png" alt="" draggable="false" />
-        `;
-      } else if (kind === 'checkers') {
-        prop.innerHTML = `<img src="/assets/props/checker_piece.png" alt="" draggable="false" />`;
-      } else if (kind === 'heart') {
-        prop.innerHTML = `<img src="/assets/props/heart_small.png" alt="" draggable="false" />`;
-      }
-
+    const autoTimers=new TimerGroup();
+    let lastIndex=-1,minuteBusy=false;
+    const resetPose=()=>{fernando.dataset.pose='base';fernandoImg.src=POSES.base;};
+    const clearProp=()=>{prop.className='tribute-prop';prop.removeAttribute('data-prop');prop.replaceChildren();};
+    const propAssets={domino:['domino_piece_1.png','domino_piece_2.png'],checkers:['checker_piece.png'],heart:['heart_small.png']};
+    const renderProp=kind=>{
+      clearProp();if(!kind||!propAssets[kind])return;
+      prop.dataset.prop=kind;
+      for(const file of propAssets[kind]){const img=document.createElement('img');img.src='/assets/props/'+file;img.alt='';img.draggable=false;prop.append(img);}
       prop.classList.add('active');
     };
-
-    const hideBubble=(immediate=false)=>{
-      window.clearTimeout(bubbleTimer);
-      if(bubble.hidden)return;
-      if(immediate){bubble.hidden=true;bubble.classList.remove('bubble-enter','bubble-leave');return;}
-      bubble.classList.remove('bubble-enter');
-      bubble.classList.add('bubble-leave');
-      window.setTimeout(()=>{bubble.hidden=true;bubble.classList.remove('bubble-leave');},140);
-    };
-
-    const showLine = (entry) => {
+    const bubbleView=createSpeechBubble(bubble,{onHide:()=>{fernando.classList.remove('pose-pop');clearProp();resetPose();}});
+    const hideBubble=(immediate=false)=>bubbleView.hide(immediate);
+    const inView=()=>{const r=fernando.getBoundingClientRect();return !document.hidden&&r.bottom>0&&r.top<innerHeight;};
+    const showLine=entry=>{
+      if(minuteBusy||!inView())return;
       const duration=readingDuration(entry.text,{min:3000,max:10000});
       window.dispatchEvent(new CustomEvent('sm:project-bubble-open',{detail:{source:'fernando-tribute'}}));
-      bubble.innerHTML = String(entry.text).replace(/Senhorita Minuto/g,'<strong>Senhorita Minuto</strong>');
-      bubble.hidden = false;
-      bubble.classList.remove('bubble-leave','bubble-enter');
-      void bubble.offsetWidth;
-      bubble.classList.add('bubble-enter');
-      fernando.dataset.pose = entry.pose;
-      fernandoImg.src = POSES[entry.pose] || POSES.base;
-
-      fernando.classList.remove('pose-pop');
-      void fernando.offsetWidth;
-      fernando.classList.add('pose-pop');
-
-      renderProp(entry.prop);
-
-      window.clearTimeout(bubbleTimer);
-      bubbleTimer = window.setTimeout(() => {
-        hideBubble(false);
-        fernando.classList.remove('pose-pop');
-        clearProp();
-        resetPose();
-      }, duration);
+      fernando.dataset.pose=entry.pose;fernandoImg.src=POSES[entry.pose]||POSES.base;
+      fernando.classList.remove('pose-pop');void fernando.offsetWidth;fernando.classList.add('pose-pop');
+      renderProp(entry.prop);bubbleView.show(entry.text,duration);
     };
 
     const randomLine = () => {
@@ -170,22 +127,15 @@
       showLine(lines[next]);
     };
 
-    const scheduleAuto = () => {
-      window.clearTimeout(autoTimer);
-      autoTimer = window.setTimeout(() => {
-        if (document.visibilityState === 'visible') randomLine();
-        scheduleAuto();
-      }, 24000 + Math.random() * 18000);
-    };
-
-    fernando.addEventListener('click', randomLine);
+    const scheduleAuto=()=>{autoTimers.clearAll();if(document.hidden)return;autoTimers.set(()=>{if(inView()&&!minuteBusy)randomLine();scheduleAuto();},24000+Math.random()*18000);};
+    fernando.addEventListener('click',randomLine);
     window.addEventListener('sm:minute-bubble-open',()=>hideBubble(true));
-    window.addEventListener('sm:project-bubble-open',(event)=>{const detail=event instanceof CustomEvent?event.detail:null;if(detail?.source!=='fernando-tribute')hideBubble(true);});
+    window.addEventListener('sm:project-bubble-open',event=>{if(event.detail?.source!=='fernando-tribute')hideBubble(true);});
+    window.addEventListener('sm:interaction-state',event=>{minuteBusy=event.detail?.active===true;if(minuteBusy)hideBubble(true);});
+    window.addEventListener('sm:language-changed',()=>hideBubble(true));
+    document.addEventListener('visibilitychange',()=>{if(document.hidden){hideBubble(true);autoTimers.clearAll();}else scheduleAuto();});
+    window.addEventListener('pagehide',()=>{hideBubble(true);autoTimers.clearAll();});
+    window.addEventListener('pageshow',event=>{if(event.persisted){minuteBusy=false;scheduleAuto();}});
     scheduleAuto();
-
-    window.addEventListener('pagehide', () => {
-      window.clearTimeout(bubbleTimer);
-      window.clearTimeout(autoTimer);
-    }, { once: true });
   }
 </script>

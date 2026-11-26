@@ -36,3 +36,9 @@ Antes de publicar, vale testar estes fluxos no navegador local.
 - Senhorita Minuto e arquivista presentes; saudação com leitura e resposta local, sem portal global.
 - Carrossel: setas, clique nas laterais, teclado, escolha de tema planejado sem link, lista somente dos blogs disponíveis. Sem animação quando movimento reduzido.
 - Entrar em Futebolando: nenhum mascote do portal; retornar à vitrine; testar PT/EN.
+
+## 6. Temporizadores de diálogo
+- Clique novamente perto do desaparecimento do balão: o texto novo não pode desaparecer por callback antigo.
+- Troque idioma durante saudação/resposta pendente: não deixar diálogo anterior ou portal órfão.
+- O gato deve manter a brincadeira e a magia; FERNANDO preserva poses, dominó, dama e demais props; Jack e arquivista usam controlador comum.
+- Sono e despertar: teste Chromium com relógio virtual preserva 90s/3s; testar manualmente os eventos especiais e o marco de 1000 cliques antes de refatoração ampla.
