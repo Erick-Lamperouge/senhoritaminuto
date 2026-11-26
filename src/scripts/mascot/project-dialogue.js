@@ -10,6 +10,7 @@ export function createProjectDialogue({root,character,speech,source,entries,pose
   const listen=(target,name,fn)=>target.addEventListener(name,fn,{signal:abort.signal});
   const tx=(key,fallback)=>window.SM_I18N?.t?.(key,fallback)??fallback;
   const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  root.dataset.motionPreference=motion.matches?'reduce':'full';
   const player=createScenePlayer(root,{poses});
   const bubble=createSpeechBubble(speech,{highlight:'Senhorita Minuto'});
   let next=1,greeted=false,busy=false,speaking=false,ambientIndex=0;
@@ -61,7 +62,12 @@ export function createProjectDialogue({root,character,speech,source,entries,pose
   });
   listen(window,'sm:language-changed',()=>{hide();ambientTimers.clearAll();greeted=false;timers.set(greet,350);scheduleAmbient();});
   listen(document,'visibilitychange',()=>{if(document.hidden){hide();ambientTimers.clearAll();}else{greet();scheduleAmbient(SCENE_TIMING.firstAmbientMs);}});
-  listen(motion,'change',()=>{player.reset();ambientTimers.clearAll();if(!motion.matches)scheduleAmbient(SCENE_TIMING.firstAmbientMs);});
+  listen(motion,'change',()=>{
+    player.reset();ambientTimers.clearAll();
+    if(!motion.matches)scheduleAmbient(SCENE_TIMING.firstAmbientMs);
+    // Acknowledge the actual media-query change after timers are updated.
+    root.dataset.motionPreference=motion.matches?'reduce':'full';
+  });
   listen(window,'pagehide',event=>{hide();ambientTimers.clearAll();observer?.disconnect();if(!event.persisted)abort.abort();});
   listen(window,'pageshow',event=>{if(event.persisted){busy=false;character.setAttribute('aria-disabled','false');observer?.observe(character);scheduleAmbient(SCENE_TIMING.firstAmbientMs);}});
   timers.set(greet,initialDelay);scheduleAmbient(SCENE_TIMING.firstAmbientMs);

@@ -206,11 +206,12 @@ for(const [pagePath,id,firstPose,secondPose,thirdPose,ambientPose,animationPart]
  assert.match(await bubble.textContent(),id==='jack'?/I'm Jack/:/I'm the Archivist/);
  await p.clock.runFor(18000); // allow greeting and reply to complete
  await p.emulateMedia({reducedMotion:'reduce'});
- await p.waitForFunction(id=>matchMedia('(prefers-reduced-motion: reduce)').matches&&document.querySelector('#'+id+'-mascot')?.dataset.pose==='idle',id,{timeout:5000,polling:50});
+ await p.waitForFunction(id=>matchMedia('(prefers-reduced-motion: reduce)').matches&&document.querySelector('#'+id+'-mascot')?.dataset.motionPreference==='reduce'&&document.querySelector('#'+id+'-mascot')?.dataset.pose==='idle',id,{timeout:5000,polling:50});
  await p.clock.runFor(30000);assert.equal(await root.getAttribute('data-pose'),'idle');
  await p.emulateMedia({reducedMotion:'no-preference'});
- // Let the real MediaQueryList event schedule the ambient check.
- await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+ // Wait for the actual listener to acknowledge the media preference before advancing virtual time.
+ await p.waitForFunction(id=>document.querySelector('#'+id+'-mascot')?.dataset.motionPreference==='full',id,{timeout:5000,polling:50});
+ await p.evaluate(()=>window.dispatchEvent(new PointerEvent('pointermove')));
  await p.clock.runFor(14500);
  assert.equal(await root.getAttribute('data-pose'),ambientPose);
  assert.notEqual(await root.locator(animationPart).evaluate(el=>getComputedStyle(el).animationName),'none');
@@ -226,7 +227,7 @@ for(const [pagePath,id,firstPose,secondPose,thirdPose,ambientPose,animationPart]
  // MediaQueryList change is delivered on browser rendering, not the virtual timer.
  await p.emulateMedia({reducedMotion:'reduce'});
  assert.equal(await root.locator(animationPart).evaluate(el=>getComputedStyle(el).animationName),'none');
- await p.waitForFunction(id=>matchMedia('(prefers-reduced-motion: reduce)').matches&&document.querySelector('#'+id+'-mascot')?.dataset.pose==='idle',id,{timeout:5000,polling:50});
+ await p.waitForFunction(id=>matchMedia('(prefers-reduced-motion: reduce)').matches&&document.querySelector('#'+id+'-mascot')?.dataset.motionPreference==='reduce'&&document.querySelector('#'+id+'-mascot')?.dataset.pose==='idle',id,{timeout:5000,polling:50});
  assert.equal(await root.getAttribute('data-pose'),'idle');
  assert.deepEqual(errors,[]);await p.close();console.log('PASS '+id+' articulated poses, speech, autonomous scene and reduced motion');
 }
