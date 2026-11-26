@@ -177,7 +177,7 @@ try{
  assert.equal(await crossing.locator('#portalLeft.is-open,#portalRight.is-open,#interactionPortal.active').count(),0);
  await crossing.close();console.log('PASS blocked traversal uses portal and cleans both endpoints');
 
-// Explicit pose changes, CSS animations, finite scenes, pause and cleanup.
+// Explicit pose changes, CSS animations, finite scenes, OS reduced motion and cleanup.
 for(const [pagePath,id,firstPose,secondPose,thirdPose,ambientPose,animationPart] of [
  ['/projetos/jack-up/','jack','dribble','cap','limp','dribble','.jack-ball'],
  ['/projetos/blogs/','archive','react','stand','sort','page','.archive-page']
@@ -189,6 +189,9 @@ for(const [pagePath,id,firstPose,secondPose,thirdPose,ambientPose,animationPart]
  await p.clock.install();await p.goto(origin+pagePath,{waitUntil:'networkidle'});
  await p.locator('#'+id+'-character').scrollIntoViewIfNeeded();
  const root=p.locator('#'+id+'-mascot'),bubble=p.locator('#'+id+'-speech');
+ assert.equal(await root.locator('button').count(),1);
+ assert.equal(await root.locator('.project-scene-controls,[data-mascot-motion]').count(),0);
+ assert.equal(await root.locator('.jack-mascot-kicker,.archive-kicker').count(),0);
  const click=()=>p.evaluate(id=>document.querySelector('#'+id+'-character').click(),id);
  await click();assert.equal(await root.getAttribute('data-pose'),firstPose);assert.ok(await bubble.isVisible());
  await p.screenshot({path:'review-shots/'+id+'-pose-1.png',animations:'allow'});
@@ -200,11 +203,15 @@ for(const [pagePath,id,firstPose,secondPose,thirdPose,ambientPose,animationPart]
  await p.clock.runFor(3500);assert.equal(await root.getAttribute('data-pose'),'idle');
  await p.evaluate(()=>window.SM_I18N.applyLanguage('en'));await p.clock.runFor(500);
  assert.equal(await p.locator('html').getAttribute('lang'),'en');
+ assert.match(await bubble.textContent(),id==='jack'?/I'm Jack/:/I'm the Archivist/);
  await p.clock.runFor(18000); // allow greeting and reply to complete
- await root.locator('[data-mascot-motion]').click();
- assert.equal(await root.getAttribute('data-motion-paused'),'true');
+ await p.emulateMedia({reducedMotion:'reduce'});
+ await p.waitForFunction(id=>matchMedia('(prefers-reduced-motion: reduce)').matches&&document.querySelector('#'+id+'-mascot')?.dataset.pose==='idle',id,{timeout:5000,polling:50});
  await p.clock.runFor(30000);assert.equal(await root.getAttribute('data-pose'),'idle');
- await root.locator('[data-mascot-motion]').click();await p.clock.runFor(14500);
+ await p.emulateMedia({reducedMotion:'no-preference'});
+ // Let the real MediaQueryList event schedule the ambient check.
+ await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+ await p.clock.runFor(14500);
  assert.equal(await root.getAttribute('data-pose'),ambientPose);
  assert.notEqual(await root.locator(animationPart).evaluate(el=>getComputedStyle(el).animationName),'none');
  // Inspect an actual transform at two points of the active CSS animation.

@@ -92,6 +92,7 @@ jobs:
           grep -q 'data-mascot-species="alligator"' /tmp/jack.html
           grep -q 'jack-crutch' /tmp/jack.html
           grep -q 'project-speech' /tmp/jack.html
+          ! grep -Eq 'data-mascot-motion|project-scene-controls' /tmp/jack.html /tmp/catalog.html
           curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/projetos/scratch/ -o /tmp/scratch.html
           grep -q 'id="scratchCat"' /tmp/scratch.html
           grep -q 'href="/futebolando/"' /tmp/catalog.html

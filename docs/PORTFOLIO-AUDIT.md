@@ -23,3 +23,5 @@ CI 45904559622: 18/18 portal, 161/161 núcleo, integração/scanner 183 textos a
 
 ## 05F — cenas dos dois mascotes
 A revisão 05E passou CI 45904950000 (19/19 portal, 161/161 núcleo, sete cenários) e deploy 45905267314. Nova rodada 05F, base pública 747c1540a6d9bccd7bb32294288ee6154f515ecb: Jack com drible, boné, muleta e reação; arquivista irmão da Minuto, sentado lendo, folheia, organiza fichas e levanta/aponta. Balões de pergaminho com ponta, sem caixa de personagem; controle comum de pose/diálogo, movimento reduzido e pausa manual. Sem alterações no jogo/links ou demais projetos/blog. Ver docs/MASCOT-SCENES.md. Validação pendente.
+
+05F CI 45908475139 concluída com sucesso (22/22 portal, 161/161 núcleo, nove cenários). 05G: nomes e pausa local retirados a pedido do usuário, nomes nas saudações, sistema de movimento reduzido mantido. Ver docs/MASCOT-SCENES.md. CI nova a confirmar.

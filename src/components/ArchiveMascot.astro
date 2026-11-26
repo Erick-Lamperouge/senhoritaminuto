@@ -1,7 +1,7 @@
 ---
 import '../styles/project-mascot.css';
 ---
-<div class="archive-mascot project-character-scene" id="archive-mascot" data-pose="idle" data-motion-paused="false" data-character-role="minute-brother">
+<div class="archive-mascot project-character-scene" id="archive-mascot" data-pose="idle" data-character-role="minute-brother">
   <button class="archive-character project-character" id="archive-character" type="button" data-i18n-aria="blogs.mascot.button" aria-label="Conversar com o arquivista">
     <svg viewBox="0 0 216 164" aria-hidden="true" focusable="false" shape-rendering="crispEdges">
       <!-- Open library vignette: no framed card or background panel. -->
@@ -36,8 +36,7 @@ import '../styles/project-mascot.css';
       </g>
     </svg>
   </button>
-  <div class="archive-speech project-speech" id="archive-speech" role="status" aria-live="polite" data-i18n="blogs.mascot.greeting" hidden>Minha irmã cuida do tempo. Eu cuido das histórias.</div>
-  <div class="project-scene-controls"><span class="archive-kicker" data-i18n="blogs.mascot.name">ARQUIVISTA / IRMÃO DA MINUTO</span><button class="project-motion" data-mascot-motion type="button" aria-pressed="false" data-i18n="mascot.motion.pause" hidden>Pausar movimentos</button></div>
+  <div class="archive-speech project-speech" id="archive-speech" role="status" aria-live="polite" data-i18n="blogs.mascot.greeting" hidden>Sou o Arquivista, irmão da Senhorita Minuto. Ela cuida do tempo; eu, das histórias.</div>
 </div>
 <script>
   import {createProjectDialogue} from '../scripts/mascot/project-dialogue.js';
@@ -46,7 +45,7 @@ import '../styles/project-mascot.css';
     root:document.querySelector('#archive-mascot'),character:document.querySelector('#archive-character'),speech:document.querySelector('#archive-speech'),source:'archive',
     poses:ARCHIVE_POSES,ambient:['page','sort','stand'],
     entries:[
-      {key:'blogs.mascot.greeting',text:'Minha irmã cuida do tempo. Eu cuido das histórias.',replyKey:'blogs.mascot.greetingReply',reply:'E ele ainda organiza os livros por ordem de leitura!',pose:'page'},
+      {key:'blogs.mascot.greeting',text:'Sou o Arquivista, irmão da Senhorita Minuto. Ela cuida do tempo; eu, das histórias.',replyKey:'blogs.mascot.greetingReply',reply:'E ele ainda organiza os livros por ordem de leitura!',pose:'page'},
       {key:'blogs.mascot.family',text:'Já me chamaram de Segundos, de Horas... mas a minha irmã é a Minuto.',replyKey:'blogs.mascot.familyReply',reply:'E eu continuo sendo a mais famosa da família!',pose:'react'},
       {key:'blogs.mascot.shelf',text:'Minuto, trouxe mais uma estante!',replyKey:'blogs.mascot.shelfReply',reply:'Desde que ela não abra um portal sozinha, estamos bem.',pose:'stand'},
       {key:'blogs.mascot.sort',text:'Ela patrulha portais. Eu patrulho fichas e estantes.',pose:'sort'},

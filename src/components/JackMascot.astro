@@ -1,7 +1,7 @@
 ---
 import '../styles/project-mascot.css';
 ---
-<div class="jack-mascot project-character-scene" id="jack-mascot" data-project-mascot="jack-up" data-mascot-species="alligator" data-pose="idle" data-motion-paused="false">
+<div class="jack-mascot project-character-scene" id="jack-mascot" data-project-mascot="jack-up" data-mascot-species="alligator" data-pose="idle">
   <button class="jack-character project-character" id="jack-character" type="button" aria-label="Conversar com Jack" data-i18n-aria="jack.mascot.button">
     <svg viewBox="-10 -24 180 176" aria-hidden="true" focusable="false" shape-rendering="crispEdges">
       <path fill="#25363a" opacity=".65" d="M14 141h132v5H14z"/>
@@ -32,8 +32,7 @@ import '../styles/project-mascot.css';
       </g>
     </svg>
   </button>
-  <div class="jack-speech project-speech" id="jack-speech" role="status" aria-live="polite" data-i18n="jack.mascot.hello" hidden>Minuto, vamos preparar mais uma rodada de aprendizado?</div>
-  <div class="project-scene-controls"><span class="jack-mascot-kicker" data-i18n="jack.mascot.name">JACK / COMPANHEIRO DE TREINO</span><button class="project-motion" data-mascot-motion type="button" aria-pressed="false" data-i18n="mascot.motion.pause" hidden>Pausar movimentos</button></div>
+  <div class="jack-speech project-speech" id="jack-speech" role="status" aria-live="polite" data-i18n="jack.mascot.hello" hidden>Opa! Sou o Jack, o jacaré do Jack-UP. Bora treinar, Minuto?</div>
 </div>
 <script>
   import {createProjectDialogue} from '../scripts/mascot/project-dialogue.js';
@@ -42,7 +41,7 @@ import '../styles/project-mascot.css';
     root:document.querySelector('#jack-mascot'),character:document.querySelector('#jack-character'),speech:document.querySelector('#jack-speech'),source:'jack-up',
     poses:JACK_POSES,ambient:['dribble','cap','limp'],initialDelay:750,
     entries:[
-      {key:'jack.mascot.hello',text:'Minuto, vamos preparar mais uma rodada de aprendizado?',replyKey:'jack.mascot.helloReply',reply:'Vamos, Jack! No seu jogo, cada desafio é uma chance de aprender.',pose:'cap'},
+      {key:'jack.mascot.hello',text:'Opa! Sou o Jack, o jacaré do Jack-UP. Bora treinar, Minuto?',replyKey:'jack.mascot.helloReply',reply:'Vamos, Jack! No seu jogo, cada desafio é uma chance de aprender.',pose:'cap'},
       {key:'jack.mascot.ball',text:'Minuto, eu trouxe foco, disciplina e uma bola!',replyKey:'jack.mascot.ballReply',reply:'E eu trouxe organização. Agora vai!',pose:'dribble'},
       {key:'jack.mascot.hat',text:'Quer jogar ou veio só admirar meu boné?',pose:'cap'},
       {key:'jack.mascot.crutch',text:'Se eu aparecer de muleta, é uma cena de demonstração.',replyKey:'jack.mascot.crutchReply',reply:'Tudo bem, Jack. Cuide-se e vamos aprender sem pressa.',pose:'limp'},

@@ -12,14 +12,13 @@ export function createProjectDialogue({root,character,speech,source,entries,pose
   const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
   const player=createScenePlayer(root,{poses});
   const bubble=createSpeechBubble(speech,{highlight:'Senhorita Minuto'});
-  const pause=root.querySelector('[data-mascot-motion]');
-  let next=1,greeted=false,busy=false,speaking=false,ambientIndex=0,paused=false;
+  let next=1,greeted=false,busy=false,speaking=false,ambientIndex=0;
   const visible=()=>{const r=character.getBoundingClientRect();return r.bottom>0&&r.top<innerHeight&&r.right>0&&r.left<innerWidth&&document.visibilityState==='visible';};
   const minuteAvailable=()=>!['sleep','broken','portal','interaction'].includes(document.querySelector('#mascotTraveler')?.dataset.mode);
   function hide(){timers.clearAll();speaking=false;bubble.hide(true);player.reset();}
   function scheduleAmbient(delay=SCENE_TIMING.ambientMs){
     ambientTimers.clearAll();
-    if(!ambient.length||document.hidden||paused||motion.matches)return;
+    if(!ambient.length||document.hidden||motion.matches)return;
     ambientTimers.set(()=>{
       if(visible()&&!busy&&!speaking&&minuteAvailable()){player.play(ambient[ambientIndex%ambient.length]);ambientIndex++;}
       scheduleAmbient();
@@ -63,16 +62,6 @@ export function createProjectDialogue({root,character,speech,source,entries,pose
   listen(window,'sm:language-changed',()=>{hide();ambientTimers.clearAll();greeted=false;timers.set(greet,350);scheduleAmbient();});
   listen(document,'visibilitychange',()=>{if(document.hidden){hide();ambientTimers.clearAll();}else{greet();scheduleAmbient(SCENE_TIMING.firstAmbientMs);}});
   listen(motion,'change',()=>{player.reset();ambientTimers.clearAll();if(!motion.matches)scheduleAmbient(SCENE_TIMING.firstAmbientMs);});
-  if(pause){
-    pause.hidden=false;
-    listen(pause,'click',()=>{
-      paused=!paused;root.dataset.motionPaused=String(paused);player.reset();
-      pause.setAttribute('aria-pressed',String(paused));
-      pause.dataset.i18n=paused?'mascot.motion.resume':'mascot.motion.pause';
-      pause.textContent=tx(pause.dataset.i18n,paused?'Retomar movimentos':'Pausar movimentos');
-      scheduleAmbient(SCENE_TIMING.firstAmbientMs);
-    });
-  }
   listen(window,'pagehide',event=>{hide();ambientTimers.clearAll();observer?.disconnect();if(!event.persisted)abort.abort();});
   listen(window,'pageshow',event=>{if(event.persisted){busy=false;character.setAttribute('aria-disabled','false');observer?.observe(character);scheduleAmbient(SCENE_TIMING.firstAmbientMs);}});
   timers.set(greet,initialDelay);scheduleAmbient(SCENE_TIMING.firstAmbientMs);

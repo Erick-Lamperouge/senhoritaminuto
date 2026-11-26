@@ -51,3 +51,6 @@ Antes de publicar, vale testar estes fluxos no navegador local.
 ## 8. Cenas 05F
 - Jack quica a bola, tira o boné, usa muleta e retorna ao idle; arquivista lê sentado, vira página, organiza fichas, levanta/aponta. Click troca pose e balão, não dispara callback anterior. Pausa e prefers-reduced-motion; validar cena automática quando visível.
 - Balão absoluto com ponta no desktop e celular; sem moldura do personagem, sem clipping ou deslocamento dos demais blocos. Diálogos PT/EN e resposta da Senhorita Minuto. Jogos e artigos intactos.
+
+## 9. Interface limpa 05G
+- Jack e Arquivista possuem apenas botão do próprio personagem e balão; nenhum nome fixo ou controle de pausa embaixo. Apresentação nos balões PT/EN; reduced motion testado via preferência de sistema. Carrossel não alterado.
