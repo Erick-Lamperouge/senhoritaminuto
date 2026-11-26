@@ -42,3 +42,8 @@ Antes de publicar, vale testar estes fluxos no navegador local.
 - Troque idioma durante saudação/resposta pendente: não deixar diálogo anterior ou portal órfão.
 - O gato deve manter a brincadeira e a magia; FERNANDO preserva poses, dominó, dama e demais props; Jack e arquivista usam controlador comum.
 - Sono e despertar: teste Chromium com relógio virtual preserva 90s/3s; testar manualmente os eventos especiais e o marco de 1000 cliques antes de refatoração ampla.
+
+## 7. Eventos especiais e páginas
+- A 1000ª interação durante um diálogo deve adiar (não perder) a visita do futuro; confirmar rachaduras zeradas e estado persistido. Navegação mantém contagem, reload zera.
+- Confirmar que o portal de futuro fecha após chegada e reabre na partida; travessia bloqueada abre portais e os fecha ao concluir.
+- Jack é jacaré azul; confirmar diálogo, iframe intacto, versão em inglês e link externo. Scratch preserva arte e jogo; catálogo permite pausar animação.

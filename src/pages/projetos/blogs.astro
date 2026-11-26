@@ -45,11 +45,6 @@ import '../../styles/blog-catalog.css';
   <Mascot/>
 </BaseLayout>
 <script>
-  const controls=document.querySelector<HTMLElement>('#blog-search-controls');
-  const input=document.querySelector<HTMLInputElement>('#blog-search');
-  const empty=document.querySelector<HTMLElement>('#blog-search-empty');
-  const cards=[...document.querySelectorAll<HTMLElement>('[data-blog-entry]')];
-  const norm=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  function filter(){const q=norm(input?.value??'').trim();let count=0;for(const card of cards){card.hidden=!norm((card.textContent??'')+' '+(card.dataset.search??'')).includes(q);if(!card.hidden)count++;}if(empty)empty.hidden=count!==0;}
-  if(controls&&input){controls.hidden=false;input.addEventListener('input',filter);window.addEventListener('sm:language-changed',filter);filter();}
+ import {mountSearch} from '../../scripts/portfolio-search.mjs';
+ mountSearch({controls:document.querySelector('#blog-search-controls'),input:document.querySelector('#blog-search'),empty:document.querySelector('#blog-search-empty'),cards:[...document.querySelectorAll('[data-blog-entry]')]});
 </script>

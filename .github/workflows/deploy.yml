@@ -44,6 +44,7 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Build and verify integrated portfolio
         run: |
+          npm run test:portal
           npm run build:integrated
           node scripts/check-blog-integration.mjs
           node scripts/check-public-surface.mjs
@@ -83,6 +84,12 @@ jobs:
           curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/futebolando/en/ -o /tmp/football-en.html
           grep -q 'href="/projetos/blogs/"' /tmp/portal.html
           grep -q 'id="archive-character"' /tmp/catalog.html
+          grep -q 'id="selector-stage"' /tmp/catalog.html
+          grep -q 'id="mascotButton"' /tmp/catalog.html
+          curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/projetos/jack-up/ -o /tmp/jack.html
+          grep -q 'data-mascot-species="alligator"' /tmp/jack.html
+          curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/projetos/scratch/ -o /tmp/scratch.html
+          grep -q 'id="scratchCat"' /tmp/scratch.html
           grep -q 'href="/futebolando/"' /tmp/catalog.html
           grep -q 'data-article-id="expected-goals"' /tmp/football.html
           grep -q 'lang="en"' /tmp/football-en.html

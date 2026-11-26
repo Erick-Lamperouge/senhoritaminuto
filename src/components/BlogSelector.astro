@@ -17,6 +17,7 @@ import {blogCatalog} from '../config/blog-catalog.mjs';
     <div class="selector-dots" aria-hidden="true">{blogCatalog.map((entry,i)=><span data-selector-dot={i} data-active={i===0?'true':'false'}></span>)}</div>
     <button type="button" id="selector-next" aria-label="Próximo" data-i18n-aria="blogs.selector.next"><span aria-hidden="true">→</span></button>
   </div>
+  <div class="selector-motion-control" hidden id="selector-motion-control"><button type="button" id="selector-motion" aria-pressed="false" data-i18n="blogs.selector.pause">Pausar animação</button></div>
   <div class="selector-details" aria-live="polite">
     {blogCatalog.map((entry,i)=><div data-selector-detail={i} hidden={i!==0}><p class="selector-detail-title" data-i18n={entry.nameKey}>{entry.name}</p><p data-i18n={entry.descriptionKey}>{entry.description}</p>{entry.href?<a class="button primary selector-open" href={entry.href} data-i18n="blogs.open">Conhecer o Futebolando</a>:<span class="selector-planned" data-i18n="blogs.selector.notAvailable">Ainda não disponível para leitura.</span>}</div>)}
   </div>
@@ -36,6 +37,9 @@ import {blogCatalog} from '../config/blog-catalog.mjs';
     document.querySelector('#selector-prev')?.addEventListener('click',()=>choose(active-1));
     document.querySelector('#selector-next')?.addEventListener('click',()=>choose(active+1));
     stage.addEventListener('keydown',event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();choose(nextSelection(active,event.key,buttons.length));buttons[active].focus();}});
+    const motion=document.querySelector<HTMLButtonElement>('#selector-motion');
+    const motionControl=document.querySelector<HTMLElement>('#selector-motion-control');
+    if(motion&&motionControl){motionControl.hidden=false;motion.addEventListener('click',()=>{const paused=stage.dataset.paused!=='true';stage.dataset.paused=String(paused);motion.setAttribute('aria-pressed',String(paused));motion.dataset.i18n=paused?'blogs.selector.resume':'blogs.selector.pause';const i18n=(window as any).SM_I18N;motion.textContent=i18n?.t(motion.dataset.i18n)??(paused?'Retomar animação':'Pausar animação');});}
     choose(0);
   }
 </script>

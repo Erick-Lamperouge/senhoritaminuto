@@ -26,3 +26,5 @@
 
 /* Slow, vertical idle movement: no automatic rotation and no side-to-side sway. */
 .selector-item[data-slot=left] .selector-emblem,.selector-item[data-slot=right] .selector-emblem{animation:selector-side-float 7.5s ease-in-out infinite}.selector-item[data-slot=left] .selector-emblem{animation-delay:-2.2s}.selector-item[data-slot=right] .selector-emblem{animation-delay:-4.4s}@keyframes selector-side-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+
+.selector-stage[data-paused=true] .selector-emblem{animation-play-state:paused}.selector-motion-control{display:flex;justify-content:center;margin:.35rem 0 .8rem}.selector-motion-control button{min-height:44px;padding:.35rem .85rem;border:1px solid var(--line);background:transparent;color:var(--muted);font:inherit;font-size:.75rem;cursor:pointer;border-radius:999px}.selector-motion-control button:hover{color:var(--amber-soft);border-color:var(--amber)}

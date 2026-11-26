@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import {portfolioProjects} from '../config/portfolio.mjs';
 import Mascot from '../components/Mascot.astro';
 import '../styles/blog-catalog.css';
 ---
@@ -40,46 +41,7 @@ import '../styles/blog-catalog.css';
         <p id="project-search-empty" role="status" data-i18n="projects.empty" hidden>Nenhum projeto corresponde à pesquisa.</p>
       </div>
       <div class="project-grid" id="portfolio-projects">
-        <ProjectCard
-          eyebrow="JOGO / SCRATCH"
-          title="Projeto Scratch"
-          description="Um jogo desenvolvido no Scratch que combina narrativa, interação e uma improvável ameaça felina ao futuro da humanidade."
-          href="/projetos/scratch"
-          cta="Jogar e conhecer"
-          status="PRONTO"
-          eyebrowKey="card.scratch.eyebrow"
-          titleKey="card.scratch.title"
-          descriptionKey="card.scratch.desc"
-          ctaKey="card.scratch.cta"
-          statusKey="card.scratch.status"
-        />
-        <ProjectCard
-          eyebrow="EDTECH / ACLS"
-          title="FERNANDO"
-          description="Simulador educacional para treinamento de parada cardiorrespiratória e raciocínio em ACLS."
-          href="/projetos/fernando"
-          cta="Conhecer o projeto"
-          status="PRONTO"
-          eyebrowKey="card.fernando.eyebrow"
-          titleKey="card.fernando.title"
-          descriptionKey="card.fernando.desc"
-          ctaKey="card.fernando.cta"
-          statusKey="card.fernando.status"
-        />
-        <ProjectCard
-          eyebrow="JOGO EDUCACIONAL / SAÚDE"
-          title="Jack-UP"
-          description="Um jogo educacional em inglês voltado à área da saúde, com desafios e perguntas clínicas sobre fraturas."
-          href="/projetos/jack-up"
-          cta="Jogar Jack-UP"
-          status="PRONTO"
-          eyebrowKey="card.jack.eyebrow"
-          titleKey="card.jack.title"
-          descriptionKey="card.jack.desc"
-          ctaKey="card.jack.cta"
-          statusKey="card.jack.status"
-        />
-        <ProjectCard eyebrow="PUBLICAÇÕES / CONHECIMENTO" title="Rede de Blogs" description="Uma coleção de publicações independentes sobre diferentes temas, com pesquisa, análise e aprendizado." href="/projetos/blogs/" cta="Explorar os blogs" status="PRÉVIA" eyebrowKey="card.blogs.eyebrow" titleKey="card.blogs.title" descriptionKey="card.blogs.desc" ctaKey="card.blogs.cta" statusKey="card.blogs.status" />
+        {portfolioProjects.map(project=><ProjectCard {...project}/>)}
       </div>
     </section>
 
@@ -117,11 +79,6 @@ import '../styles/blog-catalog.css';
 </BaseLayout>
 
 <script>
-  const controls=document.querySelector<HTMLElement>('#project-search-controls');
-  const input=document.querySelector<HTMLInputElement>('#project-search');
-  const cards=[...document.querySelectorAll<HTMLElement>('#portfolio-projects .project-card-link')];
-  const empty=document.querySelector<HTMLElement>('#project-search-empty');
-  const norm=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  function filter(){const q=norm(input?.value??'').trim();let visible=0;for(const card of cards){card.hidden=!norm((card.textContent??'')+' '+(card.getAttribute('href')??'')).includes(q);if(!card.hidden)visible++;}if(empty)empty.hidden=visible!==0;}
-  if(controls&&input){controls.hidden=false;input.addEventListener('input',filter);window.addEventListener('sm:language-changed',filter);filter();}
+ import {mountSearch} from '../scripts/portfolio-search.mjs';
+ mountSearch({controls:document.querySelector('#project-search-controls'),input:document.querySelector('#project-search'),empty:document.querySelector('#project-search-empty'),cards:[...document.querySelectorAll('#portfolio-projects .project-card-link')]});
 </script>

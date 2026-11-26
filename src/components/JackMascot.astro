@@ -1,27 +1,44 @@
 ---
 import '../styles/project-mascot.css';
 ---
-<div class="jack-mascot" id="jack-mascot" data-project-mascot="jack-up">
+<div class="jack-mascot" id="jack-mascot" data-project-mascot="jack-up" data-mascot-species="alligator">
   <span class="jack-mascot-kicker" data-i18n="jack.mascot.name">JACK / COMPANHEIRO DE TREINO</span>
   <button class="jack-character" id="jack-character" type="button" aria-label="Conversar com Jack" data-i18n-aria="jack.mascot.button">
-    <svg viewBox="0 0 128 144" aria-hidden="true" focusable="false" shape-rendering="crispEdges">
-      <path fill="#263437" d="M18 132h92v6H18z"/>
-      <!-- Pixel-art learning companion, not a depiction of a real clinician. -->
+    <svg viewBox="0 0 160 148" aria-hidden="true" focusable="false" shape-rendering="crispEdges">
+      <path fill="#25363a" d="M17 135h126v6H17z"/>
       <g class="jack-body">
-        <path fill="#1f3338" d="M36 30h56v8h8v47H92v11H36V85h-8V38h8z"/>
-        <path fill="#f0e6cd" d="M39 35h50v44H39zM48 79h32v14H48z"/>
-        <path fill="#17282b" d="M44 48h13v13H44zM71 48h13v13H71zM59 64h10v8H59z"/>
-        <path class="jack-eye" fill="#6db8ad" d="M48 51h5v5h-5zM75 51h5v5h-5z"/>
-        <path fill="#a59b83" d="M52 79h4v9h-4zM62 79h4v9h-4zM72 79h4v9h-4z"/>
-        <path fill="#6db8ad" d="M34 24h60v11H34zM42 16h44v8H42zM55 9h18v7H55z"/>
-        <path fill="#e5ad55" d="M55 21h18v6H55zM61 15h6v18h-6z"/>
-        <path fill="#487e79" d="M39 94h50v28H39zM31 96h8v19h-8zM89 96h8v19h-8z"/>
-        <path fill="#17282b" d="M43 97h42v17H43z"/>
-        <path fill="#f0e6cd" d="M47 101h34v4H47zM47 109h34v3H47zM62 96h5v23h-5z"/>
-        <path fill="#f0e6cd" d="M16 84h10v23H16zM21 106h14v8H21zM99 86h10v23H99zM94 107h15v7H94z"/>
-        <path fill="#f8faf0" d="M13 91h16v17H13zM14 94h14v3H14zM14 101h14v3H14z"/>
-        <path fill="#e5ad55" d="M45 122h13v8H45zM70 122h13v8H70z"/>
-        <path fill="#273b3f" d="M40 130h22v6H40zM66 130h22v6H66z"/>
+        <!-- Original vector, inspired by Jack's blue alligator identity; no sponsor marks. -->
+        <path class="jack-tail" fill="#122e69" d="M52 104H30v-7H19v10H10v11h9v9h23v-5h20v-18z"/>
+        <path fill="#2462be" d="M48 108H29v-7H20v14h8v7h19v-6h10v-8z"/>
+        <path fill="#142e61" d="M45 65h53v10h10v39H98v15H44v-15H35V75h10z"/>
+        <path fill="#2873cf" d="M47 69h48v10h9v33H94v14H47v-14h-8V79h8z"/>
+        <path fill="#cddce4" d="M49 80h43v8h7v25H43V88h6z"/>
+        <path fill="#f4f3e7" d="M54 79h32v10h8v20H49V89h5z"/>
+        <path fill="#dc852f" d="M49 87h5v22h-5zM89 87h5v22h-5z"/>
+        <path fill="#286ac5" d="M62 94h18v5H68v7h-6z"/>
+        <path fill="#c9d9e2" d="M43 113h26v14H43zM73 113h26v14H73z"/>
+        <path fill="#14336d" d="M45 127h24v8H37v5h35v-13zM75 127h24v8h12v5H73v-13z"/>
+        <path fill="#4b92e0" d="M42 135h7v5h-7zM53 135h6v5h-6zM90 135h7v5h-7zM101 135h6v5h-6z"/>
+        <!-- Head, raised brow, long rounded snout, nostrils and friendly teeth. -->
+        <path fill="#112a5e" d="M37 29h56v8h12v10h35v7h10v20h-10v8H72v-5H46V67H35V39h2z"/>
+        <path fill="#216bce" d="M42 33h47v8h12v11h36v5h8v14h-9v7H73v-6H49V62H39V40h3z"/>
+        <path fill="#468fe6" d="M44 35h43v8h11v13h38v7h-43v-5H43z"/>
+        <path fill="#183c88" d="M51 62h32v7h48v5H75v-5H51z"/>
+        <path fill="#f4f3e7" d="M54 61h7v7h-7zM72 66h7v7h-7zM88 69h8v6h-8zM115 69h8v6h-8z"/>
+        <path fill="#e8f3ec" d="M51 43h21v14H51z"/>
+        <path class="jack-eye" fill="#123e56" d="M62 46h7v8h-7z"/><path fill="#56dcc7" d="M62 47h3v3h-3z"/>
+        <path fill="#0f2d66" d="M49 40h27v5H49zM124 56h5v5h-5zM136 57h4v4h-4z"/>
+        <!-- Light cap and brim. -->
+        <path fill="#26394d" d="M35 22h9V11h43v7h10v10h15v7H35z"/>
+        <path fill="#d6e4ec" d="M39 22h10V15h35v6h10v11H39z"/>
+        <path fill="#f8faf4" d="M49 15h30v5H49zM43 22h7v7h-7zM76 28h30v5H76z"/>
+        <!-- Basketball and arms. -->
+        <path fill="#142e61" d="M35 80H25v23h12v-9h10V80zM102 79h12v14h-7v15H95V91h7z"/>
+        <path fill="#2873cf" d="M28 83h10v12H28zM104 83h7v12h-7zM99 97h8v9h-8z"/>
+        <path fill="#713e1d" d="M14 89h7v-7h22v7h7v20h-7v7H21v-7h-7z"/>
+        <path fill="#f29a38" d="M18 91h6v-5h16v5h6v16h-6v5H24v-5h-6z"/>
+        <path stroke="#713e1d" stroke-width="2" fill="none" d="M32 85v28M17 99h30M22 88q13 11 20 22M42 88q-13 11-20 22"/>
+        <path fill="#3985d6" d="M37 95h10v9H37z"/>
       </g>
     </svg>
   </button>

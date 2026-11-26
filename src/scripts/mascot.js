@@ -2,6 +2,9 @@ import { MASCOT_TIMING, readingDuration } from './mascot/timing.js';
 import { TimerGroup } from './mascot/timers.js';
 import { createPortalController } from './mascot/portals.js';
 import { createSpeechBubble } from './mascot/speech.js';
+import { MILESTONES, crackLevel, needsFuture, readProgress, writeProgress, futureTimeline } from './mascot/progress.js';
+import { createRetroChime } from './mascot/audio.js';
+import { portfolioProjects } from '../config/portfolio.mjs';
 
 const traveler = document.querySelector('#mascotTraveler');
 const button = document.querySelector('#mascotButton');
@@ -72,6 +75,7 @@ if (ready) {
     idle: new TimerGroup(),
     wake: new TimerGroup(),
     ui: new TimerGroup(),
+    counter: new TimerGroup(),
     rewind: new TimerGroup(),
   };
 
@@ -93,34 +97,15 @@ if (ready) {
     lastUserActivity: Date.now(),
     wakeScheduled: false,
     pendingInteraction: null,
+    pendingEgg: null,
   };
 
-  const clickSessionKey = 'senhorita-minuto-clickcount-session-v1';
-  const repairSessionKey = 'senhorita-minuto-repaired-session-v1';
-
-  const eggs = new Map([
-    [5, 'mascot.egg.5'],
-    [7, 'mascot.egg.7'],
-    [12, 'mascot.egg.12'],
-    [20, 'mascot.egg.20'],
-    [25, 'mascot.egg.25'],
-    [50, 'mascot.egg.50'],
-    [90, 'mascot.egg.90'],
-    [100, 'mascot.egg.100'],
-    [200, 'mascot.egg.200'],
-    [500, 'mascot.egg.500'],
-    [1000, 'mascot.egg.1000'],
-  ]);
-
-  const projects = [
-    { nameKey: 'card.scratch.title', name: 'Projeto Scratch', href: '/projetos/scratch' },
-    { nameKey: 'card.fernando.title', name: 'FERNANDO', href: '/projetos/fernando' },
-    { nameKey: 'card.jack.title', name: 'Jack-UP', href: '/projetos/jack-up' },
-    { nameKey: 'card.blogs.title', name: 'Rede de Blogs', href: '/projetos/blogs/' },
-  ];
+  const eggs = new Map(MILESTONES.map(count=>[count,'mascot.egg.'+count]));
+  const projects = portfolioProjects.map(p=>({nameKey:p.titleKey,name:p.title,href:p.href}));
+  const chime = createRetroChime({host:window});
 
   function projectMascotVisible() {
-    return Array.from(document.querySelectorAll('#scratchCatScene,#fernandoInline,#archive-mascot,#jack-mascot')).some((node) => {
+    return Array.from(document.querySelectorAll('#scratchCatScene,#fernandoInline,#fernandoCharacter,#archive-mascot,#jack-mascot')).some((node) => {
       if (!(node instanceof HTMLElement)) return false;
       const rect = node.getBoundingClientRect();
       return rect.bottom > 0 && rect.top < window.innerHeight && rect.right > 0 && rect.left < window.innerWidth;
@@ -201,20 +186,19 @@ if (ready) {
 
   function showClickCounter(duration = 3000) {
     clickCounter.hidden = false;
-    timers.ui.set(() => {
+    timers.counter.clearAll();
+    timers.counter.set(() => {
       clickCounter.hidden = true;
     }, duration);
   }
 
-  function updateCracks() {
-    if (state.repaired || state.clickCount <= 50) {
-      traveler.dataset.crack = '0';
-      return;
-    }
-    if (state.clickCount < 100) traveler.dataset.crack = '1';
-    else if (state.clickCount < 200) traveler.dataset.crack = '2';
-    else if (state.clickCount < 500) traveler.dataset.crack = '3';
-    else traveler.dataset.crack = '4';
+  function updateCracks(){traveler.dataset.crack=crackLevel(state.clickCount,state.repaired);}
+  function persistProgress(){try{writeProgress(window.sessionStorage,{count:state.clickCount,repaired:state.repaired});}catch{}}
+  function flushReward(){
+    if(state.owner!=='patrol'||document.hidden)return false;
+    if(needsFuture(state.clickCount,state.repaired)){state.pendingEgg=null;runFutureRepair();return true;}
+    if(state.pendingEgg!==null){const key=eggs.get(state.pendingEgg);state.pendingEgg=null;if(key){const message=tx(key,key);showClickCounter();say(message,readingDuration(message,{min:MASCOT_TIMING.clickMinMs,max:9800}));}}
+    return false;
   }
 
   function clearVisualEphemera({ closePortals = true } = {}) {
@@ -286,6 +270,7 @@ if (ready) {
     setPosition(points[nearest].x, points[nearest].y, instant);
     startPatrol();
     scheduleAutonomousAction();
+    flushReward();
   }
 
   function cancelAutonomousAction({ keepPosition = true } = {}) {
@@ -441,6 +426,7 @@ if (ready) {
     startPatrol();
     scheduleAutonomousAction();
     scheduleIdleSleep();
+    flushReward();
   }
 
   function registerUserActivity() {
@@ -556,6 +542,7 @@ if (ready) {
       scheduleAutonomousAction();
       scheduleIdleSleep();
       const pending=state.pendingInteraction;state.pendingInteraction=null;
+      if(flushReward())return;
       if(pending && Date.now()-pending.queuedAt<=12000)beginInteraction(pending.detail);
     }, 1120);
   }
@@ -862,38 +849,24 @@ if (ready) {
     }
   }
 
-  function playRetroChime() {
-    try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const master = ctx.createGain();
-      master.gain.setValueAtTime(0.0001, ctx.currentTime);
-      master.gain.exponentialRampToValueAtTime(0.025, ctx.currentTime + 0.015);
-      master.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.24);
-      master.connect(ctx.destination);
-      [620, 930].forEach((frequency, index) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(frequency, ctx.currentTime + index * 0.055);
-        gain.gain.setValueAtTime(index === 0 ? 0.5 : 0.3, ctx.currentTime);
-        osc.connect(gain);
-        gain.connect(master);
-        osc.start(ctx.currentTime + index * 0.055);
-        osc.stop(ctx.currentTime + 0.18 + index * 0.055);
-      });
-      timers.ui.set(() => ctx.close(), 380);
-    } catch {}
+  function clearFutureVisuals(){
+    timers.special.clearAll();portals.closeAll();futureVisitor.classList.remove('active','leaving');futureVisitor.hidden=true;futureSpeech.hidden=true;repairBeam.classList.remove('active');
+    traveler.classList.remove('is-dismantled','is-repairing','power-active');
+  }
+  function abortFuture(){
+    if(state.owner!=='future')return false;
+    clearFutureVisuals();state.owner='patrol';setMood('neutral');traveler.dataset.mode='walk';
+    window.dispatchEvent(new CustomEvent('sm:interaction-state',{detail:{active:false}}));return true;
   }
 
   function runFutureRepair() {
     debug('future:repair:start');
-    if (state.owner === 'future' || state.repaired) return;
-    if (state.owner === 'autonomous') cancelAutonomousAction({ keepPosition: true });
-    if (state.owner === 'interaction' || state.owner === 'sleep') return;
+    if(state.owner!=='patrol'||state.repaired||document.hidden)return;
 
     state.owner = 'future';
+    state.pendingInteraction=null;
+    window.dispatchEvent(new CustomEvent('sm:interaction-state',{detail:{active:true,target:'future'}}));
+    timers.idle.clearAll();
     timers.scheduler.clearAll();
     timers.action.clearAll();
     timers.special.clearAll();
@@ -905,6 +878,8 @@ if (ready) {
     traveler.dataset.mode = 'broken';
     traveler.classList.add('is-dismantled');
 
+    const futureMessage=tx('mascot.future','Eu vim do futuro para consertar você.');
+    const timeline=futureTimeline(readingDuration(futureMessage,{min:MASCOT_TIMING.normalMinMs}));
     const brokenRect = currentRect();
     const futureX = clamp(
       brokenRect.left + (brokenRect.left < window.innerWidth / 2 ? 112 : -112),
@@ -924,11 +899,12 @@ if (ready) {
       futureVisitor.classList.remove('leaving');
       futureVisitor.getBoundingClientRect();
       futureVisitor.classList.add('active');
-    }, 1650);
+    }, timeline.arrival);
+    timers.special.set(()=>portals.closeGlobals(),timeline.arrivalClose);
     timers.special.set(() => {
-      futureSpeech.textContent = tx('mascot.future', 'Eu vim do futuro para consertar você.');
+      futureSpeech.textContent = futureMessage;
       futureSpeech.hidden = false;
-    }, 1900);
+    }, timeline.speechAt);
     timers.special.set(() => {
       futureSpeech.hidden = true;
       repairBeam.classList.add('active');
@@ -936,73 +912,46 @@ if (ready) {
       setMood('happy');
       state.repaired = true;
       traveler.dataset.crack = '0';
-      try {
-        window.sessionStorage.setItem(repairSessionKey, '1');
-      } catch {}
-    }, 4900);
+      persistProgress();
+    }, timeline.repairAt);
     timers.special.set(() => {
       repairBeam.classList.remove('active');
       traveler.classList.remove('is-dismantled', 'is-repairing', 'power-active');
       traveler.dataset.mode = 'walk';
       setMood('happy');
-    }, 6100);
+    }, timeline.reassembled);
     timers.special.set(() => {
       futureVisitor.classList.add('leaving');
       portals.openGlobal(portalRight, { x: futureX + 14, y: futureY + 62, future: true });
-    }, 6850);
+    }, timeline.departure);
     timers.special.set(() => {
-      futureVisitor.classList.remove('active', 'leaving');
-      futureVisitor.hidden = true;
-      portals.closeAll();
+      clearFutureVisuals();
       state.owner = 'patrol';
+      window.dispatchEvent(new CustomEvent('sm:interaction-state',{detail:{active:false}}));
       setMood('neutral');
       returnToPatrol({ instant: true });
       scheduleIdleSleep();
-    }, 7550);
+    }, timeline.end);
   }
 
-  function loadPersistentState() {
-    try {
-      const navEntry = window.performance?.getEntriesByType?.('navigation')?.[0];
-      if (navEntry && navEntry.type === 'reload') {
-        window.sessionStorage.removeItem(clickSessionKey);
-        window.sessionStorage.removeItem(repairSessionKey);
-      }
-      state.clickCount = Number(window.sessionStorage.getItem(clickSessionKey)) || 0;
-      state.repaired = window.sessionStorage.getItem(repairSessionKey) === '1';
-    } catch {}
-    updateCounter();
-    updateCracks();
-    clickCounter.hidden = true;
+  function loadPersistentState(resetOnReload=true) {
+    try{
+      const navEntry=window.performance?.getEntriesByType?.('navigation')?.[0];
+      const p=readProgress(window.sessionStorage,{reset:resetOnReload&&navEntry?.type==='reload',fallback:{count:state.clickCount,repaired:state.repaired}});
+      state.clickCount=p.count;state.repaired=p.repaired;
+    }catch{}
+    state.pendingEgg=null;updateCounter();updateCracks();clickCounter.hidden=true;
   }
 
-  button.addEventListener('click', () => {
-    if (state.owner === 'future') return;
+  button.addEventListener('click',()=>{
+    if(state.owner==='future')return;
     registerUserActivity();
-    state.clickCount += 1;
-    updateCounter();
-    try {
-      window.sessionStorage.setItem(clickSessionKey, String(state.clickCount));
-    } catch {}
-    updateCracks();
-    playRetroChime();
-
-    if (state.clickCount === 1000 && !state.repaired) {
-      showClickCounter(3000);
-      runFutureRepair();
-      return;
-    }
-
-    if (eggs.has(state.clickCount)) {
-      showClickCounter(3000);
-      const key = eggs.get(state.clickCount);
-      const message = tx(key, String(key));
-      const duration = readingDuration(message, { min: MASCOT_TIMING.clickMinMs, max: 9800 });
-      if (state.owner === 'sleep') {
-        timers.ui.set(() => say(message, duration), MASCOT_TIMING.wakeDelayMs + 180);
-      } else {
-        say(message, duration);
-      }
+    state.clickCount=Math.min(Number.MAX_SAFE_INTEGER,state.clickCount+1);
+    updateCounter();persistProgress();updateCracks();chime.play();
+    if(needsFuture(state.clickCount,state.repaired)||eggs.has(state.clickCount)){
+      state.pendingEgg=state.clickCount;showClickCounter();
+      if(state.owner==='autonomous'){cancelAutonomousAction({keepPosition:true});startPatrol();scheduleAutonomousAction();}
+      flushReward();
     }
   });
 
@@ -1064,6 +1013,7 @@ if (ready) {
   try {
     if (!window.localStorage.getItem(firstVisitKey) && !projectMascotVisible()) {
       timers.ui.set(() => {
+        if(state.owner!=='patrol'||document.hidden||projectMascotVisible())return;
         const welcome = tx(
           'mascot.welcome',
           'Oi! Eu sou a Senhorita Minuto. Eu patrulho as laterais o tempo todo — e às vezes faço umas entradas mais dramáticas.',
@@ -1075,6 +1025,7 @@ if (ready) {
   } catch {
     if (!projectMascotVisible()) {
       timers.ui.set(() => {
+        if(state.owner!=='patrol'||document.hidden||projectMascotVisible())return;
         const welcome = tx('mascot.welcome', 'Oi! Eu sou a Senhorita Minuto.');
         say(welcome, readingDuration(welcome, { min: MASCOT_TIMING.initialMinMs, max: 11_000 }));
       }, 700);
@@ -1098,9 +1049,11 @@ if (ready) {
 
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
+      chime.close();
       if (state.owner === 'autonomous') cancelAutonomousAction({ keepPosition: true });
-      abortInteraction();
-      if (state.owner !== 'future') enterSleep('hidden');
+      abortInteraction();abortFuture();
+      if(state.owner==='sleep'){timers.wake.clearAll();state.wakeScheduled=false;}
+      else enterSleep('hidden');
       return;
     }
     // Ela permanece dormindo ao voltar para a aba. O primeiro movimento real
@@ -1112,6 +1065,9 @@ if (ready) {
   });
 
   window.addEventListener('resize', () => {
+    if(state.owner==='future')return; // Keep the visitor's arrival/departure sequence intact.
+    if(abortInteraction()){returnToPatrol({instant:true});scheduleIdleSleep();return;}
+    if(state.owner==='autonomous'){cancelAutonomousAction({keepPosition:false});returnToPatrol({instant:true});return;}
     portals.closeGlobals();
     if (state.owner !== 'patrol') return;
     alignToPatrolBase(true);
@@ -1123,7 +1079,7 @@ if (ready) {
     () => {
       Object.values(timers).forEach((group) => group.clearAll());
       cancelActiveAnimations();
-      portals.closeAll();
+      portals.closeAll();chime.close();
       state.pendingInteraction=null;
     },
   );
@@ -1131,10 +1087,10 @@ if (ready) {
     if(!event.persisted)return;
     Object.values(timers).forEach(group=>group.clearAll());
     clearVisualEphemera();normalizeTravelerClasses();hideMinuteSpeech(true);
-    traveler.classList.remove('is-dismantled','is-repairing');futureVisitor.classList.remove('active','leaving');futureVisitor.hidden=true;futureSpeech.hidden=true;repairBeam.classList.remove('active');
+    clearFutureVisuals();loadPersistentState(false);
     state.owner='patrol';state.wakeScheduled=false;state.lastUserActivity=Date.now();state.pendingInteraction=null;
     window.dispatchEvent(new CustomEvent('sm:interaction-state',{detail:{active:false}}));
-    setMood('neutral');alignToPatrolBase(true);startPatrol();scheduleAutonomousAction();scheduleIdleSleep();
+    setMood('neutral');alignToPatrolBase(true);startPatrol();scheduleAutonomousAction();scheduleIdleSleep();flushReward();
   });
 
   loadPersistentState();
@@ -1145,4 +1101,5 @@ if (ready) {
     scheduleAutonomousAction();
     scheduleIdleSleep();
   }
+  flushReward();
 }

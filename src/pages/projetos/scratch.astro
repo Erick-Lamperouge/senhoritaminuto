@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Mascot from '../../components/Mascot.astro';
 import ScratchCat from '../../components/ScratchCat.astro';
+import ProjectEmbed from '../../components/ProjectEmbed.astro';
 ---
 <BaseLayout title="Projeto Scratch — Senhorita Minuto" description="Jogue o projeto Scratch diretamente no portfólio Senhorita Minuto.">
   <Header />
@@ -24,18 +25,7 @@ import ScratchCat from '../../components/ScratchCat.astro';
       </aside>
     </section>
 
-    <div class="play-here-callout" role="note" aria-label="Dá para jogar diretamente nesta página" data-i18n-aria="common.playHereAria">
-      <span class="play-here-signal" aria-hidden="true"></span>
-      <span class="play-here-copy">
-        <strong data-i18n="common.playHere">Dá para jogar aqui</strong>
-        <small data-i18n="common.playHereSub">Jogue sem sair do site</small>
-      </span>
-      <span class="play-here-arrow" aria-hidden="true">↓</span>
-    </div>
-
-    <div class="embed-shell top-embed-shell" id="jogar">
-      <iframe src="https://scratch.mit.edu/projects/1280541113/embed" title="Jogo no Scratch" allowfullscreen loading="eager"></iframe>
-    </div>
+    <ProjectEmbed src="https://scratch.mit.edu/projects/1280541113/embed" title="Jogo no Scratch" openUrl="https://scratch.mit.edu/projects/1280541113/"/>
 
     <div class="project-details" id="sobre-projeto">
       <section>

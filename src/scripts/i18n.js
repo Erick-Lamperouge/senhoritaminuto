@@ -2,6 +2,8 @@ const STORAGE_KEY='senhorita-minuto-language-v1';
 
 const translations={
   pt:{
+    "blogs.selector.pause":"Pausar animação",
+    "blogs.selector.resume":"Retomar animação",
     "jack.mascot.name":"JACK / COMPANHEIRO DE TREINO",
     "jack.mascot.button":"Conversar com Jack",
     "jack.mascot.hello":"Minuto, vamos preparar mais uma rodada de aprendizado?",
@@ -94,6 +96,8 @@ const translations={
     'fernando.line1':'Arigó!','fernando.line2':'Minha família é do sertão. Povo arretado de bom!','fernando.line3':'Bora jogar dominó? Aí a conversa fica séria.','fernando.line4':'Sou muito bom na dama, viu?','fernando.line5':'A primeira fala de Valentina foi “Vovô”. Essa eu guardo comigo.','fernando.interact1':'Oxente, Senhorita Minuto, se eu perder na dama tu volta só um minutinho e deixa eu mexer de novo, visse?','fernando.interact1r':'Oxente nada. Isso é fraude temporal. Perdeu, perdeu.','fernando.interact2':'No sertão, o sol não espera ninguém. Ainda bem que tu toma conta dos minutos.','fernando.interact2r':'Dos minutos eu cuido. No dominó, meu amigo, cada um por si.'
   },
   en:{
+    "blogs.selector.pause":"Pause animation",
+    "blogs.selector.resume":"Resume animation",
     "jack.mascot.name":"JACK / TRAINING COMPANION",
     "jack.mascot.button":"Talk to Jack",
     "jack.mascot.hello":"Minuto, shall we get ready for another round of learning?",
