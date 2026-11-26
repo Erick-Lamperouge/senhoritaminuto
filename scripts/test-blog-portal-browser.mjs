@@ -207,9 +207,20 @@ for(const [pagePath,id,firstPose,secondPose,thirdPose,ambientPose,animationPart]
  await root.locator('[data-mascot-motion]').click();await p.clock.runFor(14500);
  assert.equal(await root.getAttribute('data-pose'),ambientPose);
  assert.notEqual(await root.locator(animationPart).evaluate(el=>getComputedStyle(el).animationName),'none');
- await p.emulateMedia({reducedMotion:'reduce'});await p.clock.runFor(100);
- assert.equal(await root.getAttribute('data-pose'),'idle');
+ // Inspect an actual transform at two points of the active CSS animation.
+ const transforms=await root.locator(animationPart).evaluate(el=>{
+   const anim=el.getAnimations().find(a=>a.effect?.target===el);
+   if(!anim)return null;
+   anim.pause();anim.currentTime=0;const start=getComputedStyle(el).transform;
+   anim.currentTime=500;const middle=getComputedStyle(el).transform;
+   anim.play();return {start,middle};
+ });
+ assert.ok(transforms&&transforms.start!==transforms.middle,'animated layer must actually move');
+ // MediaQueryList change is delivered on browser rendering, not the virtual timer.
+ await p.emulateMedia({reducedMotion:'reduce'});
  assert.equal(await root.locator(animationPart).evaluate(el=>getComputedStyle(el).animationName),'none');
+ await p.waitForFunction(id=>matchMedia('(prefers-reduced-motion: reduce)').matches&&document.querySelector('#'+id+'-mascot')?.dataset.pose==='idle',id,{timeout:5000,polling:50});
+ assert.equal(await root.getAttribute('data-pose'),'idle');
  assert.deepEqual(errors,[]);await p.close();console.log('PASS '+id+' articulated poses, speech, autonomous scene and reduced motion');
 }
 }finally{await browser?.close();server.kill();}

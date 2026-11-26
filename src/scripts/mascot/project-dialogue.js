@@ -62,7 +62,7 @@ export function createProjectDialogue({root,character,speech,source,entries,pose
   });
   listen(window,'sm:language-changed',()=>{hide();ambientTimers.clearAll();greeted=false;timers.set(greet,350);scheduleAmbient();});
   listen(document,'visibilitychange',()=>{if(document.hidden){hide();ambientTimers.clearAll();}else{greet();scheduleAmbient(SCENE_TIMING.firstAmbientMs);}});
-  listen(motion,'change',()=>{player.reset();scheduleAmbient();});
+  listen(motion,'change',()=>{player.reset();ambientTimers.clearAll();if(!motion.matches)scheduleAmbient(SCENE_TIMING.firstAmbientMs);});
   if(pause){
     pause.hidden=false;
     listen(pause,'click',()=>{
