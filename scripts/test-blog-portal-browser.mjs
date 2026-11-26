@@ -147,9 +147,18 @@ try{
  await future.goto(origin+'/',{waitUntil:'networkidle'});
  assert.equal(await future.locator('#clickCounterValue').textContent(),'1000');
  assert.equal(await future.locator('#mascotTraveler').getAttribute('data-crack'),'0');
- await future.reload({waitUntil:'networkidle'});
- assert.equal(await future.locator('#clickCounterValue').textContent(),'0');
- assert.deepEqual(futureErrors,[]);await future.close();console.log('PASS deferred 1000-click future, portal cleanup, session navigation and reload');
+ assert.deepEqual(futureErrors,[]);await future.close();console.log('PASS deferred 1000-click future, portal cleanup and session navigation');
+ const reload=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
+ await reload.route('**/*',r=>r.request().url().startsWith(origin)?r.continue():r.abort());
+ await reload.addInitScript(()=>{window.AudioContext=undefined;window.webkitAudioContext=undefined;if(!sessionStorage.getItem('sm-test-seeded')){sessionStorage.setItem('sm-test-seeded','1');sessionStorage.setItem('senhorita-minuto-clickcount-session-v1','123');}});
+ // Real NavigationTiming: a fake clock can virtualize the performance API.
+ await reload.goto(origin+'/',{waitUntil:'networkidle'});
+ assert.equal(await reload.locator('#clickCounterValue').textContent(),'123');
+ await reload.reload({waitUntil:'networkidle'});
+ assert.equal(await reload.evaluate(()=>performance.getEntriesByType('navigation')[0]?.type),'reload');
+ assert.equal(await reload.locator('#clickCounterValue').textContent(),'0');
+ assert.equal(await reload.evaluate(()=>sessionStorage.getItem('senhorita-minuto-clickcount-session-v1')),null);
+ await reload.close();console.log('PASS real browser navigation reload clears progress');
  const crossing=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'no-preference'});
  await crossing.route('**/*',r=>r.request().url().startsWith(origin)?r.continue():r.abort());
  await crossing.addInitScript(()=>{Math.random=()=>0.60;window.AudioContext=undefined;});

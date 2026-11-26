@@ -13,3 +13,6 @@ export function writeProgress(storage,{count,repaired}){
   try{storage.setItem(CLICK_KEY,String(normalizeCount(count)));if(repaired)storage.setItem(REPAIR_KEY,'1');else storage.removeItem(REPAIR_KEY);}catch{}
 }
 export function futureTimeline(readMs){const speechAt=1900,repairAt=speechAt+Math.max(3000,Number.isFinite(readMs)?readMs:3000);return {arrival:1650,arrivalClose:1850,speechAt,repairAt,reassembled:repairAt+1200,departure:repairAt+1950,end:repairAt+2650};}
+
+/** Modern NavigationTiming and the legacy fallback on older browsers. */
+export function wasReload(perf){try{const entry=perf?.getEntriesByType?.('navigation')?.[0];if(entry?.type)return entry.type==='reload';return perf?.navigation?.type===1;}catch{return false;}}

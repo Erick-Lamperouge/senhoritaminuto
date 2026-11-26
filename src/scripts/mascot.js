@@ -2,7 +2,7 @@ import { MASCOT_TIMING, readingDuration } from './mascot/timing.js';
 import { TimerGroup } from './mascot/timers.js';
 import { createPortalController } from './mascot/portals.js';
 import { createSpeechBubble } from './mascot/speech.js';
-import { MILESTONES, crackLevel, needsFuture, readProgress, writeProgress, futureTimeline } from './mascot/progress.js';
+import { MILESTONES, crackLevel, needsFuture, readProgress, writeProgress, futureTimeline, wasReload } from './mascot/progress.js';
 import { createRetroChime } from './mascot/audio.js';
 import { portfolioProjects } from '../config/portfolio.mjs';
 
@@ -936,8 +936,7 @@ if (ready) {
 
   function loadPersistentState(resetOnReload=true) {
     try{
-      const navEntry=window.performance?.getEntriesByType?.('navigation')?.[0];
-      const p=readProgress(window.sessionStorage,{reset:resetOnReload&&navEntry?.type==='reload',fallback:{count:state.clickCount,repaired:state.repaired}});
+      const p=readProgress(window.sessionStorage,{reset:resetOnReload&&wasReload(window.performance),fallback:{count:state.clickCount,repaired:state.repaired}});
       state.clickCount=p.count;state.repaired=p.repaired;
     }catch{}
     state.pendingEgg=null;updateCounter();updateCracks();clickCounter.hidden=true;
