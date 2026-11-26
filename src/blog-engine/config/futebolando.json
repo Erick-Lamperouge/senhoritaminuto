@@ -1,0 +1,379 @@
+{
+  "schemaVersion": 1,
+  "slug": "futebolando",
+  "name": "Futebolando",
+  "description": "Futebol além do placar: notícias, contexto, história e análise.",
+  "tagline": "O apito inicial da notícia é aqui.",
+  "language": "pt-BR",
+  "status": "draft",
+  "theme": {
+    "background": "#0C0F13",
+    "surface": "#151A1F",
+    "text": "#EAEEF2",
+    "muted": "#9AA3AE",
+    "primary": "#22C55E",
+    "accent": "#FBBF24",
+    "border": "#303944"
+  },
+  "categories": [
+    {
+      "slug": "noticias",
+      "label": "Notícias"
+    },
+    {
+      "slug": "analises",
+      "label": "Análises"
+    },
+    {
+      "slug": "historia",
+      "label": "História"
+    },
+    {
+      "slug": "regras",
+      "label": "Regras"
+    },
+    {
+      "slug": "futebol-brasileiro",
+      "label": "Futebol brasileiro"
+    },
+    {
+      "slug": "futebol-internacional",
+      "label": "Futebol internacional"
+    },
+    {
+      "slug": "competicoes",
+      "label": "Competições"
+    },
+    {
+      "slug": "clubes",
+      "label": "Clubes"
+    },
+    {
+      "slug": "estatisticas",
+      "label": "Estatísticas"
+    },
+    {
+      "slug": "projecoes",
+      "label": "Projeções esportivas"
+    },
+    {
+      "slug": "opiniao",
+      "label": "Opinião"
+    },
+    {
+      "slug": "gestao",
+      "label": "Gestão dos clubes"
+    }
+  ],
+  "editorial": {
+    "voice": "Curioso, direto e explicativo; analítico sem sensacionalismo.",
+    "audience": "Quem gosta de futebol e quer compreender o jogo além do resultado.",
+    "formats": [
+      "noticia",
+      "analise",
+      "guia",
+      "historia",
+      "opiniao",
+      "estatistica",
+      "projecao"
+    ],
+    "review": "human_required",
+    "opinion": "approved_only",
+    "requireSources": true,
+    "allowAutomaticPublishing": false,
+    "initialResearchWindows": [
+      "06:00",
+      "12:30",
+      "17:00",
+      "23:00"
+    ],
+    "timeZone": "America/Fortaleza",
+    "mode": "hybrid",
+    "betting": false,
+    "forecasts": "sporting_analysis_only"
+  },
+  "monetization": {
+    "adsense": {
+      "planned": true,
+      "enabled": false
+    },
+    "affiliates": {
+      "planned": true,
+      "enabled": false
+    },
+    "products": {
+      "planned": true,
+      "enabled": false
+    },
+    "donations": {
+      "pix": {
+        "planned": true,
+        "enabled": false
+      },
+      "crypto": {
+        "planned": true,
+        "enabled": false
+      }
+    },
+    "sponsorship": false
+  },
+  "preview": {
+    "featured": {
+      "category": "Análises",
+      "title": "O futebol além dos 90 minutos",
+      "summary": "Um espaço para entender as ideias, a história e as decisões por trás do jogo."
+    },
+    "cards": [
+      {
+        "category": "Regras",
+        "title": "Impedimento: a regra explicada com exemplos práticos"
+      },
+      {
+        "category": "História",
+        "title": "Libertadores: história e formato da competição"
+      },
+      {
+        "category": "Análises",
+        "title": "Barcelona: jogo posicional e evolução"
+      }
+    ]
+  },
+  "international": {
+    "defaultLocale": "pt-BR",
+    "editions": [
+      {
+        "locale": "pt-BR",
+        "path": "",
+        "label": "Português",
+        "ui": {
+          "skip": "Pular para o conteúdo",
+          "notice": "Prévia de desenvolvimento · nenhum anúncio ativo",
+          "navigation": "Navegação da prévia",
+          "home": "Início",
+          "categories": "Editorias",
+          "pitches": "Pautas",
+          "content": "conteudo",
+          "advertising": "Espaço reservado · publicidade",
+          "proposal": "proposta editorial",
+          "preparation": "Pautas em preparação",
+          "filter": "Filtrar pautas desta prévia",
+          "placeholder": "Digite um tema...",
+          "draft": "Prévia · ainda não publicada",
+          "complementary": "Espaços complementares",
+          "about": "Sobre o blog",
+          "products": "Guias e produtos",
+          "productDescription": "Espaço futuro para materiais próprios e recomendações identificadas.",
+          "footer": "Rede de Blogs Senhorita Minuto · Protótipo",
+          "count": "pauta(s) encontrada(s).",
+          "language": "Idioma",
+          "preview": "prévia"
+        }
+      },
+      {
+        "locale": "en",
+        "path": "en",
+        "label": "English",
+        "ui": {
+          "skip": "Skip to content",
+          "notice": "Development preview · no active ads",
+          "navigation": "Preview navigation",
+          "home": "Home",
+          "categories": "Sections",
+          "pitches": "Stories",
+          "content": "content",
+          "advertising": "Reserved advertising space",
+          "proposal": "editorial concept",
+          "preparation": "Stories in preparation",
+          "filter": "Filter preview stories",
+          "placeholder": "Enter a topic...",
+          "draft": "Preview · not yet published",
+          "complementary": "Additional sections",
+          "about": "About this blog",
+          "products": "Guides and products",
+          "productDescription": "Reserved for future original publications and disclosed recommendations.",
+          "footer": "Senhorita Minuto Blog Network · Prototype",
+          "count": "story/stories found.",
+          "language": "Language",
+          "preview": "preview"
+        },
+        "copy": {
+          "description": "Football beyond the score: news, context, history and analysis.",
+          "tagline": "The story kicks off here.",
+          "categories": [
+            "News",
+            "Analysis",
+            "History",
+            "Rules",
+            "Brazilian football",
+            "International football",
+            "Competitions",
+            "Clubs",
+            "Statistics",
+            "Sporting forecasts",
+            "Opinion",
+            "Club management"
+          ],
+          "featured": {
+            "category": "Analysis",
+            "title": "Football beyond the 90 minutes",
+            "summary": "Understand the ideas, history and decisions behind the game."
+          },
+          "cards": [
+            {
+              "category": "Rules",
+              "title": "Offside: the rule explained with practical examples"
+            },
+            {
+              "category": "History",
+              "title": "Copa Libertadores: history and competition format"
+            },
+            {
+              "category": "Analysis",
+              "title": "Barcelona: positional play and evolution"
+            }
+          ]
+        }
+      }
+    ],
+    "candidateLocales": [
+      "es",
+      "pt-PT"
+    ],
+    "audience": {
+      "scope": "global",
+      "jurisdiction": null,
+      "seedMarkets": [
+        "BR",
+        "GB",
+        "ES",
+        "PT",
+        "DE",
+        "FR",
+        "IT"
+      ],
+      "watchMarkets": [
+        "CN"
+      ],
+      "seedTopics": [
+        "champions-league",
+        "premier-league",
+        "la-liga",
+        "liga-portugal",
+        "serie-a-italia",
+        "bundesliga",
+        "ligue-1",
+        "brasileirao",
+        "libertadores",
+        "real-madrid",
+        "barcelona",
+        "liverpool",
+        "manchester-city",
+        "bayern-munich",
+        "benfica",
+        "porto",
+        "sporting",
+        "psg",
+        "inter",
+        "juventus",
+        "flamengo",
+        "palmeiras",
+        "international-football"
+      ],
+      "expansion": "evidence_driven",
+      "allocation": {
+        "core": 50,
+        "demand": 35,
+        "exploration": 15
+      },
+      "minObservedImpressions": 100,
+      "minSources": 1
+    },
+    "payments": {
+      "activated": false,
+      "markets": [
+        {
+          "market": "BR",
+          "currency": "BRL",
+          "candidates": [
+            "pix",
+            "boleto",
+            "card",
+            "crypto"
+          ]
+        },
+        {
+          "market": "default",
+          "currency": null,
+          "candidates": [
+            "card",
+            "crypto"
+          ]
+        },
+        {
+          "market": "PT",
+          "currency": "EUR",
+          "candidates": [
+            "card",
+            "crypto"
+          ]
+        },
+        {
+          "market": "ES",
+          "currency": "EUR",
+          "candidates": [
+            "card",
+            "crypto"
+          ]
+        },
+        {
+          "market": "DE",
+          "currency": "EUR",
+          "candidates": [
+            "card",
+            "crypto"
+          ]
+        },
+        {
+          "market": "FR",
+          "currency": "EUR",
+          "candidates": [
+            "card",
+            "crypto"
+          ]
+        },
+        {
+          "market": "IT",
+          "currency": "EUR",
+          "candidates": [
+            "card",
+            "crypto"
+          ]
+        },
+        {
+          "market": "GB",
+          "currency": "GBP",
+          "candidates": [
+            "card",
+            "crypto"
+          ]
+        },
+        {
+          "market": "US",
+          "currency": "USD",
+          "candidates": [
+            "card",
+            "crypto"
+          ]
+        },
+        {
+          "market": "TH",
+          "currency": "THB",
+          "candidates": [
+            "card",
+            "crypto"
+          ]
+        }
+      ]
+    }
+  }
+}

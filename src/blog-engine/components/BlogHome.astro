@@ -1,0 +1,86 @@
+---
+import '../styles/blog.css';
+import { localizedView } from '../lib/international.mjs';
+const { config, locale = config.language } = Astro.props;
+const view = localizedView(config, locale);
+const u = view.ui;
+const vars = Object.entries(config.theme).map(([key,value]) => '--blog-'+key+':'+value).join(';');
+const home = view.home;
+---
+<!doctype html>
+<html lang={view.language}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="description" content={view.description} />
+    <title>{config.name} — {u.preview}</title>
+  </head>
+  <body class="blog" style={vars}>
+    <a class="skip" href={'#'+u.content}>{u.skip}</a>
+    <div class="blog-notice">{u.notice}</div>
+    <header class="blog-header">
+      <div class="blog-wrap header-inner">
+        <div class="blog-brand-row">
+          <a class="brand" href={home}>{config.name}</a>
+          <nav class="blog-languages" aria-label={u.language}>
+            {view.editions.map(edition => <a href={edition.href} lang={edition.locale} hreflang={edition.locale} aria-current={edition.locale===view.language?'page':undefined}>{edition.label}</a>)}
+          </nav>
+        </div>
+        <p>{view.tagline}</p>
+        <nav aria-label={u.navigation}>
+          <a href={home}>{u.home}</a><a href="#sections">{u.categories}</a><a href="#stories">{u.pitches}</a>
+        </nav>
+      </div>
+    </header>
+    <main id={u.content} class="blog-wrap">
+      <div class="ad-preview">{u.advertising}</div>
+      <div class="blog-grid">
+        <div>
+          <section class="feature" aria-labelledby="feature-heading">
+            <div class="feature-art" aria-hidden="true"><div></div><div></div><div></div></div>
+            <div class="feature-copy">
+              <p class="eyebrow">{view.preview.featured.category} / {u.proposal}</p>
+              <h1 id="feature-heading">{view.preview.featured.title}</h1>
+              <p>{view.preview.featured.summary}</p>
+            </div>
+          </section>
+          <section id="sections">
+            <h2>{u.categories}</h2>
+            <ul class="chips">{view.categories.map(category => <li>{category.label}</li>)}</ul>
+          </section>
+          <section id="stories">
+            <h2>{u.preparation}</h2>
+            <label for="pauta-search">{u.filter}</label>
+            <input id="pauta-search" type="search" placeholder={u.placeholder} />
+            <p id="pauta-status" role="status" class="muted" data-count={u.count}></p>
+            <ul class="pauta-list">{view.preview.cards.map(card => (
+              <li data-pauta class="pauta"><span class="eyebrow">{card.category}</span><h3>{card.title}</h3><span class="muted">{u.draft}</span></li>
+            ))}</ul>
+          </section>
+        </div>
+        <aside aria-label={u.complementary}>
+          <div class="ad-preview ad-side">{u.advertising}</div>
+          <section class="side-panel"><h2>{u.about}</h2><p>{view.description}</p></section>
+          <section class="side-panel"><h2>{u.products}</h2><p>{u.productDescription}</p></section>
+        </aside>
+      </div>
+    </main>
+    <footer class="blog-wrap blog-footer">{config.name} · {u.footer}</footer>
+    <script>
+      const input = document.querySelector<HTMLInputElement>('#pauta-search');
+      const status = document.querySelector<HTMLElement>('#pauta-status');
+      const rows = [...document.querySelectorAll<HTMLElement>('[data-pauta]')];
+      const normal = (text: string) => text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+      input?.addEventListener('input', () => {
+        const value = normal(input.value.trim());
+        let found = 0;
+        for (const row of rows) {
+          row.hidden = !normal(row.textContent ?? '').includes(value);
+          if (!row.hidden) found++;
+        }
+        if (status) status.textContent = found + ' ' + (status.dataset.count ?? '');
+      });
+    </script>
+  </body>
+</html>

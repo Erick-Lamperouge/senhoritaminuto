@@ -1,0 +1,41 @@
+name: Blog integration V2 - validation only
+on:
+  push:
+    branches: ['dev/blog-integration-v2']
+permissions:
+  contents: read
+concurrency:
+  group: blog-integration-v2-ci
+  cancel-in-progress: true
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Checkout pinned shared core
+        uses: actions/checkout@v4
+        with:
+          repository: Erick-Lamperouge/estrutura-dos-blogs
+          ref: 73436134feb26eb49472c5cc9427f94de90fdcd9
+          path: .blog-core-source
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install locked portal dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Build integrated static site
+        run: npm run build
+      - name: Verify portal regression and blog routes
+        env:
+          BLOG_CORE_CHECKOUT: .blog-core-source
+        run: node scripts/check-blog-integration.mjs
+      - name: Upload review-only build
+        uses: actions/upload-artifact@v4
+        with:
+          name: senhoritaminuto-blog-integration-preview
+          path: dist/
+          retention-days: 7
