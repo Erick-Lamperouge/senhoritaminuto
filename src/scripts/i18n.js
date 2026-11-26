@@ -2,6 +2,14 @@ const STORAGE_KEY='senhorita-minuto-language-v1';
 
 const translations={
   pt:{
+    "jack.mascot.name":"JACK / COMPANHEIRO DE TREINO",
+    "jack.mascot.button":"Conversar com Jack",
+    "jack.mascot.hello":"Minuto, vamos preparar mais uma rodada de aprendizado?",
+    "jack.mascot.helloReply":"Vamos, Jack! No seu jogo, cada desafio é uma chance de aprender.",
+    "jack.mascot.question":"Senhorita Minuto, dá para voltar no tempo quando erramos uma resposta?",
+    "jack.mascot.questionReply":"No treino podemos tentar de novo. O importante é entender o porquê da resposta.",
+    "jack.mascot.english":"O jogo está em inglês. Aqui no portfólio, podemos conversar nos dois idiomas.",
+    "jack.mascot.study":"Uma pausa para pensar vale mais do que responder com pressa.",
     "blogs.selector.kicker":"SELEÇÃO / PUBLICAÇÕES",
     "blogs.selector.title":"Escolha um universo",
     "blogs.selector.hint":"Use as setas ou escolha um ícone. Os temas futuros são apenas espaços em planejamento.",
@@ -86,6 +94,14 @@ const translations={
     'fernando.line1':'Arigó!','fernando.line2':'Minha família é do sertão. Povo arretado de bom!','fernando.line3':'Bora jogar dominó? Aí a conversa fica séria.','fernando.line4':'Sou muito bom na dama, viu?','fernando.line5':'A primeira fala de Valentina foi “Vovô”. Essa eu guardo comigo.','fernando.interact1':'Oxente, Senhorita Minuto, se eu perder na dama tu volta só um minutinho e deixa eu mexer de novo, visse?','fernando.interact1r':'Oxente nada. Isso é fraude temporal. Perdeu, perdeu.','fernando.interact2':'No sertão, o sol não espera ninguém. Ainda bem que tu toma conta dos minutos.','fernando.interact2r':'Dos minutos eu cuido. No dominó, meu amigo, cada um por si.'
   },
   en:{
+    "jack.mascot.name":"JACK / TRAINING COMPANION",
+    "jack.mascot.button":"Talk to Jack",
+    "jack.mascot.hello":"Minuto, shall we get ready for another round of learning?",
+    "jack.mascot.helloReply":"Let's go, Jack! Every challenge in your game is a chance to learn.",
+    "jack.mascot.question":"Senhorita Minuto, can we turn back time when we get an answer wrong?",
+    "jack.mascot.questionReply":"In training, we can try again. What matters is understanding why the answer is right.",
+    "jack.mascot.english":"The game is in English. Here in the portfolio, we can talk in both languages.",
+    "jack.mascot.study":"Taking a moment to think is better than rushing an answer.",
     "blogs.selector.kicker":"SELECTION / PUBLICATIONS",
     "blogs.selector.title":"Choose a universe",
     "blogs.selector.hint":"Use the arrows or select an icon. Future themes are planning slots only.",

@@ -29,6 +29,7 @@ export function createPortalController({ left, right, interaction, clamp }) {
   }
 
   function openGlobal(portal, { x, y, future = false } = {}) {
+    resetGlobal(portal);
     if (Number.isFinite(x) && Number.isFinite(y)) positionGlobal(portal, x, y);
     portal.classList.toggle('future-color', future);
     portal.classList.add('is-open');
@@ -43,16 +44,12 @@ export function createPortalController({ left, right, interaction, clamp }) {
     interaction.classList.add('active');
   }
 
-  function closeInteractionPortal() {
-    interaction.classList.remove('active', 'power-portal');
-  }
-
   return {
     closeAll,
     closeGlobals,
     openGlobal,
     closeGlobal,
     openInteraction,
-    closeInteraction: closeInteractionPortal,
+    closeInteraction,
   };
 }

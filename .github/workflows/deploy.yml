@@ -46,6 +46,7 @@ jobs:
         run: |
           npm run build:integrated
           node scripts/check-blog-integration.mjs
+          node scripts/check-public-surface.mjs
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload GitHub Pages artifact

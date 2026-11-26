@@ -23,3 +23,6 @@
 @keyframes selector-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @media(max-width:420px){.selector-stage{--slot-offset:clamp(82px,27vw,108px)}.selector-item{width:110px}.selector-name{font-size:.75rem}.selector-state{font-size:.53rem}}
 @media(prefers-reduced-motion:reduce){.selector-item,.selector-emblem{transition:none!important;animation:none!important}.selector-item[aria-pressed=true] .selector-emblem{animation:none!important}}
+
+/* Slow, vertical idle movement: no automatic rotation and no side-to-side sway. */
+.selector-item[aria-pressed=true] .selector-emblem{animation:selector-float 6s ease-in-out infinite}.selector-item[data-slot=left] .selector-emblem,.selector-item[data-slot=right] .selector-emblem{animation:selector-side-float 7.5s ease-in-out infinite}.selector-item[data-slot=left] .selector-emblem{animation-delay:-2.2s}.selector-item[data-slot=right] .selector-emblem{animation-delay:-4.4s}@keyframes selector-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}@keyframes selector-side-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}@media(prefers-reduced-motion:reduce){.selector-item .selector-emblem{animation:none!important;transition:none!important}}

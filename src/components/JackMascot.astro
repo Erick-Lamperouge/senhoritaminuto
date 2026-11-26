@@ -1,0 +1,42 @@
+---
+import '../styles/project-mascot.css';
+---
+<div class="jack-mascot" id="jack-mascot" data-project-mascot="jack-up">
+  <span class="jack-mascot-kicker" data-i18n="jack.mascot.name">JACK / COMPANHEIRO DE TREINO</span>
+  <button class="jack-character" id="jack-character" type="button" aria-label="Conversar com Jack" data-i18n-aria="jack.mascot.button">
+    <svg viewBox="0 0 128 144" aria-hidden="true" focusable="false" shape-rendering="crispEdges">
+      <path fill="#263437" d="M18 132h92v6H18z"/>
+      <!-- Pixel-art learning companion, not a depiction of a real clinician. -->
+      <g class="jack-body">
+        <path fill="#1f3338" d="M36 30h56v8h8v47H92v11H36V85h-8V38h8z"/>
+        <path fill="#f0e6cd" d="M39 35h50v44H39zM48 79h32v14H48z"/>
+        <path fill="#17282b" d="M44 48h13v13H44zM71 48h13v13H71zM59 64h10v8H59z"/>
+        <path class="jack-eye" fill="#6db8ad" d="M48 51h5v5h-5zM75 51h5v5h-5z"/>
+        <path fill="#a59b83" d="M52 79h4v9h-4zM62 79h4v9h-4zM72 79h4v9h-4z"/>
+        <path fill="#6db8ad" d="M34 24h60v11H34zM42 16h44v8H42zM55 9h18v7H55z"/>
+        <path fill="#e5ad55" d="M55 21h18v6H55zM61 15h6v18h-6z"/>
+        <path fill="#487e79" d="M39 94h50v28H39zM31 96h8v19h-8zM89 96h8v19h-8z"/>
+        <path fill="#17282b" d="M43 97h42v17H43z"/>
+        <path fill="#f0e6cd" d="M47 101h34v4H47zM47 109h34v3H47zM62 96h5v23h-5z"/>
+        <path fill="#f0e6cd" d="M16 84h10v23H16zM21 106h14v8H21zM99 86h10v23H99zM94 107h15v7H94z"/>
+        <path fill="#f8faf0" d="M13 91h16v17H13zM14 94h14v3H14zM14 101h14v3H14z"/>
+        <path fill="#e5ad55" d="M45 122h13v8H45zM70 122h13v8H70z"/>
+        <path fill="#273b3f" d="M40 130h22v6H40zM66 130h22v6H66z"/>
+      </g>
+    </svg>
+  </button>
+  <p class="jack-speech" id="jack-speech" role="status" aria-live="polite" data-i18n="jack.mascot.hello" hidden>Minuto, vamos preparar mais uma rodada de aprendizado?</p>
+</div>
+<script>
+  import {createProjectDialogue} from '../scripts/mascot/project-dialogue.js';
+  createProjectDialogue({
+    root:document.querySelector('#jack-mascot'),character:document.querySelector('#jack-character'),speech:document.querySelector('#jack-speech'),source:'jack-up',
+    entries:[
+      {key:'jack.mascot.hello',text:'Minuto, vamos preparar mais uma rodada de aprendizado?',replyKey:'jack.mascot.helloReply',reply:'Vamos, Jack! No seu jogo, cada desafio é uma chance de aprender.'},
+      {key:'jack.mascot.question',text:'Senhorita Minuto, dá para voltar no tempo quando erramos uma resposta?',replyKey:'jack.mascot.questionReply',reply:'No treino podemos tentar de novo. O importante é entender o porquê da resposta.'},
+      {key:'jack.mascot.english',text:'O jogo está em inglês. Aqui no portfólio, podemos conversar nos dois idiomas.'},
+      {key:'jack.mascot.study',text:'Uma pausa para pensar vale mais do que responder com pressa.'}
+    ],
+    initialDelay:750
+  });
+</script>

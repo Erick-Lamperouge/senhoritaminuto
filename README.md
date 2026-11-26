@@ -51,3 +51,6 @@ Os logs usam o prefixo `[Senhorita Minuto]` e registram sono, interações e sal
 
 ## Vitrine de blogs
 A Senhorita Minuto permanece presente na vitrine /projetos/blogs/ junto com o arquivista. Ambos interagem pelo protocolo existente; nenhum mascote do portal entra em /futebolando/. Registro de opções em src/config/blog-catalog.mjs; os temas planejados não recebem links. Ver docs/PORTFOLIO-AUDIT.md.
+
+### Mascotes e superfície pública
+O arquivista e Jack compartilham `src/scripts/mascot/project-dialogue.js`; sequências legadas continuam em seus próprios componentes. Antes de publicar, conferir `docs/SECURITY.md` e a checagem de superfície pública da CI. Não guardar informação confidencial em branches públicas.

@@ -90,6 +90,7 @@ if (ready) {
     repaired: false,
     lastUserActivity: Date.now(),
     wakeScheduled: false,
+    pendingInteraction: null,
   };
 
   const clickSessionKey = 'senhorita-minuto-clickcount-session-v1';
@@ -117,7 +118,7 @@ if (ready) {
   ];
 
   function projectMascotVisible() {
-    return Array.from(document.querySelectorAll('#scratchCatScene,#fernandoInline,#archive-mascot')).some((node) => {
+    return Array.from(document.querySelectorAll('#scratchCatScene,#fernandoInline,#archive-mascot,#jack-mascot')).some((node) => {
       if (!(node instanceof HTMLElement)) return false;
       const rect = node.getBoundingClientRect();
       return rect.bottom > 0 && rect.top < window.innerHeight && rect.right > 0 && rect.left < window.innerWidth;
@@ -412,6 +413,7 @@ if (ready) {
     timers.scheduler.clearAll();
     timers.action.clearAll();
     timers.interaction.clearAll();
+    state.pendingInteraction=null;
     timers.idle.clearAll();
     timers.wake.clearAll();
     state.wakeScheduled = false;
@@ -484,13 +486,11 @@ if (ready) {
     if (state.owner === 'autonomous') cancelAutonomousAction({ keepPosition: true });
 
     const selector = typeof detail?.target === 'string' ? detail.target : '';
-    const target = selector ? document.querySelector(selector) : null;
-    if (!(target instanceof HTMLElement)) {
-      if (typeof detail?.message === 'string') {
-        say(detail.message, Number(detail.duration) || readingDuration(detail.message, { min: 3000 }));
-      }
-      return false;
-    }
+    if (!/^#[A-Za-z][A-Za-z0-9_-]*$/.test(selector) || document.hidden) return false;
+    const target = document.getElementById(selector.slice(1));
+    if (!(target instanceof HTMLElement)) return false;
+    const rect = target.getBoundingClientRect();
+    if (rect.bottom<=0 || rect.top>=window.innerHeight || rect.right<=0 || rect.left>=window.innerWidth) return false;
 
     state.owner = 'interaction';
     window.dispatchEvent(new CustomEvent('sm:interaction-state',{detail:{active:true,target:selector}}));
@@ -577,6 +577,8 @@ if (ready) {
       startPatrol();
       scheduleAutonomousAction();
       scheduleIdleSleep();
+      const pending=state.pendingInteraction;state.pendingInteraction=null;
+      if(pending && Date.now()-pending.queuedAt<=12000)beginInteraction(pending.detail);
     }, 1120);
   }
 
@@ -1029,15 +1031,16 @@ if (ready) {
   window.addEventListener('sm:project-bubble-open', () => {
     // Falas de mascotes têm prioridade. Se uma ação autônoma antiga ainda
     // estivesse em andamento, ela é cancelada junto com seus timers.
-    if (state.owner === 'autonomous') cancelAutonomousAction({ keepPosition: true });
+    if (state.owner === 'future' || state.owner === 'interaction') return;
+    if (state.owner === 'autonomous') {cancelAutonomousAction({ keepPosition: true });startPatrol();scheduleAutonomousAction();}
     portals.closeGlobals();
-    if (state.owner !== 'interaction') hideMinuteSpeech(true);
+    hideMinuteSpeech(true);
   });
 
   window.addEventListener('sm:say', (event) => {
     const detail = event instanceof CustomEvent ? event.detail : null;
-    if (!detail || typeof detail.message !== 'string' || state.owner === 'sleep') return;
-    if (state.owner === 'autonomous') cancelAutonomousAction({ keepPosition: true });
+    if (!detail || typeof detail.message !== 'string' || ['sleep','future','interaction'].includes(state.owner)) return;
+    if (state.owner === 'autonomous') {cancelAutonomousAction({ keepPosition: true });startPatrol();scheduleAutonomousAction();}
     portals.closeGlobals();
     say(
       detail.message,
@@ -1047,17 +1050,13 @@ if (ready) {
 
   window.addEventListener('sm:interact', (event) => {
     const detail = event instanceof CustomEvent ? event.detail : null;
-    if (!detail || state.owner === 'sleep' || state.owner === 'future') return;
-
-    const attempt = () => {
-      if (state.owner === 'sleep' || state.owner === 'future') return;
-      if (state.owner === 'interaction') {
-        timers.ui.set(attempt, 350);
-        return;
-      }
-      beginInteraction(detail);
-    };
-    attempt();
+    if (!detail || typeof detail.message !== 'string' || document.hidden || state.owner === 'sleep' || state.owner === 'future') return;
+    if (state.owner === 'interaction') {
+      // One bounded pending request, never a forest of 350 ms polling timers.
+      state.pendingInteraction={detail,queuedAt:Date.now()};
+      return;
+    }
+    beginInteraction(detail);
   });
 
   window.addEventListener('sm:rewind', (event) => {
@@ -1105,10 +1104,13 @@ if (ready) {
     window.addEventListener(eventName, registerUserActivity, { passive: true });
   });
 
-  window.addEventListener('visibilitychange', () => {
+  document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') {
       if (state.owner === 'autonomous') cancelAutonomousAction({ keepPosition: true });
-      if (state.owner !== 'future' && state.owner !== 'interaction') enterSleep('hidden');
+      if(state.owner==='interaction'){
+        timers.interaction.clearAll();state.pendingInteraction=null;portals.closeAll();normalizeTravelerClasses();hideMinuteSpeech(true);state.owner='patrol';window.dispatchEvent(new CustomEvent('sm:interaction-state',{detail:{active:false}}));
+      }
+      if (state.owner !== 'future') enterSleep('hidden');
       return;
     }
     // Ela permanece dormindo ao voltar para a aba. O primeiro movimento real
@@ -1132,9 +1134,18 @@ if (ready) {
       Object.values(timers).forEach((group) => group.clearAll());
       cancelActiveAnimations();
       portals.closeAll();
+      state.pendingInteraction=null;
     },
-    { once: true },
   );
+  window.addEventListener('pageshow',event=>{
+    if(!event.persisted)return;
+    Object.values(timers).forEach(group=>group.clearAll());
+    clearVisualEphemera();normalizeTravelerClasses();hideMinuteSpeech(true);
+    traveler.classList.remove('is-dismantled','is-repairing');futureVisitor.classList.remove('active','leaving');futureVisitor.hidden=true;futureSpeech.hidden=true;repairBeam.classList.remove('active');
+    state.owner='patrol';state.wakeScheduled=false;state.lastUserActivity=Date.now();state.pendingInteraction=null;
+    window.dispatchEvent(new CustomEvent('sm:interaction-state',{detail:{active:false}}));
+    setMood('neutral');alignToPatrolBase(true);startPatrol();scheduleAutonomousAction();scheduleIdleSleep();
+  });
 
   loadPersistentState();
   setSide(state.side);

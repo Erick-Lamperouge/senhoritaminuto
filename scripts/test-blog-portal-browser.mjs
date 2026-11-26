@@ -34,6 +34,11 @@ try{
   await p.keyboard.press('Home');
   assert.equal(await p.locator('[data-selector-index="0"]').getAttribute('data-slot'),'front');
   assert.equal(await p.locator('[data-blog-entry]').count(),1);
+  assert.equal(await p.locator('[data-selector-index="0"] .selector-emblem').evaluate(el=>getComputedStyle(el).animationName),'none');
+  await p.emulateMedia({reducedMotion:'no-preference'});
+  assert.equal(await p.locator('[data-selector-index="0"] .selector-emblem').evaluate(el=>getComputedStyle(el).animationDuration),'6s');
+  assert.equal(await p.locator('[data-selector-index="1"] .selector-emblem').evaluate(el=>getComputedStyle(el).animationDuration),'7.5s');
+  await p.emulateMedia({reducedMotion:'reduce'});
   await p.locator('#blog-search').fill('unknown-test');assert.equal(await p.locator('[data-blog-entry]:visible').count(),0);
   await p.locator('#blog-search').fill('futebol');assert.equal(await p.locator('[data-blog-entry]:visible').count(),1);
   await p.locator('#blog-search').fill('');
@@ -49,6 +54,17 @@ try{
   await p.locator('.blog-languages a[hreflang="en"]').click();assert.equal(await p.locator('html').getAttribute('lang'),'en');
   assert.equal(await p.locator('#archive-character,#mascotButton').count(),0);
   await p.screenshot({path:'review-shots/blog-'+name+'.png',fullPage:true,animations:'disabled'});
-  assert.deepEqual(errors,[]);await p.close();console.log('PASS portal and blog '+name);
+  await p.goto(origin+'/projetos/jack-up/',{waitUntil:'networkidle'});
+  assert.equal(await p.locator('#jack-character').count(),1);assert.equal(await p.locator('#mascotButton').count(),1);
+  await p.locator('#jack-character').scrollIntoViewIfNeeded();await p.locator('#jack-character').click();
+  await p.waitForFunction(()=>document.querySelector('#mascotTraveler')?.getAttribute('data-mode')==='interaction',{},{timeout:18000});
+  assert.equal(await p.locator('#portalLeft.is-open,#portalRight.is-open').count(),0);
+  assert.equal(await p.locator('#jack-speech').isVisible(),false);
+  await p.waitForFunction(()=>!document.querySelector('#mascotTraveler')?.classList.contains('interacting'),{},{timeout:18000});
+  await p.locator('#languageTrigger').click();await p.locator('[data-language="en"]').click();
+  assert.equal(await p.locator('#jack-character').getAttribute('aria-label'),'Talk to Jack');
+  assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Jack mascot overflow');
+  await p.screenshot({path:'review-shots/jack-'+name+'.png',fullPage:true,animations:'disabled'});
+  assert.deepEqual(errors,[]);await p.close();console.log('PASS portal, blog and Jack '+name);
  }
 }finally{await browser?.close();server.kill();}

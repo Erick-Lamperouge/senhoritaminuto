@@ -22,46 +22,14 @@
   <p class="archive-speech" id="archive-speech" role="status" aria-live="polite" data-i18n="blogs.mascot.1" hidden>Bem-vindo ao arquivo! Escolha uma leitura para começar.</p>
 </div>
 <script>
-  import {MASCOT_TIMING,readingDuration} from '../scripts/mascot/timing.js';
-  import {TimerGroup} from '../scripts/mascot/timers.js';
-  const root=document.querySelector<HTMLElement>('#archive-mascot');
-  const character=document.querySelector<HTMLButtonElement>('#archive-character');
-  const speech=document.querySelector<HTMLElement>('#archive-speech');
-  const timers=new TimerGroup();
-  const tx=(key:string,fallback:string)=>(window as any).SM_I18N?.t(key,fallback)??fallback;
-  const entries=[
-    {key:'blogs.mascot.greeting',text:'Senhorita Minuto, o arquivo está organizado. Qual leitura vamos apresentar hoje?',replyKey:'blogs.mascot.greetingReply',reply:'O primeiro universo é o Futebolando! As outras estantes vão ganhar vida aos poucos.'},
-    {key:'blogs.mascot.question',text:'Minuto, cada blog tem seu próprio tempo de leitura, não é?',replyKey:'blogs.mascot.questionReply',reply:'Exatamente. Aqui eu abro a porta, mas cada publicação tem seu próprio mundo.'},
-    {key:'blogs.mascot.2',text:'Cada assunto tem seu próprio universo. Eu cuido da porta de entrada.'},
-    {key:'blogs.mascot.3',text:'O Futebolando está em prévia. Há regras, tática e números para explorar!'}
-  ];
-  let next=1,greeted=false,busy=false;
-  const visible=()=>{const r=root?.getBoundingClientRect();return !!r&&r.bottom>0&&r.top<innerHeight&&document.visibilityState==='visible';};
-  const hide=()=>{timers.clearAll();if(speech)speech.hidden=true;};
-  function speak(entry:typeof entries[number],initial=false){
-    if(!speech||busy||!visible())return;
-    timers.clearAll();
-    window.dispatchEvent(new CustomEvent('sm:project-bubble-open',{detail:{source:'archive'}}));
-    const message=tx(entry.key,entry.text);
-    speech.dataset.i18n=entry.key;speech.textContent=message;speech.hidden=false;
-    const duration=readingDuration(message,{min:initial?MASCOT_TIMING.initialMinMs:MASCOT_TIMING.normalMinMs});
-    timers.set(()=>{
-      if(speech)speech.hidden=true;
-      if(entry.replyKey&&entry.reply&&visible()){
-        timers.set(()=>{if(!visible()||busy)return;const reply=tx(entry.replyKey!,entry.reply!);const replyDuration=readingDuration(reply);window.dispatchEvent(new CustomEvent('sm:interact',{detail:{target:'#archive-mascot',message:reply,duration:replyDuration,hold:replyDuration+900,mood:'happy'}}));},MASCOT_TIMING.speakerGapMs);
-      }
-    },duration);
-  }
-  function greet(){if(greeted||busy||!visible())return;greeted=true;speak(entries[0],true);}
-  if(root&&character&&speech){
-    const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting))greet();},{threshold:0.25});observer.observe(root);
-    character.addEventListener('click',()=>{if(busy)return;greeted=true;speak(entries[next]);next=next===entries.length-1?1:next+1;});
-    window.addEventListener('sm:minute-bubble-open',hide);
-    window.addEventListener('sm:project-bubble-open',event=>{if(event instanceof CustomEvent&&event.detail?.source!=='archive')hide();});
-    window.addEventListener('sm:interaction-state',event=>{if(event instanceof CustomEvent){busy=event.detail?.active===true;character.setAttribute('aria-disabled',String(busy));if(busy)hide();}});
-    window.addEventListener('sm:language-changed',()=>{hide();greeted=false;timers.set(greet,350);});
-    document.addEventListener('visibilitychange',()=>{if(document.hidden)hide();});
-    window.addEventListener('pagehide',()=>{hide();observer.disconnect();},{once:true});
-    timers.set(greet,650);
-  }
+  import {createProjectDialogue} from '../scripts/mascot/project-dialogue.js';
+  createProjectDialogue({
+    root:document.querySelector('#archive-mascot'),character:document.querySelector('#archive-character'),speech:document.querySelector('#archive-speech'),source:'archive',
+    entries:[
+      {key:'blogs.mascot.greeting',text:'Senhorita Minuto, o arquivo está organizado. Qual leitura vamos apresentar hoje?',replyKey:'blogs.mascot.greetingReply',reply:'O primeiro universo é o Futebolando! As outras estantes vão ganhar vida aos poucos.'},
+      {key:'blogs.mascot.question',text:'Minuto, cada blog tem seu próprio tempo de leitura, não é?',replyKey:'blogs.mascot.questionReply',reply:'Exatamente. Aqui eu abro a porta, mas cada publicação tem seu próprio mundo.'},
+      {key:'blogs.mascot.2',text:'Cada assunto tem seu próprio universo. Eu cuido da porta de entrada.'},
+      {key:'blogs.mascot.3',text:'O Futebolando está em prévia. Há regras, tática e números para explorar!'}
+    ]
+  });
 </script>

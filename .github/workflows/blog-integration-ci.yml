@@ -44,6 +44,7 @@ jobs:
           npm run test:portal
           npm run build:integrated
           node scripts/check-blog-integration.mjs
+          node scripts/check-public-surface.mjs
       - name: Install browser tools
         run: |
           npm install --no-save --package-lock=false playwright@1.58.2 --no-audit --no-fund

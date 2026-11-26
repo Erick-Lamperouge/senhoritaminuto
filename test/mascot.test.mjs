@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {TimerGroup} from '../src/scripts/mascot/timers.js';
+import {createPortalController} from '../src/scripts/mascot/portals.js';
+function clock(){let next=0;const tasks=new Map();return {tasks,setTimeout(fn){const id=next++;tasks.set(id,fn);return id;},clearTimeout(id){tasks.delete(id);}};}
+test('timer cancellation includes id zero and all owned callbacks',()=>{const c=clock(),g=new TimerGroup(c);let n=0;const a=g.set(()=>n++,1);const b=g.set(()=>n++,2);assert.equal(a,0);g.clear(a);assert.equal(c.tasks.has(a),false);const callback=c.tasks.get(b);g.clearAll();callback();assert.equal(n,0);assert.equal(g.ids.size,0);});
+test('completed timers leave the registry',()=>{const c=clock(),g=new TimerGroup(c);let n=0;const id=g.set(()=>n++,5);c.tasks.get(id)();assert.equal(n,1);assert.equal(g.ids.size,0);});
+function portal(){const names=new Set();return {style:{},classList:{add(...s){s.forEach(x=>names.add(x));},remove(...s){s.forEach(x=>names.delete(x));},toggle(k,on){on?names.add(k):names.delete(k);},contains:k=>names.has(k)}};}
+test('local portal cleanup removes power class and global state',()=>{const left=portal(),right=portal(),interaction=portal();const p=createPortalController({left,right,interaction,clamp:x=>x});p.openInteraction({power:true});p.openGlobal(left,{future:true});p.closeAll();assert.equal(interaction.classList.contains('active'),false);assert.equal(interaction.classList.contains('power-portal'),false);assert.equal(left.classList.contains('is-open'),false);assert.equal(left.classList.contains('future-color'),false);});
+test('opening a global portal clears stale anchored styling',()=>{const left=portal(),right=portal(),interaction=portal();left.classList.add('anchored','future-color');left.style.left='12px';left.style.top='25px';const p=createPortalController({left,right,interaction,clamp:x=>x});p.openGlobal(left);assert.equal(left.classList.contains('anchored'),false);assert.equal(left.classList.contains('future-color'),false);assert.equal(left.style.left,'');assert.equal(left.classList.contains('is-open'),true);});

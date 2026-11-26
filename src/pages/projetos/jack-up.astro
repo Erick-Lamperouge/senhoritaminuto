@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Mascot from '../../components/Mascot.astro';
+import JackMascot from '../../components/JackMascot.astro';
 import { projects } from '../../config/projects';
 
 const jackUpUrl = projects.jackUp.liveUrl.trim();
@@ -22,9 +23,9 @@ const hasLiveJackUp = jackUpUrl.length > 0;
         </div>
       </div>
 
-      <aside class="project-showcase-slot" aria-label="Espaço reservado para o mascote do Jack-UP">
-        <div class="showcase-shell showcase-mascot-slot" data-project-mascot-slot="jack-up">
-          <span class="mascot-slot-note" data-i18n="jack.mascotSoon">Mascote em breve</span>
+      <aside class="project-showcase-slot" aria-label="Mascote do Jack-UP" data-i18n-aria="jack.mascot.name">
+        <div class="showcase-shell showcase-jack" data-project-mascot-slot="jack-up">
+          <JackMascot/>
         </div>
       </aside>
     </section>
