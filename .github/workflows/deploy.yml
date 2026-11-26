@@ -10,6 +10,9 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
+    permissions:
+      contents: read
+      pages: read
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 15
@@ -64,3 +67,24 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+  public-smoke:
+    needs: deploy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - name: Verify custom domain and isolated preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/ -o /tmp/portal.html
+          curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/projetos/blogs/ -o /tmp/catalog.html
+          curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/futebolando/ -o /tmp/football.html
+          curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/futebolando/en/ -o /tmp/football-en.html
+          grep -q 'href="/projetos/blogs/"' /tmp/portal.html
+          grep -q 'id="archive-character"' /tmp/catalog.html
+          grep -q 'href="/futebolando/"' /tmp/catalog.html
+          grep -q 'data-article-id="expected-goals"' /tmp/football.html
+          grep -q 'lang="en"' /tmp/football-en.html
+          grep -q 'noindex,nofollow' /tmp/football.html
+          ! grep -Eq 'id="archive-character"|id="mascotButton"|adsbygoogle' /tmp/football.html
+          echo "PASS custom domain portal, catalog, PT/EN football preview"
