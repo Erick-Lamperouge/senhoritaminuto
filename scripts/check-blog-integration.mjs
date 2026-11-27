@@ -45,4 +45,12 @@ check('trust and privacy notice in both languages',()=>{
  }
  for(const p of expectedPages.keys())assert.ok(text(p).includes('data-trust-link'),p);
 });
-console.log('11 integration groups passed');
+check('sports snapshots and highlights are clearly labelled and isolated',()=>{
+ for(const p of ['dist/futebolando/index.html','dist/futebolando/en/index.html']){
+  const h=text(p);assert.ok(h.includes('data-highlight-mode="curated-preview"')&&h.includes('data-football-centre')&&h.includes('data-competition="brasileirao"')&&h.includes('data-competition="world-cup"'));
+  assert.ok(!h.includes('data-fixture-date=')&&!h.includes('googletagmanager.com'));
+  assert.ok(h.includes('2026-09-20')&&h.includes('CC0-1.0'));
+ }
+ for(const p of ['dist/index.html','dist/projetos/blogs/index.html','dist/projetos/jack-up/index.html','dist/projetos/scratch/index.html','dist/projetos/fernando/index.html'])assert.ok(!text(p).includes('data-football-centre'),p);
+});
+console.log('12 integration groups passed');

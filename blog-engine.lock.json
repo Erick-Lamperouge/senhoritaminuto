@@ -3,8 +3,8 @@
   "stage": "public-technical-preview",
   "core": {
     "repository": "Erick-Lamperouge/estrutura-dos-blogs",
-    "commit": "9c9fdb7772f23b577c4b2f628d5eb3bc06d020dd",
-    "ci": 45916055719
+    "commit": "bbb353b1b0c16faa115306dca9907b6aee27dd67",
+    "ci": 45917483274
   },
   "editorial": {
     "repository": "Erick-Lamperouge/futebolando",

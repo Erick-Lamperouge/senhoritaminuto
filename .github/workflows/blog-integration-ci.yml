@@ -1,7 +1,7 @@
 name: Blog integration V2 - validation only
 on:
   push:
-    branches: ['dev/blog-integration-v2','dev/portfolio-audit-carousel','dev/mascot-scenes-v3','dev/blog-release-flow','dev/blog-trust-intake']
+    branches: ['dev/blog-integration-v2','dev/portfolio-audit-carousel','dev/mascot-scenes-v3','dev/blog-release-flow','dev/blog-trust-intake','dev/blog-sports-centre']
   pull_request:
     branches: [main]
 permissions:
@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Erick-Lamperouge/estrutura-dos-blogs
-          ref: 9c9fdb7772f23b577c4b2f628d5eb3bc06d020dd
+          ref: bbb353b1b0c16faa115306dca9907b6aee27dd67
           path: .blog-core-source
           sparse-checkout: v2
           persist-credentials: false

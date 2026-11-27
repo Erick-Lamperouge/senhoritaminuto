@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Erick-Lamperouge/estrutura-dos-blogs
-          ref: 9c9fdb7772f23b577c4b2f628d5eb3bc06d020dd
+          ref: bbb353b1b0c16faa115306dca9907b6aee27dd67
           path: .blog-core-source
           sparse-checkout: v2
           persist-credentials: false
@@ -118,4 +118,10 @@ jobs:
           grep -q 'data-contact-pending' /tmp/trust-en.html
           grep -q 'noindex,nofollow' /tmp/trust-pt.html
           grep -q 'noindex,nofollow' /tmp/trust-en.html
-          echo "PASS custom domain portal, bilingual SEO and trust notices"
+          grep -q 'data-highlight-mode="curated-preview"' /tmp/football.html
+          grep -q 'data-football-centre' /tmp/football.html
+          grep -q 'data-competition="brasileirao"' /tmp/football.html
+          grep -q 'data-competition="world-cup"' /tmp/football-en.html
+          grep -q 'Arquivo parcial' /tmp/football.html
+          ! grep -q 'data-fixture-date=' /tmp/football.html
+          echo "PASS custom domain portal, bilingual SEO, trust and sports archive"
