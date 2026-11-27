@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Erick-Lamperouge/estrutura-dos-blogs
-          ref: bbb353b1b0c16faa115306dca9907b6aee27dd67
+          ref: 4e11ec1b025c78f59ea284b86446d426f653c9e7
           path: .blog-core-source
           sparse-checkout: v2
           persist-credentials: false
@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Erick-Lamperouge/futebolando
-          ref: 9dbbe590b7ca38df9b5a23dec343ddbb6df99c3d
+          ref: 202addd2d8f1000da146ce4d37402300102a4d46
           path: .blog-editorial-source
           sparse-checkout: editorial
           persist-credentials: false
@@ -124,4 +124,8 @@ jobs:
           grep -q 'data-competition="world-cup"' /tmp/football-en.html
           grep -q 'Arquivo parcial' /tmp/football.html
           ! grep -q 'data-fixture-date=' /tmp/football.html
-          echo "PASS custom domain portal, bilingual SEO, trust and sports archive"
+          grep -q 'data-color-system="editorial"' /tmp/football.html /tmp/football-en.html
+          grep -q -- '--blog-light-tone-bronze:#805522' /tmp/football.html
+          grep -q 'data-tone="steel"' /tmp/article-pt.html
+          grep -q 'data-tone="steel"' /tmp/article-en.html
+          echo "PASS custom domain portal, bilingual SEO, trust, sports archive and editorial palette"

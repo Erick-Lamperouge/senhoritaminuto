@@ -3,12 +3,12 @@
   "stage": "public-technical-preview",
   "core": {
     "repository": "Erick-Lamperouge/estrutura-dos-blogs",
-    "commit": "bbb353b1b0c16faa115306dca9907b6aee27dd67",
-    "ci": 45917483274
+    "commit": "4e11ec1b025c78f59ea284b86446d426f653c9e7",
+    "ci": 45993274123
   },
   "editorial": {
     "repository": "Erick-Lamperouge/futebolando",
-    "commit": "9dbbe590b7ca38df9b5a23dec343ddbb6df99c3d"
+    "commit": "202addd2d8f1000da146ce4d37402300102a4d46"
   },
   "portalBaseline": "8276ed61ccac18fa62a703e47ad64de6b8f9d622",
   "policy": {

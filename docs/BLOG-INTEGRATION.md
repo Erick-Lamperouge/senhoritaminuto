@@ -12,3 +12,6 @@ Candidato dev/blog-trust-intake, núcleo 9c9fdb7772f23b577c4b2f628d5eb3bc06d020d
 
 ## 07A — destaques e central de futebol
 Candidato dev/blog-sports-centre: núcleo bbb353b1b0c16faa115306dca9907b6aee27dd67, CI 45917483274 (validação em execução ao preparar esta integração). Mantém pin editorial, 32 rotas preview e política de privacidade/SEO. Home PT/EN exibe destaques de prévia, tabelas históricas/arquivo parcial provenientes de OpenFootball CC0, links oficiais, ausência de agenda atual não verificada; sem rastreamento. Novos checks verificam isolamento do portal, licenças/rótulos e ausência de fixtures atuais. Não promover main antes de aprovação do núcleo e CI integrada. Nenhum código ou arte de mascote alterado.
+
+## 07B — paleta editorial
+Candidato da branch dev/blog-sports-centre, núcleo 4e11ec1b025c78f59ea284b86446d426f653c9e7 CI 45993274123 (a confirmar), editorial 202addd2d8f1000da146ce4d37402300102a4d46. As sete ilustrações recoloridas e a nova configuração foram sincronizadas, sem alterações nos artigos, rotas ou séries. Tema claro/escuro, tons por editoria, seleção e ações neutras. Central de futebol e destaque 07A preservados. Sem indexação, coleta ou anúncios. Validar o núcleo e o portal antes de promover main. Nenhum arquivo de mascote ou página de projeto alterado.

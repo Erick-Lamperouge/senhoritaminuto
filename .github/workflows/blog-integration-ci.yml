@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Erick-Lamperouge/estrutura-dos-blogs
-          ref: bbb353b1b0c16faa115306dca9907b6aee27dd67
+          ref: 4e11ec1b025c78f59ea284b86446d426f653c9e7
           path: .blog-core-source
           sparse-checkout: v2
           persist-credentials: false
@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Erick-Lamperouge/futebolando
-          ref: 9dbbe590b7ca38df9b5a23dec343ddbb6df99c3d
+          ref: 202addd2d8f1000da146ce4d37402300102a4d46
           path: .blog-editorial-source
           sparse-checkout: editorial
           persist-credentials: false

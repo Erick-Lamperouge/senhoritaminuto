@@ -53,4 +53,9 @@ check('sports snapshots and highlights are clearly labelled and isolated',()=>{
  }
  for(const p of ['dist/index.html','dist/projetos/blogs/index.html','dist/projetos/jack-up/index.html','dist/projetos/scratch/index.html','dist/projetos/fernando/index.html'])assert.ok(!text(p).includes('data-football-centre'),p);
 });
-console.log('12 integration groups passed');
+check('semantic palette scoped to Futebolando',()=>{
+ for(const p of expectedPages.keys()){const h=text(p);assert.ok(h.includes('data-color-system="editorial"'),p);assert.ok(h.includes('--blog-light-tone-bronze:#805522')&&h.includes('--blog-dark-tone-plum:#C7B4DF'),p);}
+ for(const p of ['dist/index.html','dist/projetos/blogs/index.html','dist/projetos/jack-up/index.html','dist/projetos/scratch/index.html','dist/projetos/fernando/index.html'])assert.ok(!text(p).includes('data-color-system="editorial"'),p);
+ for(const [p,tone] of [['artigos/impedimento','steel'],['artigos/real-madrid-historia','bronze'],['artigos/libertadores-formato','wine'],['artigos/xg-gols-esperados','plum']])assert.ok(text('dist/futebolando/'+p+'/index.html').includes('class="article-page" data-tone="'+tone+'"'),p);
+});
+console.log('13 integration groups passed');
