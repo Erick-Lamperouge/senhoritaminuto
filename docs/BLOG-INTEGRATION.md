@@ -15,3 +15,5 @@ Candidato dev/blog-sports-centre: núcleo bbb353b1b0c16faa115306dca9907b6aee27dd
 
 ## 07B — paleta editorial
 Candidato da branch dev/blog-sports-centre, núcleo 4e11ec1b025c78f59ea284b86446d426f653c9e7 CI 45993274123 (a confirmar), editorial 202addd2d8f1000da146ce4d37402300102a4d46. As sete ilustrações recoloridas e a nova configuração foram sincronizadas, sem alterações nos artigos, rotas ou séries. Tema claro/escuro, tons por editoria, seleção e ações neutras. Central de futebol e destaque 07A preservados. Sem indexação, coleta ou anúncios. Validar o núcleo e o portal antes de promover main. Nenhum arquivo de mascote ou página de projeto alterado.
+
+07B.1: pin atualizado para 1817423bbb4ac53c075711e095540f3765bcad0c (CI 45993554823); somente ajuste da verificação de cor final após transição CSS, sem modificação da implementação ou dos assets. Validar ambos workflows antes de promover.

@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Erick-Lamperouge/estrutura-dos-blogs
-          ref: 4e11ec1b025c78f59ea284b86446d426f653c9e7
+          ref: 1817423bbb4ac53c075711e095540f3765bcad0c
           path: .blog-core-source
           sparse-checkout: v2
           persist-credentials: false
