@@ -4,6 +4,8 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 const read=p=>readFileSync(p), text=p=>readFileSync(p,'utf8');
 const lock=JSON.parse(text('blog-engine.lock.json'));
+const inventory=JSON.parse(text('.blog-core-source/v2/review-shots/seo-inventory.json'));
+const expectedPages=new Map(inventory.pages.map(p=>[path.join('dist',p.path,'index.html'),p]));
 const walk=dir=>readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(dir,e.name)):[path.join(dir,e.name)]);
 const check=(name,fn)=>{fn();console.log('PASS '+name)};
 check('portal source protection',()=>{
@@ -15,8 +17,8 @@ check('original routes and mascot preserved',()=>{for(const p of ['dist/index.ht
 check('Jack mascot present',()=>{const h=text('dist/projetos/jack-up/index.html');assert.ok(h.includes('id="jack-character"')&&h.includes('id="mascotButton"')&&h.includes('data-mascot-species="alligator"'));assert.ok(!h.includes('id="archive-character"'));assert.ok(!h.includes('data-mascot-motion')&&!h.includes('project-scene-controls'));assert.ok(h.includes('jack-crutch')&&h.includes('jack-ball')&&h.includes('jack-cap')&&h.includes('project-speech'));});
 check('catalog and project search',()=>{const h=text('dist/index.html'),c=text('dist/projetos/blogs/index.html');for(const token of ['id="project-search"','href="/projetos/blogs/"'])assert.ok(h.includes(token));for(const token of ['id="archive-character"','id="blog-search"','href="/futebolando/"','href="/futebolando/en/"'])assert.ok(c.includes(token));assert.ok(c.includes('id="mascotButton"'));assert.ok(c.includes('id="selector-stage"'));assert.ok(!c.includes('data-mascot-motion')&&!c.includes('project-scene-controls'));assert.ok(c.includes('data-character-role="minute-brother"')&&c.includes('archive-legs-seated')&&c.includes('archive-files')&&c.includes('project-speech'));assert.ok(!c.includes('href="/culinaria/"')&&!c.includes('href="/engenharia/"'));});
 check('domain and original public assets',()=>{for(const f of walk('public'))assert.deepEqual(read(f),read(path.join('dist',path.relative('public',f))));assert.equal(text('dist/CNAME').trim(),'senhoritaminuto.com.br');});
-check('30 football routes',()=>{const pages=walk('dist/futebolando').filter(f=>f.endsWith('.html'));assert.equal(pages.length,30);for(const p of pages){const h=text(p);assert.ok(h.includes('noindex,nofollow')&&h.includes('class="blog"'),p);for(const token of ['id="mascotButton"','id="archive-character"','id="jack-character"','class="mascot-zone"','/assets/characters/','adsbygoogle','googletagmanager.com','pagead2.googlesyndication.com'])assert.ok(!h.includes(token),p+': '+token);}});
-check('both languages and all articles present',()=>{const a=JSON.parse(text('.blog-core-source/v2/content/articles.json'));assert.equal(a.length,8);for(const article of a)for(const [locale,ed] of Object.entries(article.editions)){const route=locale==='en'?'en/articles':'artigos';const h=text('dist/futebolando/'+route+'/'+ed.slug+'/index.html');assert.ok(h.includes('lang="'+locale+'"'));}assert.ok(text('dist/futebolando/index.html').includes('href="/futebolando/en/"'));assert.ok(text('dist/futebolando/en/index.html').includes('href="/futebolando/"'));});
+check('football routes match inventory',()=>{const pages=walk('dist/futebolando').filter(f=>f.endsWith('.html'));assert.deepEqual([...pages].sort(),[...expectedPages.keys()].sort());for(const p of pages){const h=text(p);assert.ok(h.includes('noindex,nofollow')&&h.includes('class="blog"'),p);for(const token of ['id="mascotButton"','id="archive-character"','id="jack-character"','class="mascot-zone"','/assets/characters/','adsbygoogle','googletagmanager.com','pagead2.googlesyndication.com'])assert.ok(!h.includes(token),p+': '+token);}});
+check('both languages and all articles present',()=>{const a=JSON.parse(text('.blog-core-source/v2/content/articles.json'));assert.ok(a.length>0);for(const article of a)for(const [locale,ed] of Object.entries(article.editions)){const route=locale==='en'?'en/articles':'artigos';const h=text('dist/futebolando/'+route+'/'+ed.slug+'/index.html');assert.ok(h.includes('lang="'+locale+'"'));}assert.ok(text('dist/futebolando/index.html').includes('href="/futebolando/en/"'));assert.ok(text('dist/futebolando/en/index.html').includes('href="/futebolando/"'));});
 check('no unrelated blog or active monetization',()=>{assert.ok(!existsSync('dist/culinaria-demo'));assert.ok(!existsSync('dist/ads.txt'));for(const n of ['barlow-condensed','source-serif-4','inter'])assert.ok(read('dist/blog-font-licenses/'+n+'.txt').length>100);});
 check('local Astro assets and football links resolve',()=>{for(const f of walk('dist').filter(f=>f.endsWith('.html'))){const h=text(f);for(const m of h.matchAll(/(?:src|href)="(\/(?:_astro|futebolando|projetos\/blogs)\/[^"?#]*)(?:[?#][^"]*)?"/g)){const p=path.join('dist',m[1].slice(1));assert.ok(existsSync(p)||existsSync(path.join(p,'index.html')),f+': '+m[1]);}}});
 check('SEO preserved and publication gate closed',()=>{
@@ -28,7 +30,7 @@ check('SEO preserved and publication gate closed',()=>{
   const canonical='https://senhoritaminuto.com.br/'+file.replace(/^dist\//,'').replace(/index\.html$/,'');
   const links=tags(head,'link'),meta=tags(head,'meta'),alternates=links.filter(x=>x.rel==='alternate'&&x.hreflang);
   assert.deepEqual(links.filter(x=>x.rel==='canonical').map(x=>x.href),[canonical],file);
-  assert.deepEqual(alternates.map(a=>a.hreflang).sort(),['en','pt-BR']);
+  assert.deepEqual(alternates.map(a=>({locale:a.hreflang,href:a.href})),expectedPages.get(file).alternates);
   assert.deepEqual(meta.filter(x=>x.name==='robots').map(x=>x.content),['noindex,nofollow']);
   assert.equal(meta.find(x=>x.property==='og:url')?.content,canonical);
   assert.ok(!head.includes('application/ld+json')&&!head.includes('article:published_time'));
@@ -37,4 +39,10 @@ check('SEO preserved and publication gate closed',()=>{
  for(const [url,links] of byUrl)for(const alt of links){assert.ok(byUrl.get(alt.href)?.some(a=>a.href===url),'Unreciprocal language alternate '+url);}
  assert.ok(!walk('dist/futebolando').some(p=>/sitemap[^/]*\.xml$/i.test(p)));
 });
-console.log('10 integration groups passed');
+check('trust and privacy notice in both languages',()=>{
+ for(const [p,locale] of [['dist/futebolando/transparencia/index.html','pt-BR'],['dist/futebolando/en/transparency/index.html','en']]){
+  const h=text(p);assert.ok(h.includes('data-trust-page')&&h.includes('data-contact-pending')&&h.includes('lang="'+locale+'"'));assert.ok(!/<form\b|href="mailto:|<iframe\b|googletagmanager\.com|adsbygoogle/i.test(h));
+ }
+ for(const p of expectedPages.keys())assert.ok(text(p).includes('data-trust-link'),p);
+});
+console.log('11 integration groups passed');

@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Erick-Lamperouge/estrutura-dos-blogs
-          ref: 4dd96b2e9cc4486c16a2855004ac24a700b6a7e8
+          ref: 9c9fdb7772f23b577c4b2f628d5eb3bc06d020dd
           path: .blog-core-source
           sparse-checkout: v2
           persist-credentials: false
@@ -110,4 +110,12 @@ jobs:
           grep -q 'noindex,nofollow' /tmp/article-pt.html
           grep -q 'noindex,nofollow' /tmp/article-en.html
           ! grep -Eq 'application/ld\+json|article:published_time' /tmp/article-pt.html /tmp/article-en.html
-          echo "PASS custom domain portal, mascots, 30-page preview and bilingual SEO"
+          curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/futebolando/transparencia/ -o /tmp/trust-pt.html
+          curl -fsSL --retry 4 --retry-delay 3 --max-time 20 https://senhoritaminuto.com.br/futebolando/en/transparency/ -o /tmp/trust-en.html
+          grep -q 'data-trust-page' /tmp/trust-pt.html
+          grep -q 'data-trust-page' /tmp/trust-en.html
+          grep -q 'data-contact-pending' /tmp/trust-pt.html
+          grep -q 'data-contact-pending' /tmp/trust-en.html
+          grep -q 'noindex,nofollow' /tmp/trust-pt.html
+          grep -q 'noindex,nofollow' /tmp/trust-en.html
+          echo "PASS custom domain portal, bilingual SEO and trust notices"

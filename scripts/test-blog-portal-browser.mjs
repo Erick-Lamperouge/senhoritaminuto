@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
-import {mkdirSync} from 'node:fs';
+import {mkdirSync,readFileSync} from 'node:fs';
 import {chromium} from 'playwright';
 const origin='http://127.0.0.1:4321';
 const server=spawn('npm',['run','preview','--','--host','127.0.0.1','--port','4321'],{stdio:'inherit'});
@@ -51,13 +51,15 @@ try{
   await p.locator('#languageTrigger').click();await p.locator('[data-language="pt"]').click();
   assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'catalog overflow');
   await p.screenshot({path:'review-shots/catalog-'+name+'.png',fullPage:true,animations:'disabled'});
-  await p.locator('.catalog-card a[href="/futebolando/"]').click();await p.waitForURL('**/futebolando/');assert.equal(await p.locator('[data-article-id]:visible').count(),8);
+  await p.locator('.catalog-card a[href="/futebolando/"]').click();await p.waitForURL('**/futebolando/');assert.equal(await p.locator('[data-article-id]:visible').count(),JSON.parse(readFileSync('.blog-core-source/v2/content/articles.json','utf8')).filter(a=>a.editions['pt-BR']).length);
   assert.equal(await p.locator('#archive-character,#mascotButton').count(),0);
   await p.locator('#blog-theme').selectOption('dark');assert.equal(await p.locator('html').getAttribute('data-blog-theme'),'dark');
   await p.locator('[data-article-id="expected-goals"] a').click();assert.equal(await p.locator('[data-stat-example]').count(),1);
   await p.locator('.blog-languages a[hreflang="en"]').click();assert.equal(await p.locator('html').getAttribute('lang'),'en');
   assert.equal(await p.locator('#archive-character,#mascotButton').count(),0);
   await p.screenshot({path:'review-shots/blog-'+name+'.png',fullPage:true,animations:'disabled'});
+  await p.locator('[data-trust-link]').click();assert.equal(await p.locator('[data-trust-page]').count(),1);assert.equal(await p.locator('[data-contact-pending]').count(),1);assert.equal(await p.locator('form, a[href^="mailto:"]').count(),0);assert.equal(await p.locator('#mascotButton,#archive-character').count(),0);assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+  await p.screenshot({path:'review-shots/trust-'+name+'.png',fullPage:true,animations:'disabled'});
   await p.goto(origin+'/projetos/jack-up/',{waitUntil:'networkidle'});
   assert.equal(await p.locator('#jack-character').count(),1);assert.equal(await p.locator('#mascotButton').count(),1);assert.equal(await p.locator('#jack-mascot').getAttribute('data-mascot-species'),'alligator');assert.equal(await p.locator('#jogar iframe').getAttribute('src'),'https://jack-up-ten.vercel.app/');
   await p.locator('#jack-character').scrollIntoViewIfNeeded();await p.locator('#jack-character').click();
